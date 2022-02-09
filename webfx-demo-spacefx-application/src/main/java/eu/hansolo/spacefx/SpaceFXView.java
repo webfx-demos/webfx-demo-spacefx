@@ -1789,7 +1789,7 @@ public class SpaceFXView extends StackPane {
 
 
         public Player(final String propertyString) {
-            this(propertyString.split(",")[0], propertyString.split(",")[1], Long.valueOf(propertyString.split(",")[2]));
+            this(propertyString.isEmpty() ? null : propertyString.split(",")[0], propertyString.isEmpty() ? "--" : propertyString.split(",")[1], propertyString.isEmpty() ? 0 : Long.valueOf(propertyString.split(",")[2]));
         }
         public Player(final String name, final Long score) {
             this(Uuid.randomUuid(), name, score);

@@ -1,11 +1,11 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module webfx.demo.spacefx.application.javafx {
+module webfx.demo.spacefx.application.openjfx {
 
     // Direct dependencies modules
     requires javafx.media;
     requires webfx.demo.spacefx.application;
-    requires webfx.kit.javafx;
+    requires webfx.kit.openjfx;
     requires webfx.platform.java.appcontainer.impl;
     requires webfx.platform.java.resource.impl;
     requires webfx.platform.java.scheduler.impl;
