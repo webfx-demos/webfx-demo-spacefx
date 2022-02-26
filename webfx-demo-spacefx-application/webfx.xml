@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project>
 
-    <packages>
+    <exported-packages>
         <source-packages/>
         <resource-package>eu.hansolo.spacefx</resource-package>
-    </packages>
+    </exported-packages>
 
     <providers>
         <javafx.application.Application>eu.hansolo.spacefx.SpaceFX</javafx.application.Application>
