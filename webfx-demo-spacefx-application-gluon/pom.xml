@@ -13,6 +13,8 @@
 
     <artifactId>webfx-demo-spacefx-application-gluon</artifactId>
 
+    <name>WebFXDemoSpacefx</name>
+
     <dependencies>
 
         <dependency>

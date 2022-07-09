@@ -71,8 +71,8 @@
     </dependencies>
 
     <properties>
-        <plugin.javapackager.name>webfx-demo-spacefx</plugin.javapackager.name>
-        <plugin.javapackager.displayName>webfx-demo-spacefx</plugin.javapackager.displayName>
+        <plugin.javapackager.name>WebFXDemoSpacefx</plugin.javapackager.name>
+        <plugin.javapackager.displayName>WebFX Demo Spacefx</plugin.javapackager.displayName>
         <plugin.javapackager.url/>
     </properties>
 
