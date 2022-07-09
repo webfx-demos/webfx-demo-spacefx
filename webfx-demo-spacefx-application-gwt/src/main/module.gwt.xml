@@ -12,7 +12,6 @@
     <!--===========================< webfx-kit-javafxbase-emul >============================-->
     <!-- used by webfx-kit-javafxcontrols-emul (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-peers (SOURCE) -->
     <source path="com/sun/javafx"/>
     <source path="com/sun/javafx/binding"/>
     <source path="com/sun/javafx/collections"/>
@@ -39,7 +38,7 @@
     <!-- used by webfx-kit-javafxcontrols-emul (SOURCE) -->
     <!-- used by webfx-demo-spacefx-application (SOURCE) -->
     <!-- used by webfx-kit-gwt (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-peers (SOURCE) -->
+    <!-- used by webfx-kit-javafxgraphics-registry-gwt (SOURCE) -->
     <source path="com/sun/javafx/application"/>
     <source path="com/sun/javafx/cursor"/>
     <source path="com/sun/javafx/geom"/>
@@ -81,6 +80,8 @@
     <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi"/>
     <source path="javafx/scene/media"/>
     <!--=================================< elemental2-dom >=================================-->
+    <!-- used by webfx-kit-gwt (SOURCE) -->
+    <!-- used by webfx-kit-javafxcontrols-peers-gwt (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
     <!-- used by webfx-kit-javafxmedia-peers-gwt (SOURCE) -->
     <!-- used by webfx-platform-gwt-shutdown-impl (SOURCE) -->
@@ -121,15 +122,15 @@
     <source path="dev/webfx/kit/registry/javafxcontrols"/>
     <!--=========================< webfx-kit-javafxgraphics-peers >=========================-->
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-registry-gwt (SOURCE) -->
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/markers"/>
     <!--======================< webfx-kit-javafxgraphics-peers-base >=======================-->
+    <!-- used by webfx-kit-javafxcontrols-peers-base (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/base"/>
     <!--=======================< webfx-kit-javafxgraphics-peers-gwt >=======================-->
     <!-- used by webfx-kit-gwt (SOURCE) -->
-    <!-- used by webfx-kit-javafxcontrols-registry-gwt (SOURCE) -->
+    <!-- used by webfx-kit-javafxcontrols-peers-gwt (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-registry-gwt (SOURCE) -->
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/html"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/html/layoutmeasurable"/>
@@ -157,7 +158,7 @@
     <source path="dev/webfx/platform/client/services/storage"/>
     <source path="dev/webfx/platform/client/services/storage/spi"/>
     <!--=======================< webfx-platform-client-uischeduler >========================-->
-    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
+    <!-- used by webfx-kit-launcher (SOURCE) -->
     <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
     <source path="dev/webfx/platform/client/services/uischeduler"/>
     <source path="dev/webfx/platform/client/services/uischeduler/spi"/>
@@ -188,7 +189,6 @@
     <source path="dev/webfx/platform/shared/services/boot/spi"/>
     <source path="dev/webfx/platform/shared/services/boot/spi/impl"/>
     <!--===========================< webfx-platform-shared-log >============================-->
-    <!-- used by webfx-kit-launcher (SOURCE) -->
     <!-- used by webfx-platform-gwt-log-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
     <!-- used by webfx-platform-shared-boot (SOURCE) -->
@@ -205,19 +205,17 @@
     <source path="dev/webfx/platform/shared/services/scheduler"/>
     <source path="dev/webfx/platform/shared/services/scheduler/spi"/>
     <!--=========================< webfx-platform-shared-shutdown >=========================-->
-    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <!-- used by webfx-platform-gwt-shutdown-impl (SOURCE) -->
     <!-- used by webfx-platform-shared-boot (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/shutdown"/>
     <source path="dev/webfx/platform/shared/services/shutdown/spi"/>
     <source path="dev/webfx/platform/shared/services/shutdown/spi/impl"/>
     <!--===========================< webfx-platform-shared-util >===========================-->
-    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <!-- used by webfx-kit-javafxmedia-emul (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-peers (SOURCE) -->
     <!-- used by webfx-platform-client-storage (SOURCE) -->
     <!-- used by webfx-platform-shared-log (SOURCE) -->
-    <!-- used by webfx-platform-shared-resource (SOURCE) -->
+    <!-- used by webfx-platform-shared-scheduler (SOURCE) -->
     <!-- used by webfx-platform-shared-shutdown (SOURCE) -->
     <source path="dev/webfx/platform/shared/util"/>
     <source path="dev/webfx/platform/shared/util/collection"/>
