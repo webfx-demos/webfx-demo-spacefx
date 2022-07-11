@@ -7,7 +7,7 @@
     </exported-packages>
 
     <providers>
-        <javafx.application.Application>eu.hansolo.spacefx.SpaceFX</javafx.application.Application>
+        <provider interface="javafx.application.Application">eu.hansolo.spacefx.SpaceFX</provider>
     </providers>
 
     <dependencies>
