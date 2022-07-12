@@ -16,8 +16,8 @@
 
 package eu.hansolo.spacefx;
 
-import dev.webfx.platform.client.services.storage.LocalStorage;
-import dev.webfx.platform.shared.util.uuid.Uuid;
+import dev.webfx.platform.storage.LocalStorage;
+import dev.webfx.platform.util.uuid.Uuid;
 
 import java.util.HashMap;
 import java.util.Map;

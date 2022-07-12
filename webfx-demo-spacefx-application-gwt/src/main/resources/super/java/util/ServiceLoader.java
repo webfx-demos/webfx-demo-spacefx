@@ -3,7 +3,7 @@ package java.util;
 
 import java.util.Iterator;
 import java.util.logging.Logger;
-import dev.webfx.platform.shared.util.function.Factory;
+import dev.webfx.platform.util.function.Factory;
 
 public class ServiceLoader<S> implements Iterable<S> {
 
@@ -12,17 +12,17 @@ public class ServiceLoader<S> implements Iterable<S> {
             case "dev.webfx.kit.launcher.spi.WebFxKitLauncherProvider": return new ServiceLoader<S>(dev.webfx.kit.launcher.spi.gwt.GwtWebFxKitLauncherProvider::new);
             case "dev.webfx.kit.mapper.peers.javafxmedia.spi.WebFxKitMediaMapperProvider": return new ServiceLoader<S>(dev.webfx.kit.mapper.peers.javafxmedia.spi.gwt.GwtWebFxKitMediaMapperProvider::new);
             case "dev.webfx.kit.mapper.spi.WebFxKitMapperProvider": return new ServiceLoader<S>(dev.webfx.kit.mapper.spi.gwt.GwtWebFxKitHtmlMapperProvider::new);
-            case "dev.webfx.platform.client.services.storage.spi.LocalStorageProvider": return new ServiceLoader<S>(dev.webfx.platform.gwt.services.storage.spi.impl.GwtLocalStorageProvider::new);
-            case "dev.webfx.platform.client.services.storage.spi.SessionStorageProvider": return new ServiceLoader<S>(dev.webfx.platform.gwt.services.storage.spi.impl.GwtSessionStorageProvider::new);
-            case "dev.webfx.platform.client.services.uischeduler.spi.UiSchedulerProvider": return new ServiceLoader<S>(dev.webfx.platform.gwt.services.uischeduler.spi.impl.GwtUiSchedulerProvider::new);
-            case "dev.webfx.platform.gwt.services.resource.spi.impl.GwtResourceBundle": return new ServiceLoader<S>();
-            case "dev.webfx.platform.shared.services.boot.spi.ApplicationBooterProvider": return new ServiceLoader<S>(dev.webfx.platform.gwt.services.boot.spi.impl.GwtApplicationBooterProvider::new);
-            case "dev.webfx.platform.shared.services.boot.spi.ApplicationJob": return new ServiceLoader<S>();
-            case "dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter": return new ServiceLoader<S>(dev.webfx.kit.launcher.WebFxKitLauncherModuleBooter::new, dev.webfx.platform.gwt.services.resource.spi.impl.GwtResourceModuleBooter::new, dev.webfx.platform.shared.services.boot.spi.impl.ApplicationJobsBooter::new);
-            case "dev.webfx.platform.shared.services.log.spi.LoggerProvider": return new ServiceLoader<S>(dev.webfx.platform.gwt.services.log.spi.impl.GwtLoggerProvider::new);
-            case "dev.webfx.platform.shared.services.resource.spi.ResourceServiceProvider": return new ServiceLoader<S>(dev.webfx.platform.gwt.services.resource.spi.impl.GwtResourceServiceProvider::new);
-            case "dev.webfx.platform.shared.services.scheduler.spi.SchedulerProvider": return new ServiceLoader<S>(dev.webfx.platform.gwt.services.uischeduler.spi.impl.GwtUiSchedulerProvider::new);
-            case "dev.webfx.platform.shared.services.shutdown.spi.ShutdownProvider": return new ServiceLoader<S>(dev.webfx.platform.gwt.services.shutdown.spi.impl.GwtShutdownProvider::new);
+            case "dev.webfx.platform.boot.spi.ApplicationBooterProvider": return new ServiceLoader<S>(dev.webfx.platform.boot.spi.impl.gwt.GwtApplicationBooterProvider::new);
+            case "dev.webfx.platform.boot.spi.ApplicationJob": return new ServiceLoader<S>();
+            case "dev.webfx.platform.boot.spi.ApplicationModuleBooter": return new ServiceLoader<S>(dev.webfx.kit.launcher.WebFxKitLauncherModuleBooter::new, dev.webfx.platform.boot.spi.impl.ApplicationJobsBooter::new, dev.webfx.platform.resource.spi.impl.gwt.GwtResourceModuleBooter::new);
+            case "dev.webfx.platform.console.spi.ConsoleProvider": return new ServiceLoader<S>(dev.webfx.platform.console.spi.impl.gwt.GwtConsoleProvider::new);
+            case "dev.webfx.platform.resource.spi.ResourceProvider": return new ServiceLoader<S>(dev.webfx.platform.resource.spi.impl.gwt.GwtResourceProvider::new);
+            case "dev.webfx.platform.resource.spi.impl.gwt.GwtResourceBundle": return new ServiceLoader<S>();
+            case "dev.webfx.platform.scheduler.spi.SchedulerProvider": return new ServiceLoader<S>(dev.webfx.platform.uischeduler.spi.impl.gwt.GwtUiSchedulerProvider::new);
+            case "dev.webfx.platform.shutdown.spi.ShutdownProvider": return new ServiceLoader<S>(dev.webfx.platform.shutdown.spi.impl.gwt.GwtShutdownProvider::new);
+            case "dev.webfx.platform.storage.spi.LocalStorageProvider": return new ServiceLoader<S>(dev.webfx.platform.storage.spi.impl.gwt.GwtLocalStorageProvider::new);
+            case "dev.webfx.platform.storage.spi.SessionStorageProvider": return new ServiceLoader<S>(dev.webfx.platform.storage.spi.impl.gwt.GwtSessionStorageProvider::new);
+            case "dev.webfx.platform.uischeduler.spi.UiSchedulerProvider": return new ServiceLoader<S>(dev.webfx.platform.uischeduler.spi.impl.gwt.GwtUiSchedulerProvider::new);
             case "javafx.application.Application": return new ServiceLoader<S>(eu.hansolo.spacefx.SpaceFX::new);
 
             // UNKNOWN SPI

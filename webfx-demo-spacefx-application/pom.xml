@@ -41,31 +41,31 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-client-storage</artifactId>
+            <artifactId>webfx-platform-resource</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-resource</artifactId>
+            <artifactId>webfx-platform-scheduler</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-scheduler</artifactId>
+            <artifactId>webfx-platform-shutdown</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-shutdown</artifactId>
+            <artifactId>webfx-platform-storage</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-util</artifactId>
+            <artifactId>webfx-platform-util</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

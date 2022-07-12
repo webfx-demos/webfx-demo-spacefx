@@ -5,9 +5,9 @@ import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import dev.webfx.platform.shared.services.resource.ResourceService;
-import dev.webfx.platform.shared.services.scheduler.Scheduler;
-import dev.webfx.platform.shared.services.shutdown.Shutdown;
+import dev.webfx.platform.resource.Resource;
+import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.platform.shutdown.Shutdown;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ final class WebFxUtil {
     private final static String RESOURCE_PATH = "/eu/hansolo/spacefx/";
 
     static String toResourceUrl(String resourceName) {
-        return ResourceService.toUrl(RESOURCE_PATH + resourceName, WebFxUtil.class);
+        return Resource.toUrl(RESOURCE_PATH + resourceName, WebFxUtil.class);
     }
 
     static Media newMedia(String resourceName) {

@@ -8,11 +8,11 @@ module webfx.demo.spacefx.application {
     requires javafx.controls;
     requires javafx.graphics;
     requires javafx.media;
-    requires webfx.platform.client.storage;
-    requires webfx.platform.shared.resource;
-    requires webfx.platform.shared.scheduler;
-    requires webfx.platform.shared.shutdown;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.resource;
+    requires webfx.platform.scheduler;
+    requires webfx.platform.shutdown;
+    requires webfx.platform.storage;
+    requires webfx.platform.util;
 
     // Exported packages
     exports eu.hansolo.spacefx;

@@ -43,7 +43,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import dev.webfx.platform.shared.util.uuid.Uuid;
+import dev.webfx.platform.util.uuid.Uuid;
 
 import java.util.ArrayList;
 import java.util.Collections;
