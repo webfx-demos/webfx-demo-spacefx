@@ -10,7 +10,11 @@ module webfx.demo.spacefx.application.gluon {
     requires webfx.platform.console.java;
     requires webfx.platform.resource.java;
     requires webfx.platform.scheduler.java;
-    requires webfx.platform.shutdown.java;
+    requires webfx.platform.shutdown.gluon;
     requires webfx.platform.storage.java;
+    requires webfx.platform.storagelocation.gluon;
+
+    // Meta Resource package
+    opens dev.webfx.platform.meta.exe;
 
 }

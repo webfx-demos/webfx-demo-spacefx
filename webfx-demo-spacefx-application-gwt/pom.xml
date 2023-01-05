@@ -52,11 +52,6 @@
 
         <dependency>
             <groupId>com.google.elemental2</groupId>
-            <artifactId>elemental2-promise</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.elemental2</groupId>
             <artifactId>elemental2-svg</artifactId>
         </dependency>
 
@@ -148,6 +143,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxmedia-registry-gwt</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-launcher</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -193,6 +195,13 @@
             <artifactId>webfx-platform-javabase-emul-gwt</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>shaded-sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-meta</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
         </dependency>
 
         <dependency>
