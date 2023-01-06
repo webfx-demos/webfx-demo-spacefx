@@ -6,6 +6,7 @@ module webfx.demo.spacefx.application.openjfx {
     requires javafx.media;
     requires webfx.demo.spacefx.application;
     requires webfx.kit.openjfx;
+    requires webfx.kit.platform.visibility.openjfx;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
     requires webfx.platform.resource.java;

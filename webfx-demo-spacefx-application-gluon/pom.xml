@@ -76,6 +76,12 @@
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-visibility-gluon</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <!-- Redefining the gluon profiles here, so they can be activated when invoking this pom directly -->
