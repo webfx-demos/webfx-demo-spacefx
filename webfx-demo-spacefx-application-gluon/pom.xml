@@ -18,11 +18,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-media</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-demo-spacefx-application</artifactId>
             <version>0.1.0-SNAPSHOT</version>
@@ -31,6 +26,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-openjfx</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-audio-gluon</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -91,11 +92,14 @@
                 <artifactId>gluonfx-maven-plugin</artifactId>
                 <configuration>
                     <attachList>
+                        <list>audio</list>
                         <list>lifecycle</list>
                         <list>storage</list>
                     </attachList>
                     <resourcesList>
                         <list>dev/webfx/platform/meta/exe/[^/]+</list>
+                        <list>eu/hansolo/spacefx/[^/]+</list>
+                        <list>images/checkbox/[^/]+</list>
                     </resourcesList>
                 </configuration>
             </plugin>

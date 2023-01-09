@@ -1,13 +1,12 @@
 package eu.hansolo.spacefx;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import dev.webfx.platform.audio.Audio;
+import dev.webfx.platform.audio.AudioService;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.shutdown.Shutdown;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +22,12 @@ final class WebFxUtil {
         return Resource.toUrl(RESOURCE_PATH + resourceName, WebFxUtil.class);
     }
 
-    static Media newMedia(String resourceName) {
-        return new Media(toResourceUrl(resourceName));
+    static Audio newMusic(String resourceName) {
+        return AudioService.loadMusic(Resource.toUrl(resourceName, WebFxUtil.class));
     }
 
-    static AudioClip newAudioClip(String resourceName) {
-        AudioClip audioClip = new AudioClip(toResourceUrl(resourceName));
-        audioClip.setVolume(0.5);
-        return audioClip;
+    static Audio newSound(String resourceName) {
+        return AudioService.loadSound(Resource.toUrl(resourceName, WebFxUtil.class));
     }
 
     static Image newImage(String resourceName) {
@@ -77,8 +74,6 @@ final class WebFxUtil {
             for (Image image : new ArrayList<>(toLoadImages))
                 startLoadingImage(image);
         }
-        if (loadingImagesCount == 0)
-            startWaitingPlayers();
     }
 
     public static void setLoadingContext(GraphicsContext loadingContext) {
@@ -102,29 +97,17 @@ final class WebFxUtil {
         return true;
     }
 
-    private static final List<MediaPlayer> waitingPlayers = new ArrayList<>();
-
-    static void playMusic(MediaPlayer mediaPlayer) {
-        if (true)
-            mediaPlayer.play();
-        else if (!waitingPlayers.contains(mediaPlayer))
-            waitingPlayers.add(mediaPlayer);
+    static void playMusic(Audio music) {
+        music.play();
     }
 
-    static void stopMusic(MediaPlayer mediaPlayer) {
-        mediaPlayer.stop();
-        waitingPlayers.remove(mediaPlayer);
+    static void stopMusic(Audio music) {
+        music.stop();
     }
 
-    static void startWaitingPlayers() {
-        for (MediaPlayer waitingPlayer : waitingPlayers)
-            waitingPlayer.play();
-        waitingPlayers.clear();
-    }
-
-    static void playSound(AudioClip audioClip) {
-        if (true)
-            audioClip.play();
+    static void playSound(Audio audioClip) {
+        audioClip.setVolume(0.5);
+        audioClip.play();
     }
 
     static double getImageWidth(Image image) {

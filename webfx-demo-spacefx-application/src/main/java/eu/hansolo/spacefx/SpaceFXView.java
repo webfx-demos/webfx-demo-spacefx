@@ -18,6 +18,8 @@ package eu.hansolo.spacefx;
 
 //import com.jpro.webapi.WebAPI;
 
+import dev.webfx.platform.audio.Audio;
+import dev.webfx.platform.util.uuid.Uuid;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -34,16 +36,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.*;
-import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import dev.webfx.platform.util.uuid.Uuid;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -107,32 +105,30 @@ public class SpaceFXView extends StackPane {
     private              Image                      upExplosionImg;
     private              Image                      rocketExplosionImg;
     private              Image                      rocketImg;
-    private              AudioClip                  laserSound;
-    private              AudioClip                  rocketLaunchSound;
-    private              AudioClip                  rocketExplosionSound;
-    private              AudioClip                  enemyLaserSound;
-    private              AudioClip                  enemyBombSound;
-    private              AudioClip                  explosionSound;
-    private              AudioClip                  asteroidExplosionSound;
-    private              AudioClip                  torpedoHitSound;
-    private              AudioClip                  spaceShipExplosionSound;
-    private              AudioClip                  enemyBossExplosionSound;
-    private              AudioClip                  gameoverSound;
-    private              AudioClip                  shieldHitSound;
-    private              AudioClip                  enemyHitSound;
-    private              AudioClip                  deflectorShieldSound;
-    private              AudioClip                  levelBossTorpedoSound;
-    private              AudioClip                  levelBossRocketSound;
-    private              AudioClip                  levelBossBombSound;
-    private              AudioClip                  levelBossExplosionSound;
-    private              AudioClip                  shieldUpSound;
-    private              AudioClip                  lifeUpSound;
-    private              AudioClip                  levelUpSound;
-    private              AudioClip                  bonusSound;
-    private final        Media                      gameSoundTheme ;
-    private final        Media                      soundTheme     ;
-    private final        MediaPlayer                gameMediaPlayer;
-    private final        MediaPlayer                mediaPlayer    ;
+    private              Audio                      laserSound;
+    private              Audio                      rocketLaunchSound;
+    private              Audio                      rocketExplosionSound;
+    private              Audio                      enemyLaserSound;
+    private              Audio                      enemyBombSound;
+    private              Audio                      explosionSound;
+    private              Audio                      asteroidExplosionSound;
+    private              Audio                      torpedoHitSound;
+    private              Audio                      spaceShipExplosionSound;
+    private              Audio                      enemyBossExplosionSound;
+    private              Audio                      gameoverSound;
+    private              Audio                      shieldHitSound;
+    private              Audio                      enemyHitSound;
+    private              Audio                      deflectorShieldSound;
+    private              Audio                      levelBossTorpedoSound;
+    private              Audio                      levelBossRocketSound;
+    private              Audio                      levelBossBombSound;
+    private              Audio                      levelBossExplosionSound;
+    private              Audio                      shieldUpSound;
+    private              Audio                      lifeUpSound;
+    private              Audio                      levelUpSound;
+    private              Audio                      bonusSound;
+    private final        Audio                      gameMusic;
+    private final        Audio                      music;
     private              double                     deflectorShieldRadius;
     private              boolean                    levelBossActive;
     private              Font                       scoreFont;
@@ -196,10 +192,8 @@ public class SpaceFXView extends StackPane {
 
     // ******************** Constructor ***************************************
     public SpaceFXView(Stage stage) {
-        gameSoundTheme          = WebFxUtil.newMedia("RaceToMars.mp3");
-        soundTheme              = WebFxUtil.newMedia("CityStomper.mp3");
-        gameMediaPlayer         = new MediaPlayer(gameSoundTheme);
-        mediaPlayer             = new MediaPlayer(soundTheme);
+        gameMusic = WebFxUtil.newMusic("RaceToMars.mp3");
+        music = WebFxUtil.newMusic("CityStomper.mp3");
 
         init(stage);
         initOnBackground(stage);
@@ -208,7 +202,7 @@ public class SpaceFXView extends StackPane {
             if(!value) {
                 screenTimer.stop();
                 timer.stop();
-                WebFxUtil.stopMusic(mediaPlayer);
+                WebFxUtil.stopMusic(music);
             }
         });
 
@@ -236,7 +230,7 @@ public class SpaceFXView extends StackPane {
         getChildren().add(pane);
 
         // Start playing background music
-        if (PLAY_MUSIC && !platformWaitsUserInteractionBeforeAllowingSound) { WebFxUtil.playMusic(mediaPlayer); }
+        if (PLAY_MUSIC && !platformWaitsUserInteractionBeforeAllowingSound) { WebFxUtil.playMusic(music); }
 
         // Start timer to toggle between start screen and hall of fame
         screenTimer.start();
@@ -297,37 +291,37 @@ public class SpaceFXView extends StackPane {
         hallOfFameBox.relocate((WIDTH - hallOfFameBox.getPrefWidth()) * 0.5, (HEIGHT - hallOfFameBox.getPrefHeight()) * 0.5 -HEIGHT * 0.1);
         Helper.enableNode(hallOfFameBox, false);
 
-        // Mediaplayer for background music
-        mediaPlayer.setCycleCount(-1);
-        mediaPlayer.setVolume(1);
+        // background music
+        music.setLooping(true);
+        music.setVolume(1);
 
-        // Mediaplayer for game background music
-        gameMediaPlayer.setCycleCount(-1);
-        gameMediaPlayer.setVolume(1);
+        // for game background music
+        gameMusic.setLooping(true);
+        gameMusic.setVolume(1);
 
         // Load sounds
-        laserSound              = WebFxUtil.newAudioClip("laserSound.mp3");
-        rocketLaunchSound       = WebFxUtil.newAudioClip("rocketLaunch.mp3");
-        rocketExplosionSound    = WebFxUtil.newAudioClip("rocketExplosion.mp3");
-        enemyLaserSound         = WebFxUtil.newAudioClip("enemyLaserSound.mp3");
-        enemyBombSound          = WebFxUtil.newAudioClip("enemyBomb.mp3");
-        explosionSound          = WebFxUtil.newAudioClip("explosionSound.mp3");
-        asteroidExplosionSound  = WebFxUtil.newAudioClip("asteroidExplosion.mp3");
-        torpedoHitSound         = WebFxUtil.newAudioClip("hit.mp3");
-        spaceShipExplosionSound = WebFxUtil.newAudioClip("spaceShipExplosionSound.mp3");
-        enemyBossExplosionSound = WebFxUtil.newAudioClip("enemyBossExplosion.mp3");
-        gameoverSound           = WebFxUtil.newAudioClip("gameover.mp3");
-        shieldHitSound          = WebFxUtil.newAudioClip("shieldhit.mp3");
-        enemyHitSound           = WebFxUtil.newAudioClip("enemyBossShieldHit.mp3");
-        deflectorShieldSound    = WebFxUtil.newAudioClip("deflectorshieldSound.mp3");
-        levelBossTorpedoSound   = WebFxUtil.newAudioClip("levelBossTorpedo.mp3");
-        levelBossRocketSound    = WebFxUtil.newAudioClip("levelBossRocket.mp3");
-        levelBossBombSound      = WebFxUtil.newAudioClip("levelBossBomb.mp3");
-        levelBossExplosionSound = WebFxUtil.newAudioClip("explosionSound1.mp3");
-        shieldUpSound           = WebFxUtil.newAudioClip("shieldUp.mp3");
-        lifeUpSound             = WebFxUtil.newAudioClip("lifeUp.mp3");
-        levelUpSound            = WebFxUtil.newAudioClip("levelUp.mp3");
-        bonusSound              = WebFxUtil.newAudioClip("bonus.mp3");
+        laserSound              = WebFxUtil.newSound("laserSound.mp3");
+        rocketLaunchSound       = WebFxUtil.newSound("rocketLaunch.mp3");
+        rocketExplosionSound    = WebFxUtil.newSound("rocketExplosion.mp3");
+        enemyLaserSound         = WebFxUtil.newSound("enemyLaserSound.mp3");
+        enemyBombSound          = WebFxUtil.newSound("enemyBomb.mp3");
+        explosionSound          = WebFxUtil.newSound("explosionSound.mp3");
+        asteroidExplosionSound  = WebFxUtil.newSound("asteroidExplosion.mp3");
+        torpedoHitSound         = WebFxUtil.newSound("hit.mp3");
+        spaceShipExplosionSound = WebFxUtil.newSound("spaceShipExplosionSound.mp3");
+        enemyBossExplosionSound = WebFxUtil.newSound("enemyBossExplosion.mp3");
+        gameoverSound           = WebFxUtil.newSound("gameover.mp3");
+        shieldHitSound          = WebFxUtil.newSound("shieldhit.mp3");
+        enemyHitSound           = WebFxUtil.newSound("enemyBossShieldHit.mp3");
+        deflectorShieldSound    = WebFxUtil.newSound("deflectorshieldSound.mp3");
+        levelBossTorpedoSound   = WebFxUtil.newSound("levelBossTorpedo.mp3");
+        levelBossRocketSound    = WebFxUtil.newSound("levelBossRocket.mp3");
+        levelBossBombSound      = WebFxUtil.newSound("levelBossBomb.mp3");
+        levelBossExplosionSound = WebFxUtil.newSound("explosionSound1.mp3");
+        shieldUpSound           = WebFxUtil.newSound("shieldUp.mp3");
+        lifeUpSound             = WebFxUtil.newSound("lifeUp.mp3");
+        levelUpSound            = WebFxUtil.newSound("levelUp.mp3");
+        bonusSound              = WebFxUtil.newSound("bonus.mp3");
 
         // Variable initialization
         backgroundViewportY           = SWITCH_POINT;
@@ -1388,7 +1382,7 @@ public class SpaceFXView extends StackPane {
         running = false;
         gameOverScreen = true;
         if (PLAY_MUSIC) {
-            gameMediaPlayer.pause();
+            gameMusic.pause();
         }
 
         boolean isInHallOfFame = score > hallOfFame.get(2).score;
@@ -1462,7 +1456,7 @@ public class SpaceFXView extends StackPane {
         kills       = 0;
         levelKills  = 0;
         if (PLAY_MUSIC && !platformWaitsUserInteractionBeforeAllowingSound) {
-            WebFxUtil.playMusic(mediaPlayer);
+            WebFxUtil.playMusic(music);
         }
 
         screenTimer.start();
@@ -1488,9 +1482,9 @@ public class SpaceFXView extends StackPane {
 
 
     // Play audio clips
-    private void playSound(final AudioClip audioClip) {
+    private void playSound(final Audio Audio) {
         if (PLAY_SOUND) {
-            WebFxUtil.playSound(audioClip);
+            WebFxUtil.playSound(Audio);
         }
     }
 
@@ -1519,8 +1513,8 @@ public class SpaceFXView extends StackPane {
             ctx.drawImage(level.getBackgroundImg(), 0, 0);
         }
         if (PLAY_MUSIC) {
-            mediaPlayer.pause();
-            WebFxUtil.playMusic(gameMediaPlayer);
+            music.pause();
+            WebFxUtil.playMusic(gameMusic);
         }
         Helper.enableNode(hallOfFameBox, false);
         screenTimer.stop();

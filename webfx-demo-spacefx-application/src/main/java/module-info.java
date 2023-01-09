@@ -7,7 +7,7 @@ module webfx.demo.spacefx.application {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires javafx.media;
+    requires webfx.platform.audio;
     requires webfx.platform.resource;
     requires webfx.platform.scheduler;
     requires webfx.platform.shutdown;
