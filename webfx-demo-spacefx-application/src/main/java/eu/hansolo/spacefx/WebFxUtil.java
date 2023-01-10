@@ -105,9 +105,9 @@ final class WebFxUtil {
         music.stop();
     }
 
-    static void playSound(Audio audioClip) {
-        audioClip.setVolume(0.5);
-        audioClip.play();
+    static void playSound(Audio sound) {
+        sound.setVolume(0.5); // SpaceFX sounds are quite loud, so reducing volume (otherwise saturates)
+        sound.play();
     }
 
     static double getImageWidth(Image image) {
