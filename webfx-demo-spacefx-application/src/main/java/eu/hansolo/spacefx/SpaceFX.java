@@ -155,7 +155,7 @@ public final class SpaceFX extends Application {
             }
         });
 
-        scene.setOnMousePressed(e -> {
+        scene.setOnMouseClicked(e -> {
             if (!view.isRunning() && view.isReadyToStart())
                 view.startGame();
         });
