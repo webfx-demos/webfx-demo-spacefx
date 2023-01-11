@@ -19,6 +19,8 @@ package eu.hansolo.spacefx;
 //import com.jpro.webapi.WebAPI;
 
 import dev.webfx.platform.audio.Audio;
+import dev.webfx.platform.scheduler.Scheduled;
+import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.util.uuid.Uuid;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
@@ -189,6 +191,7 @@ public class SpaceFXView extends StackPane {
     private              AnimationTimer             screenTimer;
     private              Circle                     shipTouchArea;
     private              EventHandler<TouchEvent>   touchHandler;
+    private              boolean                    autoFire; // WebFX addition for touch devices
 
     // ******************** Constructor ***************************************
     public SpaceFXView(Stage stage) {
@@ -220,6 +223,7 @@ public class SpaceFXView extends StackPane {
             shipTouchArea.setOnMouseDragged(e -> {
                 spaceShip.x = e.getX();
                 spaceShip.y = e.getY();
+                setAutoFire(true); // Activating auto fire when using mouse or touch
             });
         //}
 
@@ -1555,10 +1559,24 @@ public class SpaceFXView extends StackPane {
         }
     }
 
+    private Scheduled autoFireScheduled;
+
     public void fireSpaceShipWeapon() {
         if (WebFxUtil.nanoTime() - lastTorpedoFired < MIN_TORPEDO_INTERVAL) { return; }
         spawnWeapon(spaceShip.x, spaceShip.y);
         lastTorpedoFired = WebFxUtil.nanoTime();
+        if (autoFireScheduled != null)
+            autoFireScheduled.cancel();
+        if (autoFire)
+            autoFireScheduled = Scheduler.scheduleDelay(250, this::fireSpaceShipWeapon);
+    }
+
+    public void setAutoFire(boolean autoFire) {
+        if (this.autoFire != autoFire) {
+            this.autoFire = autoFire;
+            if (autoFire)
+                fireSpaceShipWeapon();
+        }
     }
 
     public void fireStarburst() {

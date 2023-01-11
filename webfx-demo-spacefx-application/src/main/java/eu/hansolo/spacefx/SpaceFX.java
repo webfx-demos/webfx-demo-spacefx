@@ -20,11 +20,13 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public final class SpaceFX extends Application {
 
-    public static double WINDOW_WIDTH = 700, WINDOW_HEIGHT = 900;
+    public static double WINDOW_WIDTH = Math.min(700, Screen.getPrimary().getVisualBounds().getWidth()),
+            WINDOW_HEIGHT = Math.min(900, Screen.getPrimary().getVisualBounds().getHeight());
 
     private boolean torpedoArmed;
     private boolean rocketArmed;
@@ -83,6 +85,7 @@ public final class SpaceFX extends Application {
                         break;
                     case SPACE:
                         if (torpedoArmed) {
+                            view.setAutoFire(false);
                             view.fireSpaceShipWeapon();
                             torpedoArmed = false;
                         }
@@ -151,12 +154,11 @@ public final class SpaceFX extends Application {
                 }
             }
         });
-/*
+
         scene.setOnMousePressed(e -> {
             if (!view.isRunning() && view.isReadyToStart())
                 view.startGame();
         });
-*/
 
         stage.setTitle("SpaceFX");
         stage.show();
