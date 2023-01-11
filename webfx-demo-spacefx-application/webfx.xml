@@ -12,6 +12,7 @@
 
     <dependencies>
         <used-by-source-modules/>
+        <plugin-module>webfx-demo-spacefx-css</plugin-module>
     </dependencies>
 
 </project>

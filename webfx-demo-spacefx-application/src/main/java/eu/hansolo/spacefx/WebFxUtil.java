@@ -16,7 +16,7 @@ import java.util.List;
  */
 final class WebFxUtil {
 
-    private final static String RESOURCE_PATH = "/eu/hansolo/spacefx/";
+    private final static String RESOURCE_PATH = "eu/hansolo/spacefx/";
 
     static String toResourceUrl(String resourceName) {
         return Resource.toUrl(RESOURCE_PATH + resourceName, WebFxUtil.class);

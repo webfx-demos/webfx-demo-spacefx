@@ -53,7 +53,7 @@ public final class SpaceFX extends Application {
         // Now that config is ready, we can instantiate SpaceFXView and make it as root
         scene.setRoot(view = new SpaceFXView(stage));
 
-        scene.getStylesheets().add(WebFxUtil.toResourceUrl("spacefx.css"));
+        scene.getStylesheets().add(WebFxUtil.toResourceUrl("css/spacefx.css"));
 
         scene.setOnKeyPressed(e -> {
             view.userInteracted();
