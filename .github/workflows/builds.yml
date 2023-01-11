@@ -331,16 +331,19 @@ jobs:
 
       # Invoking the Gluon Client Maven plugin to build the native Android app (chaining build & package goals)
       - if: matrix.gluon-android-arch-token != null
+        id: android_gluon_build
         name: Gluon Build for Android
         run: mvn -B -P 'gluon-android' clean gluonfx:build gluonfx:package # May take a while
         env:
           GRAALVM_HOME: ${{ env.JAVA_HOME }}
         working-directory: ${{ env.app-gluon-module-dir }}
-        continue-on-error: true # So that we print the Gluon logs in the next step (then Staging will fail if Gluon build failed)
+        continue-on-error: true # So that we print the Gluon logs in the next step to help investigating the error
 
-      - if: matrix.gluon-android-arch-token != null
-        name: Gluon Build logs for Android
-        run: tail -n+1 ${{ env.app-gluon-module-dir }}/target/gluonfx/log/*.log
+      - if: steps.android_gluon_build.outcome == 'failure'
+        name: Print Gluon logs (when build failed)
+        run:  |
+          tail -n+1 ${{ env.app-gluon-module-dir }}/target/gluonfx/log/*.log
+          exit 1
 
       # Staging 6)
       - if: matrix.gluon-android-arch-token != null
