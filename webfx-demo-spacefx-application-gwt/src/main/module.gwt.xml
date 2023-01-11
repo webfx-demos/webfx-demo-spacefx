@@ -85,6 +85,9 @@
     <source path="eu/hansolo/spacefx"/>
     <resource path="eu/hansolo/spacefx"/>
     <public includes="eu/hansolo/spacefx/" path=""/>
+    <!--===========================< webfx-demo-spacefx-css-web >===========================-->
+    <resource path="eu/hansolo/spacefx/css"/>
+    <public includes="eu/hansolo/spacefx/css/" path=""/>
     <!--=================================< webfx-kit-gwt >==================================-->
     <source path="dev/webfx/kit/launcher/spi/impl/gwt"/>
     <source path="dev/webfx/kit/mapper/spi/impl/gwt"/>
