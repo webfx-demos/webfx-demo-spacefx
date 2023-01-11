@@ -1567,7 +1567,7 @@ public class SpaceFXView extends StackPane {
         lastTorpedoFired = WebFxUtil.nanoTime();
         if (autoFireScheduled != null)
             autoFireScheduled.cancel();
-        if (autoFire)
+        if (autoFire && isRunning())
             autoFireScheduled = Scheduler.scheduleDelay(250, this::fireSpaceShipWeapon);
     }
 
