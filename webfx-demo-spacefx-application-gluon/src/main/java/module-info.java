@@ -8,7 +8,7 @@ module webfx.demo.spacefx.application.gluon {
     requires webfx.platform.audio.gluon;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
-    requires webfx.platform.resource.java;
+    requires webfx.platform.resource.gluon;
     requires webfx.platform.scheduler.java;
     requires webfx.platform.shutdown.gluon;
     requires webfx.platform.storage.java;

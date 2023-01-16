@@ -73,7 +73,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-resource-java</artifactId>
+            <artifactId>webfx-platform-resource-gluon</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -123,9 +123,13 @@
                     <resourcesList>
                         <list>dev/webfx/platform/meta/exe/[^/]+</list>
                         <list>eu/hansolo/spacefx/[^/]+</list>
-                        <list>images/checkbox/[^/]+</list>
                         <list>eu/hansolo/spacefx/css/[^/]+</list>
+                        <list>images/checkbox/[^/]+</list>
                     </resourcesList>
+                    <releaseConfiguration>
+                        <!-- Android -->
+                        <appLabel>SpaceFX</appLabel>
+                    </releaseConfiguration>
                 </configuration>
             </plugin>
         </plugins>
