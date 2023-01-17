@@ -1522,6 +1522,7 @@ public class SpaceFXView extends StackPane {
         }
         Helper.enableNode(hallOfFameBox, false);
         screenTimer.stop();
+        autoFire = false;
         running = true;
         timer.start();
     }
@@ -1574,7 +1575,7 @@ public class SpaceFXView extends StackPane {
     public void setAutoFire(boolean autoFire) {
         if (this.autoFire != autoFire) {
             this.autoFire = autoFire;
-            if (autoFire)
+            if (autoFire && isRunning())
                 fireSpaceShipWeapon();
         }
     }
