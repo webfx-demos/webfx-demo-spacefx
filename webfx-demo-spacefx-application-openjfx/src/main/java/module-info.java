@@ -14,6 +14,7 @@ module webfx.demo.spacefx.application.openjfx {
     requires webfx.platform.shutdown.java;
     requires webfx.platform.storage.java;
     requires webfx.platform.storagelocation.java;
+    requires webfx.platform.useragent.java.client;
 
     // Meta Resource package
     opens dev.webfx.platform.meta.exe;

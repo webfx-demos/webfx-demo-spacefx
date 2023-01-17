@@ -21,6 +21,7 @@ package eu.hansolo.spacefx;
 import dev.webfx.platform.audio.Audio;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.uuid.Uuid;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
@@ -55,16 +56,16 @@ import static eu.hansolo.spacefx.Config.*;
 
 
 public class SpaceFXView extends StackPane {
-    private static final long                       SCREEN_TOGGLE_INTERVAL  = 10_000_000_000l;
+    private static final long                       SCREEN_TOGGLE_INTERVAL  = 10_000_000_000L;
     private static final Random                     RND                     = new Random();
-    private static final boolean                    IS_BROWSER              = false; //WebAPI.isBrowser();
+    private static final boolean                    IS_BROWSER              = UserAgent.isBrowser();
     //private              Task<Boolean>              initTask;
     private              Level1                     level1;
     private              Level2                     level2;
     private              Level3                     level3;
     private              long                       lastScreenToggle;
     private              boolean                    readyToStart;
-    private              boolean                    platformWaitsUserInteractionBeforeAllowingSound = true;
+    private              boolean                    waitUserInteractionBeforePlayingSound = IS_BROWSER;
     private              boolean                    running;
     private              boolean                    gameOverScreen;
     private              boolean                    hallOfFameScreen;
@@ -234,7 +235,7 @@ public class SpaceFXView extends StackPane {
         getChildren().add(pane);
 
         // Start playing background music
-        if (PLAY_MUSIC && !platformWaitsUserInteractionBeforeAllowingSound) { WebFxUtil.playMusic(music); }
+        if (PLAY_MUSIC && !waitUserInteractionBeforePlayingSound) { WebFxUtil.playMusic(music); }
 
         // Start timer to toggle between start screen and hall of fame
         screenTimer.start();
@@ -1459,7 +1460,7 @@ public class SpaceFXView extends StackPane {
         score       = 0;
         kills       = 0;
         levelKills  = 0;
-        if (PLAY_MUSIC && !platformWaitsUserInteractionBeforeAllowingSound) {
+        if (PLAY_MUSIC && !waitUserInteractionBeforePlayingSound) {
             WebFxUtil.playMusic(music);
         }
 
@@ -1529,8 +1530,8 @@ public class SpaceFXView extends StackPane {
     }
 
     public void userInteracted() {
-        if (platformWaitsUserInteractionBeforeAllowingSound) {
-            platformWaitsUserInteractionBeforeAllowingSound = false;
+        if (waitUserInteractionBeforePlayingSound) {
+            waitUserInteractionBeforePlayingSound = false;
             if (PLAY_MUSIC && !isRunning())
                 WebFxUtil.playMusic(music);
         }

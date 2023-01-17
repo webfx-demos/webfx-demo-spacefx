@@ -13,6 +13,7 @@ module webfx.demo.spacefx.application.gluon {
     requires webfx.platform.shutdown.gluon;
     requires webfx.platform.storage.java;
     requires webfx.platform.storagelocation.gluon;
+    requires webfx.platform.useragent.gluon;
     requires webfx.platform.visibility.gluon;
 
     // Meta Resource package
