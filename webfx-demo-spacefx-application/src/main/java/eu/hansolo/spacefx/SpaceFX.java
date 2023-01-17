@@ -158,6 +158,7 @@ public final class SpaceFX extends Application {
         scene.setOnMouseClicked(e -> {
             if (!view.isRunning() && view.isReadyToStart())
                 view.startGame();
+            view.userInteracted();
         });
 
         stage.setTitle("SpaceFX");

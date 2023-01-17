@@ -1525,10 +1525,15 @@ public class SpaceFXView extends StackPane {
         autoFire = false;
         running = true;
         timer.start();
+        userInteracted();
     }
 
     public void userInteracted() {
-        platformWaitsUserInteractionBeforeAllowingSound = false;
+        if (platformWaitsUserInteractionBeforeAllowingSound) {
+            platformWaitsUserInteractionBeforeAllowingSound = false;
+            if (PLAY_MUSIC && !isRunning())
+                WebFxUtil.playMusic(music);
+        }
     }
 
     public boolean isReadyToStart() { return readyToStart; }
