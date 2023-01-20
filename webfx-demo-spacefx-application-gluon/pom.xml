@@ -132,10 +132,12 @@
                         <list>eu/hansolo/spacefx/css/[^/]+$</list>
                         <list>images/checkbox/[^/]+$</list>
                     </resourcesList>
+                    <appIdentifier>dev.webfx.demo.spacefx</appIdentifier>
                     <releaseConfiguration>
                         <!-- Android -->
                         <appLabel>SpaceFX</appLabel>
                     </releaseConfiguration>
+
                 </configuration>
             </plugin>
         </plugins>
