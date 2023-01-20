@@ -56,7 +56,6 @@ public final class SpaceFX extends Application {
         scene.getStylesheets().add(WebFxUtil.toResourceUrl("css/spacefx.css"));
 
         scene.setOnKeyPressed(e -> {
-            view.userInteracted();
             if (view.isRunning()) {
                 switch (e.getCode()) {
                     case UP:
@@ -126,6 +125,7 @@ public final class SpaceFX extends Application {
             } else if (e.getCode() == KeyCode.P && view.isReadyToStart()) {
                 view.startGame();
             }
+            view.userInteracted();
         });
         scene.setOnKeyReleased(e -> {
             if (view.isRunning()) {
