@@ -9,7 +9,6 @@ module webfx.demo.spacefx.application {
     requires javafx.graphics;
     requires webfx.kit.util.scene;
     requires webfx.platform.audio;
-    requires webfx.platform.os;
     requires webfx.platform.resource;
     requires webfx.platform.scheduler;
     requires webfx.platform.shutdown;

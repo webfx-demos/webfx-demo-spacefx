@@ -459,13 +459,10 @@ public class SpaceFXView extends StackPane {
         mobileOffsetY = 0;
 
         // Preparing GraphicsContext
-        canvas.sceneProperty().addListener(scene -> Platform.runLater(() -> {
-            ctx.setFont(scoreFont);
-            ctx.setTextAlign(TextAlignment.CENTER);
-            ctx.setTextBaseline(VPos.CENTER);
-            WebFxUtil.onImageLoaded(startImg, () -> ctx.drawImage(startImg, 0, 0, WIDTH, HEIGHT));
-            WebFxUtil.setLoadingContext(ctx);
-        }));
+        ctx.setFont(scoreFont);
+        ctx.setTextAlign(TextAlignment.CENTER);
+        ctx.setTextBaseline(VPos.CENTER);
+        WebFxUtil.onImageLoaded(startImg, () -> ctx.drawImage(startImg, 0, 0, WIDTH, HEIGHT));
     }
 
     private void initOnBackground(Stage stage) {

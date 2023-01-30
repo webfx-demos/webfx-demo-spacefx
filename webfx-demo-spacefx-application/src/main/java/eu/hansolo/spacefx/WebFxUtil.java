@@ -5,19 +5,12 @@ import dev.webfx.platform.audio.AudioService;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.shutdown.Shutdown;
-import dev.webfx.platform.useragent.UserAgent;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Bruno Salmon
  */
 final class WebFxUtil {
-
-    private static final boolean IS_BROWSER = UserAgent.isBrowser();
 
     static String toResourceUrl(String resourceName) {
         return Resource.toUrl(resourceName, WebFxUtil.class);
@@ -70,59 +63,16 @@ final class WebFxUtil {
     }
 
     static Image newImage(String resourceName) {
-        return startLoadingImage(new Image(toResourceUrl(resourceName), true));
-    }
-
-    static Image newImage(String resourceName, double requestedWidth, double requestedHeight) {
-        return startLoadingImage(new Image(toResourceUrl(resourceName), requestedWidth, requestedHeight, true, false, true));
-    }
-
-    private static final int MAX_SIMULTANEOUS_LOADING_IMAGES_COUNT = 3;
-    private static int loadingImagesCount;
-    private static GraphicsContext loadingContext;
-    private static final List<Image> toLoadImages = new ArrayList<>();
-
-    static boolean hasImageFinishedLoading(Image image) {
-        return image == null || image.getProgress() >= 1;
-    }
-
-    private static Image startLoadingImage(Image image) {
-        if (IS_BROWSER && !hasImageFinishedLoading(image)) {
-            if (loadingContext == null || loadingImagesCount >= MAX_SIMULTANEOUS_LOADING_IMAGES_COUNT) {
-                if (!toLoadImages.contains(image))
-                    toLoadImages.add(image);
-            } else {
-                toLoadImages.remove(image);
-                loadingImagesCount++;
-                //webfx.platform.shared.services.log.Logger.log(loadingImagesCount + " (+1 " + image.getUrl() + ")");
-                image.progressProperty().addListener((observableValue, oldProgress, progress) -> {
-                    if (progress.doubleValue() == 1) {
-                        loadingImagesCount--;
-                        //webfx.platform.shared.services.log.Logger.log(loadingImagesCount + " (-1 " + image.getUrl() + ")");
-                        doNextLoadingAction();
-                    }
-                });
-                loadingContext.drawImage(image, 50_000, 50_000);  // This will cause the image to load
-            }
-        }
-        return image;
-    }
-
-    private static void doNextLoadingAction() {
-        if (loadingImagesCount < MAX_SIMULTANEOUS_LOADING_IMAGES_COUNT) {
-            for (Image image : new ArrayList<>(toLoadImages))
-                startLoadingImage(image);
-        }
-    }
-
-    public static void setLoadingContext(GraphicsContext loadingContext) {
-        WebFxUtil.loadingContext = loadingContext;
-        doNextLoadingAction();
+        return new Image(toResourceUrl(resourceName), true);
     }
 
     static void onImageLoaded(Image image, Runnable runnable) {
         if (!onImageLoadedIfLoading(image, runnable))
             runnable.run();
+    }
+
+    static boolean hasImageFinishedLoading(Image image) {
+        return image == null || image.getProgress() >= 1;
     }
 
     static boolean onImageLoadedIfLoading(Image image, Runnable runnable) {
@@ -132,7 +82,6 @@ final class WebFxUtil {
             if (progress.doubleValue() == 1)
                 runnable.run();
         });
-        startLoadingImage(image);
         return true;
     }
 
