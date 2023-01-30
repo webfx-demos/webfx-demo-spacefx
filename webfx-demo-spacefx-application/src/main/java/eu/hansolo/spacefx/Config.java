@@ -25,8 +25,8 @@ public class Config {
     public static final double      WIDTH                               = SpaceFX.WINDOW_WIDTH;
     public static final double      HEIGHT                              = SpaceFX.WINDOW_HEIGHT;
     public static final boolean     IS_PORTRAIT_MODE                    = HEIGHT > WIDTH;
-    public static final double      BKG_SCALING_FACTOR                  = HEIGHT / 900;
-    public static final double      SCALING_FACTOR                      = BKG_SCALING_FACTOR;
+    public static final double      BKG_SCALING_FACTOR                  = Math.max(HEIGHT / 900, WIDTH / 700);
+    public static final double      SCALING_FACTOR                      = HEIGHT / 900;
     public static final double      SWITCH_POINT                        = 2079 * BKG_SCALING_FACTOR;
     public static final double      VELOCITY_FACTOR_X                   = BKG_SCALING_FACTOR;
     public static final double      VELOCITY_FACTOR_Y                   = BKG_SCALING_FACTOR;
