@@ -76,6 +76,8 @@ public class SpaceFXView extends StackPane {
     private              List<Player>               hallOfFame;
     private              VBox                       hallOfFameBox;
     private              Level                      level;
+    private              Difficulty                 minLevelDifficulty;
+    private              Difficulty                 levelDifficulty;
     private final        Image                      startImg                = WebFxUtil.newImage("startscreen.jpg");
     private final        Image                      gameOverImg             = WebFxUtil.newImage("gameover.jpg");
     private final        Image                      hallOfFameImg           = WebFxUtil.newImage("halloffamescreen.jpg");
@@ -509,18 +511,18 @@ public class SpaceFXView extends StackPane {
         rocketExplosionImg      = ScaledImage.create("rocketExplosion.png", 960, 768);
         rocketImg               = ScaledImage.create("rocket.png", 17, 50);
 
-                level2 = new Level2();
-                level3 = new Level3();
-                level  = level1;
+        level2 = new Level2();
+        level3 = new Level3();
+        initLevel();
 
-                deflectorShieldRadius   = deflectorShieldImg.getWidth() * 0.5;
-                spaceShip               = new SpaceShip(spaceshipImg, spaceshipUpImg, spaceshipDownImg);
+        deflectorShieldRadius   = deflectorShieldImg.getWidth() * 0.5;
+        spaceShip               = new SpaceShip(spaceshipImg, spaceshipUpImg, spaceshipDownImg);
 
-                // Adjust audio clip volumes
-                //explosionSound.setVolume(0.5);
-                //torpedoHitSound.setVolume(0.5);
+        // Adjust audio clip volumes
+        //explosionSound.setVolume(0.5);
+        //torpedoHitSound.setVolume(0.5);
 
-                initAsteroids();
+        initAsteroids();
 
 /*
                 return true;
@@ -528,12 +530,12 @@ public class SpaceFXView extends StackPane {
         };
         initTask.setOnSucceeded(e -> {
 */
-            shipTouchArea.setCenterX(spaceShip.x);
-            shipTouchArea.setCenterY(spaceShip.y);
-            shipTouchArea.setRadius(deflectorShieldRadius);
-            shipTouchArea.setStroke(Color.TRANSPARENT);
-            shipTouchArea.setFill(Color.TRANSPARENT);
-            readyToStart = true;
+        shipTouchArea.setCenterX(spaceShip.x);
+        shipTouchArea.setCenterY(spaceShip.y);
+        shipTouchArea.setRadius(deflectorShieldRadius);
+        shipTouchArea.setStroke(Color.TRANSPARENT);
+        shipTouchArea.setFill(Color.TRANSPARENT);
+        readyToStart = true;
 /*
         });
         initTask.setOnFailed(e -> readyToStart = false);
@@ -556,6 +558,8 @@ public class SpaceFXView extends StackPane {
     }
 
 
+    private static final Color STAR_COLOR = Color.rgb(255, 255, 255, 0.9);
+
     // Update and draw
     private void updateAndDraw() {
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
@@ -574,7 +578,7 @@ public class SpaceFXView extends StackPane {
 
         // Draw Stars
         if (SHOW_STARS) {
-            ctx.setFill(Color.rgb(255, 255, 255, 0.9));
+            ctx.setFill(STAR_COLOR);
             for (int i = 0; i < NO_OF_STARS; i++) {
                 Star star = stars[i];
                 star.update();
@@ -1267,65 +1271,65 @@ public class SpaceFXView extends StackPane {
     }
 
     private void spawnWave() {
-        switch (level.getDifficulty()) {
+        switch (levelDifficulty) {
             case EASY:
                 if (levelKills < NO_OF_KILLS_STAGE_1 && !levelBossActive) {
-                    waves.add(new Wave(WAVE_TYPES_SLOW[RND.nextInt(WAVE_TYPES_SLOW.length)], spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], false, false));
+                    waves.add(new Wave(WAVE_TYPES_SLOW[RND.nextInt(WAVE_TYPES_SLOW.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], false, false));
                 } else if (levelKills >= NO_OF_KILLS_STAGE_1 && levelKills < NO_OF_KILLS_STAGE_2 && !levelBossActive) {
                     if (RND.nextBoolean()) {
-                        waves.add(new Wave(WAVE_TYPES_MEDIUM[RND.nextInt(WAVE_TYPES_MEDIUM.length)], spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
+                        waves.add(new Wave(WAVE_TYPES_MEDIUM[RND.nextInt(WAVE_TYPES_MEDIUM.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
                     } else {
                         waves.add(new Wave(WaveType.TYPE_10_SLOW, WaveType.TYPE_11_SLOW, spaceShip, 10, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], false, false));
                     }
                 } else if (levelKills >= NO_OF_KILLS_STAGE_2 && !levelBossActive) {
                     spawnLevelBoss(spaceShip);
                 } else if (!levelBossActive) {
-                    waves.add(new Wave(WAVE_TYPES_MEDIUM[RND.nextInt(WAVE_TYPES_MEDIUM.length)], spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
+                    waves.add(new Wave(WAVE_TYPES_MEDIUM[RND.nextInt(WAVE_TYPES_MEDIUM.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
                 }
                 break;
             case NORMAL:
                 if (levelKills < NO_OF_KILLS_STAGE_1 && !levelBossActive) {
                     if (RND.nextBoolean()) {
-                        waves.add(new Wave(WAVE_TYPES_MEDIUM[RND.nextInt(WAVE_TYPES_MEDIUM.length)], spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], false, false));
+                        waves.add(new Wave(WAVE_TYPES_MEDIUM[RND.nextInt(WAVE_TYPES_MEDIUM.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], false, false));
                     } else {
-                        waves.add(new Wave(WaveType.TYPE_10_MEDIUM, WaveType.TYPE_11_MEDIUM, spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], false, false));
+                        waves.add(new Wave(WaveType.TYPE_10_MEDIUM, WaveType.TYPE_11_MEDIUM, spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], false, false));
                     }
                 } else if (levelKills >= NO_OF_KILLS_STAGE_1 && levelKills < NO_OF_KILLS_STAGE_2 && !levelBossActive) {
                     if (RND.nextBoolean()) {
-                        waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
+                        waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
                     } else {
-                        waves.add(new Wave(WaveType.TYPE_10_FAST, WaveType.TYPE_11_FAST, spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
+                        waves.add(new Wave(WaveType.TYPE_10_FAST, WaveType.TYPE_11_FAST, spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
                     }
                 } else if (levelKills >= NO_OF_KILLS_STAGE_2 && !levelBossActive) {
                     spawnLevelBoss(spaceShip);
                 } else if (!levelBossActive) {
                     if (RND.nextBoolean()) {
-                        waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
+                        waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
                     } else {
-                        waves.add(new Wave(WaveType.TYPE_10_FAST, WaveType.TYPE_11_FAST, spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
+                        waves.add(new Wave(WaveType.TYPE_10_FAST, WaveType.TYPE_11_FAST, spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
                     }
                 }
                 break;
             case HARD:
                 if (levelKills < NO_OF_KILLS_STAGE_1 && !levelBossActive) {
                     if (RND.nextBoolean()) {
-                        waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
+                        waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
                     } else {
-                        waves.add(new Wave(WaveType.TYPE_10_FAST, WaveType.TYPE_11_FAST, spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
+                        waves.add(new Wave(WaveType.TYPE_10_FAST, WaveType.TYPE_11_FAST, spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
                     }
                 } else if (levelKills >= NO_OF_KILLS_STAGE_1 && levelKills < NO_OF_KILLS_STAGE_2 && !levelBossActive) {
                     if (RND.nextBoolean()) {
-                        waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
+                        waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
                     } else {
-                        waves.add(new Wave(WaveType.TYPE_10_FAST, WaveType.TYPE_11_FAST, spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
+                        waves.add(new Wave(WaveType.TYPE_10_FAST, WaveType.TYPE_11_FAST, spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
                     }
                 } else if (levelKills >= NO_OF_KILLS_STAGE_2 && !levelBossActive) {
                     spawnLevelBoss(spaceShip);
                 } else if (!levelBossActive) {
                     if (RND.nextBoolean()) {
-                        waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
+                        waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
                     } else {
-                        waves.add(new Wave(WaveType.TYPE_10_FAST, WaveType.TYPE_11_FAST, spaceShip, level.getDifficulty().noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
+                        waves.add(new Wave(WaveType.TYPE_10_FAST, WaveType.TYPE_11_FAST, spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
                     }
                 }
                 break;
@@ -1444,7 +1448,7 @@ public class SpaceFXView extends StackPane {
         hasBeenHit  = false;
         noOfLifes   = NO_OF_LIFES;
         noOfShields = NO_OF_SHIELDS;
-        level       = level1;
+        initLevel();
         score       = 0;
         kills       = 0;
         levelKills  = 0;
@@ -1455,6 +1459,26 @@ public class SpaceFXView extends StackPane {
         screenTimer.start();
     }
 
+    private void initLevel() {
+        minLevelDifficulty = null;
+        setLevel(level1);
+    }
+
+    private void setLevel(Level level) {
+        this.level = level;
+        levelDifficulty = level.getDifficulty();
+        // Minimal difficulty management
+        if (minLevelDifficulty == null) // happens when initialising the game
+            minLevelDifficulty = levelDifficulty; // actually = level1 difficulty = easy
+        else if (level == level1) { // returning to level 1 => increasing minimal difficulty
+            Difficulty[] difficulties = Difficulty.values();
+            // Increasing minimal difficulty, unless we already reach the most difficulty level
+            if (minLevelDifficulty != difficulties[difficulties.length - 1])
+                minLevelDifficulty = difficulties[minLevelDifficulty.ordinal() + 1];
+        }
+        if (levelDifficulty.ordinal() < minLevelDifficulty.ordinal())
+            levelDifficulty = minLevelDifficulty;
+    }
 
     // Create Hall of Fame entry
     private HBox createHallOfFameEntry(final Player player) {
@@ -1486,14 +1510,11 @@ public class SpaceFXView extends StackPane {
     private void nextLevel() {
         playSound(levelUpSound);
         if (level3.equals(level)) {
-            level = level1;
-            return;
+            setLevel(level1);
         } else if (level2.equals(level)) {
-            level = level3;
-            return;
+            setLevel(level3);
         } else if (level1.equals(level)) {
-            level = level2;
-            return;
+            setLevel(level2);
         }
     }
 
@@ -1871,7 +1892,7 @@ public class SpaceFXView extends StackPane {
             this.waveType2         = waveType2;
             this.spaceShip         = spaceShip;
             this.noOfEnemies       = noOfEnemies;
-            this.noOfSmartEnemies  = level.getDifficulty().noOfSmartEnemies;
+            this.noOfSmartEnemies  = levelDifficulty.noOfSmartEnemies;
             this.image             = image;
             this.canFire           = canFire;
             this.canBomb           = canBomb;
@@ -1888,7 +1909,7 @@ public class SpaceFXView extends StackPane {
             if (isRunning) {
                 if (enemiesSpawned < noOfEnemies && WebFxUtil.nanoTime() - lastEnemySpawned > ENEMY_SPAWN_INTERVAL) {
                     Enemy enemy = spawnEnemy();
-                    if (smartEnemies.size() < level.getDifficulty().noOfSmartEnemies && RND.nextBoolean()) {
+                    if (smartEnemies.size() < levelDifficulty.noOfSmartEnemies && RND.nextBoolean()) {
                         smartEnemies.add(enemy);
                     }
                     lastEnemySpawned = WebFxUtil.nanoTime();
