@@ -35,6 +35,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 import static eu.hansolo.spacefx.Config.SPACEFX_COLOR;
@@ -45,7 +46,7 @@ public class InitialDigit extends Region implements Toggle {
     private static final double                      PREFERRED_WIDTH  = 32; //VISUAL_BOUNDS.getHeight() * 0.035;
     private static final double                      PREFERRED_HEIGHT = 45; // VISUAL_BOUNDS.getHeight() * 0.05;
     private static final String[]                    CHARACTERS       = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-" };
-    private static final long                        BLINK_INTERVAL   = 250_000_000l;
+    private static final long                        BLINK_INTERVAL   = 250_000_000L;
     private              int                         counter;
     private              double                      width;
     private              double                      height;
@@ -272,9 +273,13 @@ public class InitialDigit extends Region implements Toggle {
         }
     }
 
+    private Font font;
+
     private void draw() {
         ctx.clearRect(0, 0, width, height);
-        ctx.setFont(Fonts.spaceBoy(clamp(6, height / 1.3, height * 0.8)));
+        double fontSize = clamp(6, height / 1.3, height * 0.8);
+        if (font == null || font.getSize() != fontSize)
+            ctx.setFont(font = Fonts.spaceBoy(fontSize));
         ctx.save();
         ctx.setFill(toggle ? Color.TRANSPARENT : fontColor);
         ctx.fillText(CHARACTERS[counter], width * 0.5, height * 0.5, width * 0.9);

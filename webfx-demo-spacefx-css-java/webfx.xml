@@ -14,8 +14,4 @@
         <used-by-source-modules/>
     </dependencies>
 
-    <providers>
-        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">eu.hansolo.spacefx.css.SpaceFXFontLoader</provider>
-    </providers>
-
 </project>

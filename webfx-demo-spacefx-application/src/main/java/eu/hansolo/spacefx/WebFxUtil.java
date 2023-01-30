@@ -103,17 +103,6 @@ final class WebFxUtil {
         return height;
     }
 
-    static String loadAndGetSpaceBoyFontName() {
-        return "Spaceboy";
-/*
-        try {
-            return Font.loadFont(WebFxUtil.class.getResourceAsStream(RESOURCE_PATH + "spaceboy.ttf"), 10).getName();
-        } catch (Exception exception) {
-            return null;
-        }
-*/
-    }
-
     static long nanoTime() {
         return Scheduler.nanoTime();
     }

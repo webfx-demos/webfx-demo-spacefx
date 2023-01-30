@@ -1385,7 +1385,7 @@ public class SpaceFXView extends StackPane {
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
             ctx.drawImage(gameOverImg, 0, 0, WIDTH, HEIGHT);
             ctx.setFill(SPACEFX_COLOR);
-            ctx.setFont(Fonts.spaceBoy(SCORE_FONT_SIZE));
+            ctx.setFont(scoreFont);
             ctx.fillText(Long.toString(score), scorePosX, HEIGHT * 0.25);
             playSound(gameoverSound);
         });

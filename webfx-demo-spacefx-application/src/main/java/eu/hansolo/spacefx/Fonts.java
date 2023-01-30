@@ -20,14 +20,9 @@ import javafx.scene.text.Font;
 
 
 public class Fonts {
-    private static final String SPACE_BOY;
-    private static       String spaceBoyName;
+    private static final Font SPACE_BOY_FONT = Font.loadFont(WebFxUtil.toResourceUrl("Spaceboy.ttf"), 60);
 
-    static {
-        spaceBoyName = WebFxUtil.loadAndGetSpaceBoyFontName();
-        SPACE_BOY = spaceBoyName;
+    public static Font spaceBoy(final double size) {
+        return new Font(SPACE_BOY_FONT.getFamily(), size);
     }
-
-
-    public static final Font spaceBoy(final double size) { return new Font(SPACE_BOY, size); }
 }
