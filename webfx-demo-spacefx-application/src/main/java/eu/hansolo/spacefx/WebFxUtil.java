@@ -23,11 +23,17 @@ final class WebFxUtil {
     }
 
     static Audio newMusic(String resourceName) {
-        return AudioService.loadMusic(Resource.toUrl(resourceName, WebFxUtil.class));
+        Audio music = AudioService.loadMusic(Resource.toUrl(resourceName, WebFxUtil.class));
+        if (music != null)
+            music.setLooping(true); // Both game and background music are looping in SpaceFX
+        return music;
     }
 
     static Audio newSound(String resourceName) {
-        return AudioService.loadSound(Resource.toUrl(resourceName, WebFxUtil.class));
+        Audio sound = AudioService.loadSound(Resource.toUrl(resourceName, WebFxUtil.class));
+        if (sound != null)
+            sound.setVolume(0.5); // SpaceFX sounds are quite loud, so reducing volume (otherwise saturates)
+        return sound;
     }
 
     static Image newImage(String resourceName) {
@@ -98,16 +104,23 @@ final class WebFxUtil {
     }
 
     static void playMusic(Audio music) {
-        music.play();
+        if (music != null)
+            music.play();
+    }
+
+    static void pauseMusic(Audio music) {
+        if (music != null)
+            music.pause();
     }
 
     static void stopMusic(Audio music) {
-        music.stop();
+        if (music != null)
+            music.stop();
     }
 
     static void playSound(Audio sound) {
-        sound.setVolume(0.5); // SpaceFX sounds are quite loud, so reducing volume (otherwise saturates)
-        sound.play();
+        if (sound != null)
+            sound.play();
     }
 
     static double getImageWidth(Image image) {
