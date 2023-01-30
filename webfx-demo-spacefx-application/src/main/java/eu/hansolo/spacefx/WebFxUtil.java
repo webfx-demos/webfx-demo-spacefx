@@ -18,21 +18,20 @@ import java.util.List;
 final class WebFxUtil {
 
     private static final boolean IS_BROWSER = UserAgent.isBrowser();
-    private final static String RESOURCE_PATH = "/eu/hansolo/spacefx/";
 
     static String toResourceUrl(String resourceName) {
-        return Resource.toUrl(RESOURCE_PATH + resourceName, WebFxUtil.class);
+        return Resource.toUrl(resourceName, WebFxUtil.class);
     }
 
     static Audio newMusic(String resourceName) {
-        Audio music = AudioService.loadMusic(Resource.toUrl(resourceName, WebFxUtil.class));
+        Audio music = AudioService.loadMusic(toResourceUrl(resourceName));
         if (music != null)
             music.setLooping(true); // Both game and background music are looping in SpaceFX
         return music;
     }
 
     static Audio newSound(String resourceName) {
-        Audio sound = AudioService.loadSound(Resource.toUrl(resourceName, WebFxUtil.class));
+        Audio sound = AudioService.loadSound(toResourceUrl(resourceName));
         if (sound != null)
             sound.setVolume(0.5); // SpaceFX sounds are quite loud, so reducing volume (otherwise saturates)
         return sound;
