@@ -33,8 +33,40 @@ final class WebFxUtil {
     static Audio newSound(String resourceName) {
         Audio sound = AudioService.loadSound(toResourceUrl(resourceName));
         if (sound != null)
-            sound.setVolume(0.5); // SpaceFX sounds are quite loud, so reducing volume (otherwise saturates)
+            switch (resourceName) {
+                // These sounds are quite loud, so reducing volume (otherwise saturates)
+                case "laserSound.mp3":
+                    sound.setVolume(0.3);
+                    break;
+                case "hit.mp3":
+                case "spaceShipExplosionSound.mp3":
+                    sound.setVolume(0.5);
+                    break;
+                case "asteroidExplosion.mp3":
+                    sound.setVolume(0.7);
+                    break;
+            }
         return sound;
+    }
+
+    static void playMusic(Audio music) {
+        if (music != null)
+            music.play();
+    }
+
+    static void pauseMusic(Audio music) {
+        if (music != null)
+            music.pause();
+    }
+
+    static void stopMusic(Audio music) {
+        if (music != null)
+            music.stop();
+    }
+
+    static void playSound(Audio sound) {
+        if (sound != null)
+            sound.play();
     }
 
     static Image newImage(String resourceName) {
@@ -102,26 +134,6 @@ final class WebFxUtil {
         });
         startLoadingImage(image);
         return true;
-    }
-
-    static void playMusic(Audio music) {
-        if (music != null)
-            music.play();
-    }
-
-    static void pauseMusic(Audio music) {
-        if (music != null)
-            music.pause();
-    }
-
-    static void stopMusic(Audio music) {
-        if (music != null)
-            music.stop();
-    }
-
-    static void playSound(Audio sound) {
-        if (sound != null)
-            sound.play();
     }
 
     static double getImageWidth(Image image) {
