@@ -5,6 +5,7 @@ import dev.webfx.platform.audio.AudioService;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.shutdown.Shutdown;
+import dev.webfx.platform.useragent.UserAgent;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -16,6 +17,7 @@ import java.util.List;
  */
 final class WebFxUtil {
 
+    private static final boolean IS_BROWSER = UserAgent.isBrowser();
     private final static String RESOURCE_PATH = "/eu/hansolo/spacefx/";
 
     static String toResourceUrl(String resourceName) {
@@ -54,7 +56,7 @@ final class WebFxUtil {
     }
 
     private static Image startLoadingImage(Image image) {
-        if (!hasImageFinishedLoading(image)) {
+        if (IS_BROWSER && !hasImageFinishedLoading(image)) {
             if (loadingContext == null || loadingImagesCount >= MAX_SIMULTANEOUS_LOADING_IMAGES_COUNT) {
                 if (!toLoadImages.contains(image))
                     toLoadImages.add(image);

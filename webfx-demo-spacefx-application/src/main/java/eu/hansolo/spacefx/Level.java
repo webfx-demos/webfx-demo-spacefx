@@ -16,52 +16,49 @@
 
 package eu.hansolo.spacefx;
 
-import javafx.scene.image.Image;
-
-
 public interface Level {
 
     int getIndex();
 
     Difficulty getDifficulty();
 
-    Image getBackgroundImg();
+    ScaledImage getBackgroundImg();
 
-    Image[] getEnemyImages();
+    ScaledImage[] getEnemyImages();
 
-    Image getEnemyBossImg0();
+    ScaledImage getEnemyBossImg0();
 
-    Image getEnemyBossImg1();
+    ScaledImage getEnemyBossImg1();
 
-    Image getEnemyBossImg2();
+    ScaledImage getEnemyBossImg2();
 
-    Image getEnemyBossImg3();
+    ScaledImage getEnemyBossImg3();
 
-    Image getEnemyBossImg4();
+    ScaledImage getEnemyBossImg4();
 
-    Image getEnemyBombImg();
+    ScaledImage getEnemyBombImg();
 
-    Image getEnemyTorpedoImg();
+    ScaledImage getEnemyTorpedoImg();
 
-    Image getEnemyBossTorpedoImg();
+    ScaledImage getEnemyBossTorpedoImg();
 
-    Image getEnemyBossRocketImg();
+    ScaledImage getEnemyBossRocketImg();
 
-    Image getExplosionImg();
+    ScaledImage getExplosionImg();
 
-    Image getEnemyBossHitImg();
+    ScaledImage getEnemyBossHitImg();
 
-    Image getEnemyBossExplosionImg();
+    ScaledImage getEnemyBossExplosionImg();
 
-    Image getEnemyRocketExplosionImg();
+    ScaledImage getEnemyRocketExplosionImg();
 
-    Image getLevelBossImg();
+    ScaledImage getLevelBossImg();
 
-    Image getLevelBossTorpedoImg();
+    ScaledImage getLevelBossTorpedoImg();
 
-    Image getLevelBossRocketImg();
+    ScaledImage getLevelBossRocketImg();
 
-    Image getLevelBossBombImg();
+    ScaledImage getLevelBossBombImg();
 
-    Image getLevelBossExplosionImg();
+    ScaledImage getLevelBossExplosionImg();
 }

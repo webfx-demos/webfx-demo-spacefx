@@ -16,17 +16,17 @@
 
 package eu.hansolo.spacefx;
 
+import dev.webfx.kit.util.scene.DeviceSceneUtil;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.stage.Screen;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public final class SpaceFX extends Application {
 
-    public static double WINDOW_WIDTH = Math.min(700, Screen.getPrimary().getVisualBounds().getWidth()),
-            WINDOW_HEIGHT = Math.min(900, Screen.getPrimary().getVisualBounds().getHeight());
+    public static double WINDOW_WIDTH = 700, WINDOW_HEIGHT = 900; // Default dimensions for desktops
 
     private boolean torpedoArmed;
     private boolean rocketArmed;
@@ -42,12 +42,12 @@ public final class SpaceFX extends Application {
 
     @Override
     public void start(Stage stage) {
-        // Creating the scene with the specified size (this size is ignored when running in the browser)
-        Scene scene = new Scene(new Pane(), WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        Scene scene = DeviceSceneUtil.newScene(new Pane(), WINDOW_WIDTH, WINDOW_HEIGHT, Color.BLACK);
         stage.setScene(scene);
         // Reading back the real window size in case we run in the browser
         WINDOW_HEIGHT = scene.getHeight();
-        WINDOW_WIDTH = Math.min(scene.getWidth(), WINDOW_HEIGHT);
+        WINDOW_WIDTH = Math.min(scene.getWidth(), WINDOW_HEIGHT / 900 * 700);
         // Note: Config will consider these variables during initialization
 
         // Now that config is ready, we can instantiate SpaceFXView and make it as root

@@ -16,23 +16,18 @@
 
 package eu.hansolo.spacefx;
 
-import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
-
-//import static com.gluonhq.attach.util.Platform.isDesktop;
 
 
 public class Config {
-    public static final String      PROPERTIES_FILE_NAME                = "spacefx.properties";
+    //public static final String      PROPERTIES_FILE_NAME                = "spacefx.properties";
     //public static final Rectangle2D VISUAL_BOUNDS                       = isDesktop() ? new Rectangle2D(0, 0, 700, 900) : Screen.getPrimary().getVisualBounds();
-    public static final Rectangle2D VISUAL_BOUNDS                       = new Rectangle2D(0, 0, SpaceFX.WINDOW_WIDTH, SpaceFX.WINDOW_HEIGHT);
-    public static final boolean     IS_PORTRAIT_MODE                    = VISUAL_BOUNDS.getHeight() > VISUAL_BOUNDS.getWidth();
-    public static final double      BKG_SCALING_FACTOR                  = IS_PORTRAIT_MODE ? (VISUAL_BOUNDS.getHeight() / 900) : (VISUAL_BOUNDS.getWidth() / 700);
-    //public static final double      SCALING_FACTOR                      = isDesktop() ? 1.0 : 0.7;
-    public static final double      SCALING_FACTOR                      = 1.0;
+    public static final double      WIDTH                               = SpaceFX.WINDOW_WIDTH;
+    public static final double      HEIGHT                              = SpaceFX.WINDOW_HEIGHT;
+    public static final boolean     IS_PORTRAIT_MODE                    = HEIGHT > WIDTH;
+    public static final double      BKG_SCALING_FACTOR                  = HEIGHT / 900;
+    public static final double      SCALING_FACTOR                      = BKG_SCALING_FACTOR;
     public static final double      SWITCH_POINT                        = 2079 * BKG_SCALING_FACTOR;
-    public static final double      WIDTH                               = VISUAL_BOUNDS.getWidth();
-    public static final double      HEIGHT                              = VISUAL_BOUNDS.getHeight();
     public static final double      VELOCITY_FACTOR_X                   = BKG_SCALING_FACTOR;
     public static final double      VELOCITY_FACTOR_Y                   = BKG_SCALING_FACTOR;
     public static final double      VELOCITY_FACTOR_R                   = BKG_SCALING_FACTOR;
@@ -49,9 +44,9 @@ public class Config {
     public static final int         NO_OF_ASTEROIDS = SHOW_ASTEROIDS ? (int) (SCALING_FACTOR * 10) : 0;
     public static final int         NO_OF_LIFES                         = 5;
     public static final int         NO_OF_SHIELDS                       = 10;
-    public static final long        DEFLECTOR_SHIELD_TIME               = 5_000_000_000l;
-    public static final long        BIG_TORPEDO_TIME                    = 40_000_000_000l;
-    public static final long        STARBURST_TIME                      = 40_000_000_000l;
+    public static final long        DEFLECTOR_SHIELD_TIME               = 5_000_000_000L;
+    public static final long        BIG_TORPEDO_TIME                    = 40_000_000_000L;
+    public static final long        STARBURST_TIME                      = 40_000_000_000L;
     public static final int         MAX_NO_OF_ROCKETS                   = 3;
     public static final double      TORPEDO_SPEED                       = 6 * VELOCITY_FACTOR_Y;
     public static final double      BIG_TORPEDO_SPEED                   = 3 * VELOCITY_FACTOR_Y;
@@ -71,16 +66,16 @@ public class Config {
     public static final int         BIG_TORPEDO_DAMAGE                  = 3;
     public static final int         ROCKET_DAMAGE                       = 3;
     public static final int         SHIELD_DAMAGE                       = 5;
-    public static final long        ENEMY_BOSS_ATTACK_INTERVAL          = 25_000_000_000l;
-    public static final long        SHIELD_UP_SPAWN_INTERVAL            = 25_000_000_000l;
-    public static final long        LIFE_UP_SPAWN_INTERVAL              = 55_000_000_000l;
-    public static final long        WAVE_SPAWN_INTERVAL                 = 10_000_000_000l;
-    public static final long        BOMB_DROP_INTERVAL                  = 1_000_000_000l;
-    public static final long        MIN_TORPEDO_INTERVAL                = 50_000_000l;
-    public static final long        MIN_BIG_TORPEDO_INTERVAL            = 50_000_000l;
-    public static final long        MIN_STARBURST_INTERVAL              = 300_000_000l;
-    public static final long        BIG_TORPEDO_BONUS_INTERVAL          = 60_000_000_000l;
-    public static final long        STARBURST_BONUS_INTERVAL            = 100_000_000_000l;
+    public static final long        ENEMY_BOSS_ATTACK_INTERVAL          = 25_000_000_000L;
+    public static final long        SHIELD_UP_SPAWN_INTERVAL            = 25_000_000_000L;
+    public static final long        LIFE_UP_SPAWN_INTERVAL              = 55_000_000_000L;
+    public static final long        WAVE_SPAWN_INTERVAL                 = 10_000_000_000L;
+    public static final long        BOMB_DROP_INTERVAL                  = 1_000_000_000L;
+    public static final long        MIN_TORPEDO_INTERVAL                = 50_000_000L;
+    public static final long        MIN_BIG_TORPEDO_INTERVAL            = 50_000_000L;
+    public static final long        MIN_STARBURST_INTERVAL              = 300_000_000L;
+    public static final long        BIG_TORPEDO_BONUS_INTERVAL          = 60_000_000_000L;
+    public static final long        STARBURST_BONUS_INTERVAL            = 100_000_000_000L;
     public static final int         NO_OF_KILLS_STAGE_1                 = 50;
     public static final int         NO_OF_KILLS_STAGE_2                 = 100;
     public static final double      FIRST_QUARTER_WIDTH                 = WIDTH * 0.25;
@@ -89,10 +84,10 @@ public class Config {
     public static final double      SHIELD_INDICATOR_Y                  = HEIGHT * 0.06;
     public static final double      SHIELD_INDICATOR_WIDTH              = WIDTH * 0.26;
     public static final double      SHIELD_INDICATOR_HEIGHT             = HEIGHT * 0.01428571;
-    public static final long        FPS_60                              = 0_016_666_666l;
-    public static final long        FPS_30                              = 0_033_333_333l;
-    public static final long        FPS_10                              = 0_100_000_000l;
-    public static final long        FPS_2                               = 0_500_000_000l;
+    public static final long        FPS_60                              = 16_666_666L;
+    public static final long        FPS_30                              = 33_333_333L;
+    public static final long        FPS_10                              = 100_000_000L;
+    public static final long        FPS_2                               = 500_000_000L;
     public static final Color       SPACEFX_COLOR                       = Color.rgb(51, 210, 206);
     public static final Color       SPACEFX_COLOR_TRANSLUCENT           = Color.rgb(51, 210, 206, 0.5);
     public static final WaveType[]  WAVE_TYPES_SLOW                     = { WaveType.TYPE_1_SLOW,
@@ -173,6 +168,7 @@ public class Config {
     public static final double      ENEMY_HIT_FRAME_CENTER              = 80 * SCALING_FACTOR * 0.5;
     public static final double      ENEMY_BOSS_EXPLOSION_FRAME_WIDTH    = 200 * SCALING_FACTOR;
     public static final double      ENEMY_BOSS_EXPLOSION_FRAME_HEIGHT   = 200 * SCALING_FACTOR;
+    public static final double      ENEMY_BOSS_EXPLOSION_FRAME_CENTER   = 200 * SCALING_FACTOR * 0.5;
     public static final double      LEVEL_BOSS_EXPLOSION_FRAME_WIDTH    = 256 * SCALING_FACTOR;
     public static final double      LEVEL_BOSS_EXPLOSION_FRAME_HEIGHT   = 256 * SCALING_FACTOR;
     public static final double      LEVEL_BOSS_EXPLOSION_FRAME_CENTER   = 256 * SCALING_FACTOR * 0.5;

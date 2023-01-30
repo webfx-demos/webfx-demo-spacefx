@@ -73,6 +73,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-os-gluon</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-resource-gluon</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -125,6 +131,7 @@
                         <list>audio</list>
                         <list>lifecycle</list>
                         <list>storage</list>
+                        <list>util</list>
                     </attachList>
                     <resourcesList>
                         <list>dev/webfx/platform/meta/exe/[^/]+$</list>
@@ -134,6 +141,8 @@
                     </resourcesList>
                     <appIdentifier>dev.webfx.demo.spacefx</appIdentifier>
                     <releaseConfiguration>
+                        <!-- macOS/iOS -->
+                        <bundleName>SpaceFX</bundleName>
                         <!-- Android -->
                         <appLabel>SpaceFX</appLabel>
                     </releaseConfiguration>
