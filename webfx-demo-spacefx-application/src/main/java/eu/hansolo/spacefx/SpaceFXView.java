@@ -35,6 +35,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -235,6 +236,12 @@ public class SpaceFXView extends StackPane {
             }
             setAutoFire(true); // Activating auto fire when using mouse or touch (if not already done)
         });
+        // Space shield and rocket fire management
+        if (!IS_BROWSER) // The problem with setOnDragDetected() in the browser is that it drags & move the shipTouchArea node
+            shipTouchArea.setOnDragDetected(this::mouseFire); // What works the best on other platforms
+        else
+            shipTouchArea.setOnMouseClicked(this::mouseFire); // Ok for browser
+        canvas.setOnMouseClicked(this::mouseFire); // In case the player clicks outside the ship touch area
         //}
 
         saveInitialsButton.setOnAction(e -> storePlayer());
@@ -1601,6 +1608,14 @@ public class SpaceFXView extends StackPane {
             this.autoFire = autoFire;
             if (autoFire && isRunning())
                 fireSpaceShipWeapon();
+        }
+    }
+
+    public void mouseFire(MouseEvent e) {
+        if (score > 0) {
+            if (spaceShip.isVulnerable)
+                activateSpaceShipShield();
+            fireSpaceShipRocket();
         }
     }
 
