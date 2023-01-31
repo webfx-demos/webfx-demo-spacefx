@@ -17,29 +17,21 @@ final class WebFxUtil {
     }
 
     static Audio newMusic(String resourceName) {
-        Audio music = AudioService.loadMusic(toResourceUrl(resourceName));
-        if (music != null)
-            music.setLooping(true); // Both game and background music are looping in SpaceFX
-        return music;
+        return AudioService.loadMusic(toResourceUrl(resourceName));
     }
 
     static Audio newSound(String resourceName) {
-        Audio sound = AudioService.loadSound(toResourceUrl(resourceName));
-        if (sound != null)
-            switch (resourceName) {
-                // These sounds are quite loud, so reducing volume (otherwise saturates)
-                case "laserSound.mp3":
-                    sound.setVolume(0.3);
-                    break;
-                case "hit.mp3":
-                case "spaceShipExplosionSound.mp3":
-                    sound.setVolume(0.5);
-                    break;
-                case "asteroidExplosion.mp3":
-                    sound.setVolume(0.7);
-                    break;
-            }
-        return sound;
+        return AudioService.loadSound(toResourceUrl(resourceName));
+    }
+
+    static void setLooping(Audio audio, boolean looping) {
+        if (audio != null)
+            audio.setLooping(looping);
+    }
+
+    static void setVolume(Audio audio, double volume) {
+        if (audio != null)
+            audio.setVolume(volume);
     }
 
     static void playMusic(Audio music) {

@@ -313,12 +313,12 @@ public class SpaceFXView extends StackPane {
         Helper.enableNode(hallOfFameBox, false);
 
         // background music
-        //music.setLooping(true);
-        //music.setVolume(1);
+        WebFxUtil.setLooping(music, true);
+        WebFxUtil.setVolume(music, 1);
 
         // for game background music
-        //gameMusic.setLooping(true);
-        //gameMusic.setVolume(1);
+        WebFxUtil.setLooping(gameMusic, true);
+        WebFxUtil.setVolume(gameMusic, 1);
 
         // Load sounds
         laserSound              = WebFxUtil.newSound("laserSound.mp3");
@@ -535,8 +535,11 @@ public class SpaceFXView extends StackPane {
         spaceShip               = new SpaceShip(spaceshipImg, spaceshipUpImg, spaceshipDownImg);
 
         // Adjust audio clip volumes
-        //explosionSound.setVolume(0.5);
-        //torpedoHitSound.setVolume(0.5);
+        WebFxUtil.setVolume(explosionSound, 0.5); // explosionSound.mp3
+        WebFxUtil.setVolume(torpedoHitSound, 0.5); // hit.mp3
+        WebFxUtil.setVolume(laserSound, 0.3); // laserSound.mp3
+        WebFxUtil.setVolume(spaceShipExplosionSound, 0.5); // spaceShipExplosionSound.mp3
+        WebFxUtil.setVolume(asteroidExplosionSound, 0.7); // asteroidExplosion.mp3
 
         initAsteroids();
 
