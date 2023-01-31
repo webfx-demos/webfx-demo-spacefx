@@ -191,6 +191,8 @@ public class SpaceFXView extends StackPane {
     private              AnimationTimer             timer;
     private              AnimationTimer             screenTimer;
     private              Circle                     shipTouchArea;
+    private              double                     shipTouchGoalX;
+    private              double                     shipTouchGoalY;
     private              EventHandler<TouchEvent>   touchHandler;
     private              boolean                    autoFire; // WebFX addition for touch devices
 
@@ -221,11 +223,18 @@ public class SpaceFXView extends StackPane {
                 spaceShip.y = e.getTouchPoint().getY();
             });
         } else {*/
-            shipTouchArea.setOnMouseDragged(e -> {
-                spaceShip.x = e.getX();
-                spaceShip.y = e.getY();
-                setAutoFire(true); // Activating auto fire when using mouse or touch
-            });
+        shipTouchArea.setOnMouseDragged(e -> {
+            shipTouchGoalX = e.getX();
+            shipTouchGoalY = e.getY();
+            double deltaGoalX = shipTouchGoalX - spaceShip.x;
+            double deltaGoalY = shipTouchGoalY - spaceShip.y;
+            double biggestDelta = Math.max(Math.abs(deltaGoalX), Math.abs(deltaGoalY));
+            if (biggestDelta > 0) {
+                spaceShip.vX = deltaGoalX / biggestDelta * 5;
+                spaceShip.vY = deltaGoalY / biggestDelta * 5;
+            }
+            setAutoFire(true); // Activating auto fire when using mouse or touch (if not already done)
+        });
         //}
 
         saveInitialsButton.setOnAction(e -> storePlayer());
@@ -1584,7 +1593,7 @@ public class SpaceFXView extends StackPane {
         if (autoFireScheduled != null)
             autoFireScheduled.cancel();
         if (autoFire && isRunning())
-            autoFireScheduled = Scheduler.scheduleDelay(250, this::fireSpaceShipWeapon);
+            autoFireScheduled = Scheduler.scheduleDelay(300, this::fireSpaceShipWeapon);
     }
 
     public void setAutoFire(boolean autoFire) {
@@ -2025,7 +2034,7 @@ public class SpaceFXView extends StackPane {
 
     // ******************** Sprites *******************************************
     private class SpaceShip extends Sprite {
-        private static final long      INVULNERABLE_TIME = 3_000_000_000l;
+        private static final long      INVULNERABLE_TIME = 3_000_000_000L;
         private        final ScaledImage     imageUp;
         private        final ScaledImage     imageDown;
         private              long      born;
@@ -2081,6 +2090,18 @@ public class SpaceFXView extends StackPane {
             }
             if (y - height * 0.5 < 0) {
                 y = height * 0.5;
+            }
+            if (shipTouchGoalX > 0 || shipTouchGoalY > 0) {
+                if (vX > 0 && x > shipTouchGoalX || vX < 0 && x < shipTouchGoalX) {
+                    x = shipTouchGoalX;
+                    vX = 0;
+                    shipTouchGoalX = 0;
+                }
+                if (vY > 0 && y > shipTouchGoalY || vY < 0 && y < shipTouchGoalY) {
+                    y = shipTouchGoalY;
+                    vY = 0;
+                    shipTouchGoalY = 0;
+                }
             }
             shipTouchArea.setCenterX(x);
             shipTouchArea.setCenterY(y);
