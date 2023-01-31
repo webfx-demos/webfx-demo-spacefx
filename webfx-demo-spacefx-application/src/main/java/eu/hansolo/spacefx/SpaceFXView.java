@@ -1524,16 +1524,20 @@ public class SpaceFXView extends StackPane {
         }
     }
 
-
+    private long lastNextLevelTime; // To fix possible multiple shortly calls to nextLevel()
     // Iterate through levels
     private void nextLevel() {
-        playSound(levelUpSound);
-        if (level3.equals(level)) {
-            setLevel(level1);
-        } else if (level2.equals(level)) {
-            setLevel(level3);
-        } else if (level1.equals(level)) {
-            setLevel(level2);
+        long now = System.currentTimeMillis();
+        if (now > lastNextLevelTime + 10000) { // Waiting at least 10s since last call to go to next level
+            lastNextLevelTime = now;
+            playSound(levelUpSound);
+            if (level3.equals(level)) {
+                setLevel(level1);
+            } else if (level2.equals(level)) {
+                setLevel(level3);
+            } else if (level1.equals(level)) {
+                setLevel(level2);
+            }
         }
     }
 
