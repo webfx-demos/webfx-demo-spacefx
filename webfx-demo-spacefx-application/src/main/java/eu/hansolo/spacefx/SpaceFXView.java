@@ -2210,11 +2210,10 @@ public class SpaceFXView extends StackPane {
 
             if (rotateRight) {
                 rot += vR;
-                if (rot > 360) { rot = 0; }
             } else {
                 rot -= vR;
-                if (rot < 0) { rot = 360; }
             }
+            rot = (rot + 360) % 360;
 
             // Respawn asteroid
             if(x < -size || x - radius > WIDTH || y - height > HEIGHT) {
@@ -3261,11 +3260,10 @@ public class SpaceFXView extends StackPane {
 
             if (rotateRight) {
                 rot += vR;
-                if (rot > 360) { rot = 0; }
             } else {
                 rot -= vR;
-                if (rot < 0) { rot = 360; }
             }
+            rot = (rot + 360) % 360;
 
             // Remove shieldUp
             if (x < -size || x - radius > WIDTH || y - height > HEIGHT) {
@@ -3322,11 +3320,10 @@ public class SpaceFXView extends StackPane {
 
             if (rotateRight) {
                 rot += vR;
-                if (rot > 360) { rot = 0; }
             } else {
                 rot -= vR;
-                if (rot < 0) { rot = 360; }
             }
+            rot = (rot + 360) % 360;
 
             // Remove lifeUp
             if (x < -size || x - radius > WIDTH || y - height > HEIGHT) {
@@ -3383,11 +3380,10 @@ public class SpaceFXView extends StackPane {
 
             if (rotateRight) {
                 rot += vR;
-                if (rot > 360) { rot = 0; }
             } else {
                 rot -= vR;
-                if (rot < 0) { rot = 360; }
             }
+            rot = (rot + 360) % 360;
 
             // Remove lifeUp
             if (x < -size || x - radius > WIDTH || y - height > HEIGHT) {
@@ -3444,11 +3440,10 @@ public class SpaceFXView extends StackPane {
 
             if (rotateRight) {
                 rot += vR;
-                if (rot > 360) { rot = 0; }
             } else {
                 rot -= vR;
-                if (rot < 0) { rot = 360; }
             }
+            rot = (rot + 360) % 360;
 
             // Remove lifeUp
             if (x < -size || x - radius > WIDTH || y - height > HEIGHT) {
