@@ -898,20 +898,11 @@ public class SpaceFXView extends StackPane {
                     hit = isHitCircleCircle(spaceShip.x, spaceShip.y, spaceShip.radius, levelBoss.x, levelBoss.y, levelBoss.radius);
                 }
                 if (hit) {
+                    boolean levelBossExplodes = false;
                     if (spaceShip.shield) {
                         lastShieldActivated = 0;
                         levelBoss.hits -= SHIELD_DAMAGE;
-                        if (levelBoss.hits <= 0) {
-                            levelBossExplosions.add(new LevelBossExplosion(levelBoss.x - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.y - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.vX, levelBoss.vY, 1.0));
-                            score += levelBoss.value;
-                            kills++;
-                            //levelKills++;
-                            levelBoss.toBeRemoved = true;
-                            levelBossActive = false;
-                            levelKills = 0;
-                            nextLevel();
-                            playSound(levelBossExplosionSound);
-                        }
+                        levelBossExplodes = levelBoss.hits <= 0;
                     } else {
                         spaceShipExplosion.countX = 0;
                         spaceShipExplosion.countY = 0;
@@ -922,12 +913,21 @@ public class SpaceFXView extends StackPane {
                         noOfLifes--;
                         if (0 == noOfLifes) {
                             gameOver();
+                        } else {
+                            levelBossExplodes = true;
                         }
                     }
-                    levelBoss.toBeRemoved = true;
-                    levelBossActive = false;
-                    levelKills = 0;
-                    nextLevel();
+                    if (levelBossExplodes) {
+                        levelBossExplosions.add(new LevelBossExplosion(levelBoss.x - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.y - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.vX, levelBoss.vY, 1.0));
+                        score += levelBoss.value;
+                        kills++;
+                        //levelKills++;
+                        levelBoss.toBeRemoved = true;
+                        levelBossActive = false;
+                        levelKills = 0;
+                        nextLevel();
+                        playSound(levelBossExplosionSound);
+                    }
                 }
             }
         }
