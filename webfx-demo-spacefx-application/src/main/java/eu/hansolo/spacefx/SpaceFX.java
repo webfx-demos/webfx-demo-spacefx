@@ -47,7 +47,7 @@ public final class SpaceFX extends Application {
         stage.setScene(scene);
         // Reading back the real window size in case we run in the browser
         WINDOW_HEIGHT = scene.getHeight();
-        WINDOW_WIDTH = Math.min(scene.getWidth(), WINDOW_HEIGHT);
+        WINDOW_WIDTH = Math.min(scene.getWidth(), WINDOW_HEIGHT / 900 * 700);
         // Note: Config will consider these variables during initialization
 
         // Now that config is ready, we can instantiate SpaceFXView and make it as root
