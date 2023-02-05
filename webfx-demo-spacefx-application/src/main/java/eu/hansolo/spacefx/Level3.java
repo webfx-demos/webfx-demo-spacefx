@@ -44,7 +44,7 @@ public class Level3 implements Level {
     public final ScaledImage   enemyBossHitImg = ScaledImage.create("torpedoHitL3.png", 400, 160);
     public final ScaledImage   enemyBossExplosionImg = ScaledImage.create("enemyBossExplosionL3.png", 800, 1400);
     public final ScaledImage   enemyRocketExplosionImg = ScaledImage.create("enemyRocketExplosionL3.png", 512, 896);
-    public final ScaledImage   levelBossImg = ScaledImage.create("levelBossL3.png", 300, 300);
+    public final ScaledImage   levelBossImg = ScaledImage.create("levelBossL3.png", 282, 166);
     public final ScaledImage   levelBossTorpedoImg = ScaledImage.create("levelBossTorpedoL3.png", 35, 60);
     public final ScaledImage   levelBossRocketImg = ScaledImage.create("levelBossRocketL3.png", 14, 30);
     public final ScaledImage   levelBossBombImg = ScaledImage.create("levelBossBombL3.png", 30, 30);

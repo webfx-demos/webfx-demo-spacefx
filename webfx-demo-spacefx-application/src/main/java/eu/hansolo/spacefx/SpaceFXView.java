@@ -811,18 +811,20 @@ public class SpaceFXView extends StackPane {
         for (LevelBoss levelBoss : levelBosses) {
             levelBoss.update();
             ctx.save();
-            ctx.translate(levelBoss.x - levelBoss.radius, levelBoss.y - levelBoss.radius);
+            ctx.translate(levelBoss.x - levelBoss.radiusX, levelBoss.y - levelBoss.radiusY);
             ctx.save();
-            ctx.translate(levelBoss.radius, levelBoss.radius);
+            ctx.translate(levelBoss.radiusX, levelBoss.radiusY);
             ctx.rotate(levelBoss.r);
-            ctx.translate(-levelBoss.radius, -levelBoss.radius);
+            ctx.translate(-levelBoss.radiusX, -levelBoss.radiusY);
             levelBoss.drawImage(ctx);
             ctx.restore();
             ctx.restore();
 
+            double lbx = levelBoss.x, lby = levelBoss.y + levelBoss.radiusY - levelBoss.radiusX;
+
             // Check for torpedo hits with enemy boss
             for (Torpedo torpedo : torpedos) {
-                if (isHitCircleCircle(torpedo.x, torpedo.y, torpedo.radius, levelBoss.x, levelBoss.y, levelBoss.radius)) {
+                if (isHitCircleCircle(torpedo.x, torpedo.y, torpedo.radius, lbx, lby, levelBoss.radius)) {
                     levelBoss.hits -= TORPEDO_DAMAGE;
                     if (levelBoss.hits <= 0) {
                         levelBossExplosions.add(new LevelBossExplosion(levelBoss.x - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.y - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.vX, levelBoss.vY, 1.0));
@@ -844,7 +846,7 @@ public class SpaceFXView extends StackPane {
 
             // Check for bigTorpedo hits with enemy boss
             for (BigTorpedo bigTorpedo : bigTorpedos) {
-                if (isHitCircleCircle(bigTorpedo.x, bigTorpedo.y, bigTorpedo.radius, levelBoss.x, levelBoss.y, levelBoss.radius)) {
+                if (isHitCircleCircle(bigTorpedo.x, bigTorpedo.y, bigTorpedo.radius, lbx, lby, levelBoss.radius)) {
                     levelBoss.hits -= BIG_TORPEDO_DAMAGE;
                     if (levelBoss.hits <= 0) {
                         levelBossExplosions.add(new LevelBossExplosion(levelBoss.x - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.y - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.vX, levelBoss.vY, 1.0));
@@ -866,7 +868,7 @@ public class SpaceFXView extends StackPane {
 
             // Check for rocket hits with level boss
             for (Rocket rocket : rockets) {
-                if (isHitCircleCircle(rocket.x, rocket.y, rocket.radius, levelBoss.x, levelBoss.y, levelBoss.radius)) {
+                if (isHitCircleCircle(rocket.x, rocket.y, rocket.radius, lbx, lby, levelBoss.radius)) {
                     levelBoss.hits -= ROCKET_DAMAGE;
                     if (levelBoss.hits <= 0) {
                         levelBossExplosions.add(new LevelBossExplosion(levelBoss.x - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.y - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.vX, levelBoss.vY, 1.0));
@@ -1689,7 +1691,7 @@ public class SpaceFXView extends StackPane {
         public          double  width;
         public          double  height;
         public          double  size;
-        public          double  radius;
+        public          double  radius, radiusX, radiusY; // radiusX & radiusY have been added for LevelBoss images which are not square
         public          boolean toBeRemoved;
 
 
@@ -1729,6 +1731,8 @@ public class SpaceFXView extends StackPane {
             }
             size = Math.max(width, height);
             radius = size * 0.5;
+            radiusX = width / 2;
+            radiusY = height / 2;
             WebFxUtil.onImageLoadedIfLoading(image.getImage(), () -> {
                 computeImageSizeDependentFields();
                 update();
@@ -1899,7 +1903,7 @@ public class SpaceFXView extends StackPane {
     }
 
     private class Wave {
-        private static final long         ENEMY_SPAWN_INTERVAL = 250_000_000l;
+        private static final long         ENEMY_SPAWN_INTERVAL = 250_000_000L;
         private final        WaveType     waveType1;
         private final        WaveType     waveType2;
         private final        SpaceShip    spaceShip;
@@ -2477,8 +2481,8 @@ public class SpaceFXView extends StackPane {
 
     private class EnemyBoss extends Sprite {
         private static final int       MAX_VALUE            = 100;
-        private static final long      TIME_BETWEEN_SHOTS   = 500_000_000l;
-        private static final long      TIME_BETWEEN_ROCKETS = 5_000_000_000l;
+        private static final long      TIME_BETWEEN_SHOTS   = 500_000_000L;
+        private static final long      TIME_BETWEEN_ROCKETS = 5_000_000_000L;
         private static final double    HALF_ANGLE_OF_SIGHT  = 10;
         private final        SpaceShip spaceShip;
         private              double    dX;
@@ -2618,7 +2622,7 @@ public class SpaceFXView extends StackPane {
     }
 
     private class EnemyBossRocket extends Sprite {
-        private final long      rocketLifespan = 2_500_000_000l;
+        private final long      rocketLifespan = 2_500_000_000L;
         private final SpaceShip spaceShip;
         private       long      born;
         private       double    dX;
@@ -2681,12 +2685,12 @@ public class SpaceFXView extends StackPane {
 
     private class LevelBoss extends Sprite {
         private static final int       MAX_VALUE            = 500;
-        private static final long      TIME_BETWEEN_SHOTS   = 400_000_000l;
-        private static final long      TIME_BETWEEN_ROCKETS = 3_500_000_000l;
-        private static final long      TIME_BETWEEN_BOMBS   = 2_500_000_000l;
+        private static final long      TIME_BETWEEN_SHOTS   = 400_000_000L;
+        private static final long      TIME_BETWEEN_ROCKETS = 3_500_000_000L;
+        private static final long      TIME_BETWEEN_BOMBS   = 2_500_000_000L;
         private static final double    HALF_ANGLE_OF_SIGHT  = 22;
         private static final double    BOMB_RANGE           = 50;
-        private static final long      WAITING_PHASE        = 10_000_000_000l;
+        private static final long      WAITING_PHASE        = 10_000_000_000L;
         private final        SpaceShip spaceShip;
         private              double    dX;
         private              double    dY;
@@ -2799,15 +2803,22 @@ public class SpaceFXView extends StackPane {
             }
 
             if (now - lastShot > TIME_BETWEEN_SHOTS) {
-                double[] p0 = { x, y };
-                double[] p1 = Helper.rotatePointAroundRotationCenter(x + HEIGHT * vpX, y + HEIGHT * vpY, x, y, -HALF_ANGLE_OF_SIGHT);
-                double[] p2 = Helper.rotatePointAroundRotationCenter(x + HEIGHT * vpX, y + HEIGHT * vpY, x, y, HALF_ANGLE_OF_SIGHT);
+                double xx = x;
+                double yy = y;
+                // Empiric correction for the level boss image which is not square
+                if (level == level1)
+                    xx +=  (radius - radiusX) * 2;
+                else
+                    xx +=  (radius - radiusY) * 0.3;
+                double[] p0 = { xx, yy };
+                double[] p1 = Helper.rotatePointAroundRotationCenter(xx + HEIGHT * vpX, yy + HEIGHT * vpY, xx, yy, -HALF_ANGLE_OF_SIGHT);
+                double[] p2 = Helper.rotatePointAroundRotationCenter(xx + HEIGHT * vpX, yy + HEIGHT * vpY, xx, yy, HALF_ANGLE_OF_SIGHT);
 
                 double area = 0.5 * (-p1[1] * p2[0] + p0[1] * (-p1[0] + p2[0]) + p0[0] * (p1[1] - p2[1]) + p1[0] * p2[1]);
                 double s    = 1 / (2 * area) * (p0[1] * p2[0] - p0[0] * p2[1] + (p2[1] - p0[1]) * spaceShip.x + (p0[0] - p2[0]) * spaceShip.y);
                 double t    = 1 / (2 * area) * (p0[0] * p1[1] - p0[1] * p1[0] + (p0[1] - p1[1]) * spaceShip.x + (p1[0] - p0[0]) * spaceShip.y);
                 if (s > 0 && t > 0 && 1 - s - t > 0) {
-                    double[] tp = Helper.rotatePointAroundRotationCenter(x, y + radius, x, y, r);
+                    double[] tp = Helper.rotatePointAroundRotationCenter(xx, yy + radiusY, xx, yy, r);
                     spawnLevelBossTorpedo(tp[0], tp[1], vX, vY, r);
                     lastShot = now;
                 }
@@ -2859,7 +2870,7 @@ public class SpaceFXView extends StackPane {
     }
 
     private class LevelBossRocket extends Sprite {
-        private final long      rocketLifespan = 3_000_000_000l;
+        private final long      rocketLifespan = 3_000_000_000L;
         private final SpaceShip spaceShip;
         private       long      born;
         private       double    dX;
