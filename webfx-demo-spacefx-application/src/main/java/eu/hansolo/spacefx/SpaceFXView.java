@@ -1972,7 +1972,7 @@ public class SpaceFXView extends StackPane {
                     // Check for torpedo hits
                     for (Torpedo torpedo : torpedos) {
                         if (isHitCircleCircle(torpedo.x, torpedo.y, torpedo.radius, enemy.x, enemy.y, enemy.radius)) {
-                            explosions.add(new Explosion(enemy.x - EXPLOSION_FRAME_WIDTH * 0.25, enemy.y - EXPLOSION_FRAME_HEIGHT * 0.25, enemy.vX, enemy.vY, 0.35));
+                            explosions.add(new Explosion(enemy.x - EXPLOSION_FRAME_CENTER * 0.35, enemy.y - EXPLOSION_FRAME_CENTER * 0.35, enemy.vX, enemy.vY, 0.35));
                             score += enemy.value;
                             kills++;
                             levelKills++;
@@ -1985,7 +1985,7 @@ public class SpaceFXView extends StackPane {
                     // Check for bigTorpedo hits
                     for (BigTorpedo bigTorpedo : bigTorpedos) {
                         if (isHitCircleCircle(bigTorpedo.x, bigTorpedo.y, bigTorpedo.radius, enemy.x, enemy.y, enemy.radius)) {
-                            explosions.add(new Explosion(enemy.x - EXPLOSION_FRAME_WIDTH * 0.25, enemy.y - EXPLOSION_FRAME_HEIGHT * 0.25, enemy.vX, enemy.vY, 0.35));
+                            explosions.add(new Explosion(enemy.x - EXPLOSION_FRAME_CENTER * 0.35, enemy.y - EXPLOSION_FRAME_CENTER * 0.35, enemy.vX, enemy.vY, 0.35));
                             score += enemy.value;
                             kills++;
                             levelKills++;
@@ -1998,7 +1998,7 @@ public class SpaceFXView extends StackPane {
                     // Check for rocket hits
                     for (Rocket rocket : rockets) {
                         if (isHitCircleCircle(rocket.x, rocket.y, rocket.radius, enemy.x, enemy.y, enemy.radius)) {
-                            rocketExplosions.add(new RocketExplosion(enemy.x - ROCKET_EXPLOSION_FRAME_WIDTH * 0.25, enemy.y - ROCKET_EXPLOSION_FRAME_HEIGHT * 0.25, enemy.vX, enemy.vY, 0.5));
+                            rocketExplosions.add(new RocketExplosion(enemy.x - EXPLOSION_FRAME_CENTER * 0.5, enemy.y - EXPLOSION_FRAME_CENTER * 0.5, enemy.vX, enemy.vY, 0.5));
                             score += enemy.value;
                             kills++;
                             levelKills++;
@@ -2018,7 +2018,7 @@ public class SpaceFXView extends StackPane {
                         }
                         if (hit) {
                             if (spaceShip.shield) {
-                                explosions.add(new Explosion(enemy.x - EXPLOSION_FRAME_WIDTH * 0.125, enemy.y - EXPLOSION_FRAME_HEIGHT * 0.125, enemy.vX, enemy.vY, 0.35));
+                                explosions.add(new Explosion(enemy.x - EXPLOSION_FRAME_CENTER * 0.35, enemy.y - EXPLOSION_FRAME_CENTER * 0.35, enemy.vX, enemy.vY, 0.35));
                                 playSound(spaceShipExplosionSound);
                             } else {
                                 spaceShipExplosion.countX = 0;

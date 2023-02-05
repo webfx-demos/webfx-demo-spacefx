@@ -151,6 +151,7 @@ public class Config {
     public static final double      ASTEROID_EXPLOSION_FRAME_CENTER     = 128 * SCALING_FACTOR * 0.5;
     public static final double      EXPLOSION_FRAME_WIDTH               = 256 * SCALING_FACTOR;
     public static final double      EXPLOSION_FRAME_HEIGHT              = 256 * SCALING_FACTOR;
+    public static final double      EXPLOSION_FRAME_CENTER              = 256 * SCALING_FACTOR * 0.5;
     public static final double      UP_EXPLOSION_FRAME_WIDTH            = 100 * SCALING_FACTOR;
     public static final double      UP_EXPLOSION_FRAME_HEIGHT           = 100 * SCALING_FACTOR;
     public static final double      UP_EXPLOSION_FRAME_CENTER           = 100 * SCALING_FACTOR * 0.5;
