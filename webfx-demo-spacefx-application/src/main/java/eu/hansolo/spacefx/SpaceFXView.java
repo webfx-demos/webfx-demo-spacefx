@@ -1723,8 +1723,10 @@ public class SpaceFXView extends StackPane {
         }
 
         protected void computeImageSizeDependentFields() {
-            width = WebFxUtil.getImageWidth(image.getImage());
-            height = WebFxUtil.getImageHeight(image.getImage());
+            if (image != null) {
+                width = image.getWidth();
+                height = image.getHeight();
+            }
             size = Math.max(width, height);
             radius = size * 0.5;
             WebFxUtil.onImageLoadedIfLoading(image.getImage(), () -> {
@@ -2273,8 +2275,8 @@ public class SpaceFXView extends StackPane {
     }
 
     private class Enemy extends Sprite {
-        public static final  long      TIME_BETWEEN_SHOTS  = 500_000_000l;
-        public static final  long      TIME_BETWEEN_BOMBS  = 1_000_000_000l;
+        public static final  long      TIME_BETWEEN_SHOTS  = 500_000_000L;
+        public static final  long      TIME_BETWEEN_BOMBS  = 1_000_000_000L;
         public static final  double    HALF_ANGLE_OF_SIGHT = 5;
         private static final double    BOMB_RANGE          = 10;
         private static final int       MAX_VALUE           = 50;
