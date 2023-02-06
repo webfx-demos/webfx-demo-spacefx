@@ -2359,7 +2359,18 @@ public class SpaceFXView extends StackPane {
             } else {
                 x  = waveType.coordinates.get(frameCounter).x;
                 y  = waveType.coordinates.get(frameCounter).y;
-                r  = waveType.coordinates.get(frameCounter).r;
+                double newR  = waveType.coordinates.get(frameCounter).r;
+                if (frameCounter == 0 || r == -90) // initial frame
+                    r = newR;
+                else { // Smoothing enemy rotation to max 5° to prevent ugly rotation jumps
+                    double deltaR = (newR - r + 360) % 360;
+                    if (deltaR > 180)
+                        deltaR -= 360;
+                    if (deltaR > 0)
+                        r += Math.min(5, deltaR);
+                    else
+                        r += Math.max(-5, deltaR);
+                }
                 vX = x - oldX;
                 vY = y - oldY;
             }
