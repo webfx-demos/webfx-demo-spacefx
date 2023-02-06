@@ -1904,8 +1904,9 @@ public class SpaceFXView extends StackPane {
         }
     }
 
+    private static final long         ENEMY_SPAWN_INTERVAL = (long) (250_000_000L * SCALING_FACTOR);
+
     private class Wave {
-        private static final long         ENEMY_SPAWN_INTERVAL = 250_000_000L;
         private final        WaveType     waveType1;
         private final        WaveType     waveType2;
         private final        SpaceShip    spaceShip;
