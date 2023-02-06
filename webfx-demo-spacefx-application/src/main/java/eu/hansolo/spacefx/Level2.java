@@ -23,8 +23,8 @@ package eu.hansolo.spacefx;
 public class Level2 implements Level {
     public final int           index                  = 2;
     public final Difficulty    difficulty             = Difficulty.NORMAL;
-    public final ScaledImage   backgroundImg = ScaledImage.createBackground("backgroundL2.jpg", 700, 3379);
-    //public final Image      backgroundImg           = isDesktop() ? WebFxUtil.newImage("backgroundL2.jpg"), 700 * BKG_SCALING_FACTOR, 3379 * BKG_SCALING_FACTOR, true, false) : isIOS() ? WebFxUtil.newImage("backgroundL2.jpg"), 700 * BKG_SCALING_FACTOR, 3379 * BKG_SCALING_FACTOR, true, false) : WebFxUtil.newImage("backgroundL2.png"), 700 * BKG_SCALING_FACTOR, 3379 * BKG_SCALING_FACTOR, true, false);
+    public final ScaledImage   backgroundImg = ScaledImage.createBackground("backgroundL2.jpg", 700, 3377);
+    //public final Image      backgroundImg           = isDesktop() ? WebFxUtil.newImage("backgroundL2.jpg"), 700 * BKG_SCALING_FACTOR, 3377 * BKG_SCALING_FACTOR, true, false) : isIOS() ? WebFxUtil.newImage("backgroundL2.jpg"), 700 * BKG_SCALING_FACTOR, 3377 * BKG_SCALING_FACTOR, true, false) : WebFxUtil.newImage("backgroundL2.png"), 700 * BKG_SCALING_FACTOR, 3377 * BKG_SCALING_FACTOR, true, false);
     public final ScaledImage[] enemyImages = new ScaledImage[]{
             ScaledImage.create("enemy1L2.png", 56, 56),
             ScaledImage.create("enemy2L2.png", 50, 50),

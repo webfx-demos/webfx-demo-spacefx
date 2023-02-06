@@ -23,7 +23,7 @@ package eu.hansolo.spacefx;
 public class Level1 implements Level {
     public final int          index                   = 1;
     public final Difficulty   difficulty              = Difficulty.EASY;
-    public final ScaledImage  backgroundImg = ScaledImage.createBackground("backgroundL1.jpg", 700, 3379);
+    public final ScaledImage  backgroundImg = ScaledImage.createBackground("backgroundL1.jpg", 700, 3377);
     public final ScaledImage[] enemyImages = new ScaledImage[]{
             ScaledImage.create("enemy1L1.png", 56, 56),
             ScaledImage.create("enemy2L1.png", 50, 50),
