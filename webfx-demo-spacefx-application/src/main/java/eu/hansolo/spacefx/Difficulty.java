@@ -18,7 +18,7 @@ package eu.hansolo.spacefx;
 
 
 public enum Difficulty {
-    EASY(5, 0), NORMAL(7, 1), HARD(10, 2);
+    EASY(5, 0), NORMAL(7, 1), HARD(10, 2), PRO(15, 7), IMPOSSIBLE(20, 10);
 
     public final int noOfEnemies;
     public final int noOfSmartEnemies;
