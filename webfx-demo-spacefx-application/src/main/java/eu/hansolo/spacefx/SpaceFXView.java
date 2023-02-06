@@ -2198,8 +2198,8 @@ public class SpaceFXView extends StackPane {
             height     = image.getHeight() * scale;
             size       = Math.max(width, height);
             radius     = size * 0.5;
-            imgCenterX = image.getWidth() * 0.5;
-            imgCenterY = image.getHeight() * 0.5;
+            imgCenterX = width * 0.5;
+            imgCenterY = height * 0.5;
         }
 
         @Override public void respawn() {
