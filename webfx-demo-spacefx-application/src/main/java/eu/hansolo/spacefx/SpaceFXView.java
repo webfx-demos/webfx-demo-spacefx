@@ -45,10 +45,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static eu.hansolo.spacefx.Config.*;
@@ -808,7 +805,9 @@ public class SpaceFXView extends StackPane {
         }
 
         // Draw LevelBoss
-        for (LevelBoss levelBoss : levelBosses) {
+        //for (LevelBoss levelBoss : levelBosses) { // Observed ConcurrentModificationException, so replaced with a safe standard loop
+        for (int i = 0; i < levelBosses.size(); i++) {
+            LevelBoss levelBoss = levelBosses.get(i);
             levelBoss.update();
             ctx.save();
             ctx.translate(levelBoss.x - levelBoss.radiusX, levelBoss.y - levelBoss.radiusY);
@@ -975,7 +974,9 @@ public class SpaceFXView extends StackPane {
         }
 
         // Draw BigTorpedos
-        for (BigTorpedo bigTorpedo : bigTorpedos) {
+        //for (BigTorpedo bigTorpedo : bigTorpedos) { // Observed ConcurrentModificationException, so replaced with a safe standard loop
+        for (int i = 0; i < bigTorpedos.size(); i++) {
+            BigTorpedo bigTorpedo = bigTorpedos.get(i);
             bigTorpedo.update();
             ctx.save();
             ctx.translate(bigTorpedo.x - bigTorpedo.width / 2, bigTorpedo.y - bigTorpedo.height / 2);
