@@ -2832,7 +2832,7 @@ public class SpaceFXView extends StackPane {
                 double area = 0.5 * (-p1[1] * p2[0] + p0[1] * (-p1[0] + p2[0]) + p0[0] * (p1[1] - p2[1]) + p1[0] * p2[1]);
                 double s    = 1 / (2 * area) * (p0[1] * p2[0] - p0[0] * p2[1] + (p2[1] - p0[1]) * spaceShip.x + (p0[0] - p2[0]) * spaceShip.y);
                 double t    = 1 / (2 * area) * (p0[0] * p1[1] - p0[1] * p1[0] + (p0[1] - p1[1]) * spaceShip.x + (p1[0] - p0[0]) * spaceShip.y);
-                if (s > 0 && t > 0 && 1 - s - t > 0) {
+                if (s > 0 && t > 0 && 1 - s - t > 0 && vY != 0) {
                     double[] tp = Helper.rotatePointAroundRotationCenter(xx, yy + radiusY, xx, yy, r);
                     spawnLevelBossTorpedo(tp[0], tp[1], vX, vY, r);
                     lastShot = now;
