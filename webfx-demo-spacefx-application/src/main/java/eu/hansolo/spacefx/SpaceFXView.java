@@ -2181,10 +2181,7 @@ public class SpaceFXView extends StackPane {
             rot = 0;
 
             // Random Size
-            scale = (rnd.nextDouble() * 0.4) + 0.4;
-
-            // No of hits (0.2 - 0.8)
-            hits = (int) (scale * 5.0);
+            scale = (rnd.nextDouble() * 0.4) + 0.4; // 0.4 - 0.8
 
             // Value
             value = (int) (1 / scale * MAX_VALUE);
@@ -2193,6 +2190,9 @@ public class SpaceFXView extends StackPane {
             vYVariation = (rnd.nextDouble() * 0.5) + 0.2;
 
             computeImageSizeDependentFields();
+
+            // No of hits (1 - 3) depending on asteroid size
+            hits = (int) (size / (140 * 0.8 * SCALING_FACTOR /* max size */) * 4);
 
             cX = x + imgCenterX;
             cY = y + imgCenterY;
