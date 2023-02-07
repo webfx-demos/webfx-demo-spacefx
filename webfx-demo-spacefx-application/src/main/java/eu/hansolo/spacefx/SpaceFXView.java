@@ -663,7 +663,7 @@ public class SpaceFXView extends StackPane {
                 }
             }
 
-            // Check for space ship hit
+            // Check for spaceship hit
             if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit;
                 if (spaceShip.shield) {
@@ -704,7 +704,9 @@ public class SpaceFXView extends StackPane {
         waves.removeAll(wavesToRemove);
 
         // Draw EnemyBoss
-        for (EnemyBoss enemyBoss : enemyBosses) {
+        //for (EnemyBoss enemyBoss : enemyBosses) { // Replaced with safe standard loop to prevent ConcurrentModificationException
+        for (int i = 0; i < enemyBosses.size(); i++) {
+            EnemyBoss enemyBoss = enemyBosses.get(i);
             enemyBoss.update();
             ctx.save();
             ctx.translate(enemyBoss.x - enemyBoss.radius, enemyBoss.y - enemyBoss.radius);
@@ -822,7 +824,9 @@ public class SpaceFXView extends StackPane {
             double lbx = levelBoss.x, lby = levelBoss.y + levelBoss.radiusY - levelBoss.radiusX;
 
             // Check for torpedo hits with enemy boss
-            for (Torpedo torpedo : torpedos) {
+            //for (Torpedo torpedo : torpedos) { // Replaced with safe standard loop to prevent ConcurrentModificationException
+            for (int j = 0; j < torpedos.size(); j++) {
+                Torpedo torpedo = torpedos.get(j);
                 if (isHitCircleCircle(torpedo.x, torpedo.y, torpedo.radius, lbx, lby, levelBoss.radius)) {
                     levelBoss.hits -= TORPEDO_DAMAGE;
                     if (levelBoss.hits <= 0) {
@@ -844,7 +848,9 @@ public class SpaceFXView extends StackPane {
             }
 
             // Check for bigTorpedo hits with enemy boss
-            for (BigTorpedo bigTorpedo : bigTorpedos) {
+            //for (BigTorpedo bigTorpedo : bigTorpedos) { // Replaced with safe standard loop to prevent ConcurrentModificationException
+            for (int j = 0; j < bigTorpedos.size(); j++) {
+                BigTorpedo bigTorpedo = bigTorpedos.get(j);
                 if (isHitCircleCircle(bigTorpedo.x, bigTorpedo.y, bigTorpedo.radius, lbx, lby, levelBoss.radius)) {
                     levelBoss.hits -= BIG_TORPEDO_DAMAGE;
                     if (levelBoss.hits <= 0) {
@@ -866,14 +872,16 @@ public class SpaceFXView extends StackPane {
             }
 
             // Check for rocket hits with level boss
-            for (Rocket rocket : rockets) {
+            //for (Rocket rocket : rockets) { // Replaced with safe standard loop to prevent ConcurrentModificationException
+            for (int j = 0; j < rockets.size(); j++) {
+                Rocket rocket = rockets.get(j);
                 if (isHitCircleCircle(rocket.x, rocket.y, rocket.radius, lbx, lby, levelBoss.radius)) {
                     levelBoss.hits -= ROCKET_DAMAGE;
                     if (levelBoss.hits <= 0) {
                         levelBossExplosions.add(new LevelBossExplosion(levelBoss.x - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.y - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.vX, levelBoss.vY, 1.0));
                         score += levelBoss.value;
                         kills++;
-                        levelKills++;
+                        //levelKills++;
                         levelBoss.toBeRemoved = true;
                         levelBossActive = false;
                         levelKills = 0;
