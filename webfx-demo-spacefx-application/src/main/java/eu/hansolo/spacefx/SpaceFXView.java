@@ -2186,6 +2186,9 @@ public class SpaceFXView extends StackPane {
 
             computeImageSizeDependentFields();
 
+            cX = x + imgCenterX;
+            cY = y + imgCenterY;
+
             // Velocity
             vX          = ((rnd.nextDouble() * xVariation) - xVariation * 0.5) * VELOCITY_FACTOR_X;
             vY          = (((rnd.nextDouble() * 1.5) + minSpeedY * 1/scale) * vYVariation) * VELOCITY_FACTOR_Y;
