@@ -1622,9 +1622,8 @@ public class SpaceFXView extends StackPane {
     }
 
     public void mouseFire(MouseEvent e) {
-        if (score > 0) {
-            if (spaceShip.isVulnerable)
-                activateSpaceShipShield();
+        if (score > 0 && WebFxUtil.nanoTime() > spaceShip.born + SpaceShip.INVULNERABLE_TIME / 2) {
+            activateSpaceShipShield();
             fireSpaceShipRocket();
         }
     }
