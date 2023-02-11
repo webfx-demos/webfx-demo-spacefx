@@ -77,26 +77,31 @@ final class WebFxUtil {
         return true;
     }
 
-    static double getImageWidth(Image image) {
-        if (image == null)
-            return 0;
-        double width = image.getWidth();
-        if (width <= 0)
-            width = image.getRequestedWidth();
-        return width;
+    static boolean stopWatchPaused;
+    private static long stopWatchPauseNanoTime, stopWatchPauseNanoDuration;
+
+    static boolean isStopWatchPaused() {
+        return stopWatchPaused;
     }
 
-    static double getImageHeight(Image image) {
-        if (image == null)
-            return 0;
-        double height = image.getHeight();
-        if (height <= 0)
-            height = image.getRequestedHeight();
-        return height;
+    static void pauseStopWatch() {
+        if (!stopWatchPaused) {
+            stopWatchPauseNanoTime = Scheduler.nanoTime();
+            stopWatchPaused = true;
+        }
+    }
+
+    static void resumeStopWatch() {
+        if (stopWatchPaused) {
+            stopWatchPauseNanoDuration += Scheduler.nanoTime() - stopWatchPauseNanoTime;
+            stopWatchPaused = false;
+        }
     }
 
     static long nanoTime() {
-        return Scheduler.nanoTime();
+        if (stopWatchPaused)
+            return stopWatchPauseNanoTime;
+        return Scheduler.nanoTime() - stopWatchPauseNanoDuration;
     }
 
     static void exit(int status) {

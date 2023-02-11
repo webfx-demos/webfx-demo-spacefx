@@ -21,6 +21,8 @@ import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.uuid.Uuid;
+import dev.webfx.platform.visibility.Visibility;
+import dev.webfx.platform.visibility.VisibilityState;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -393,6 +395,8 @@ public class SpaceFXView extends StackPane {
         long deltaTime                = FPS_60;
         timer = new AnimationTimer() {
             @Override public void handle(final long now) {
+                if (WebFxUtil.isStopWatchPaused())
+                    return;
                 if (now > lastTimerCall) {
                     lastTimerCall = now + deltaTime;
                     updateAndDraw();
@@ -479,6 +483,22 @@ public class SpaceFXView extends StackPane {
         ctx.setTextAlign(TextAlignment.CENTER);
         ctx.setTextBaseline(VPos.CENTER);
         WebFxUtil.onImageLoaded(startImg, () -> ctx.drawImage(startImg, 0, 0, WIDTH, HEIGHT));
+        Visibility.addVisibilityListener(visibilityState -> {
+            if (isRunning()) {
+                if (visibilityState == VisibilityState.HIDDEN) {
+                    WebFxUtil.pauseStopWatch();
+                    if (PLAY_MUSIC)
+                        WebFxUtil.pauseMusic(gameMusic);
+                } else {
+                    WebFxUtil.resumeStopWatch();
+                    if (PLAY_MUSIC)
+                        WebFxUtil.playMusic(gameMusic);
+                    if (autoFire)
+                        fireSpaceShipWeapon();
+                }
+            }
+        });
+
     }
 
     private void initOnBackground(Stage stage) {
@@ -1601,12 +1621,14 @@ public class SpaceFXView extends StackPane {
     private Scheduled autoFireScheduled;
 
     public void fireSpaceShipWeapon() {
+        if (autoFireScheduled != null)
+            autoFireScheduled.cancel();
+        if (WebFxUtil.isStopWatchPaused())
+            return;
         if (WebFxUtil.nanoTime() - lastTorpedoFired >= MIN_TORPEDO_INTERVAL) {
             spawnWeapon(spaceShip.x, spaceShip.y);
             lastTorpedoFired = WebFxUtil.nanoTime();
         }
-        if (autoFireScheduled != null)
-            autoFireScheduled.cancel();
         if (autoFire && isRunning())
             autoFireScheduled = Scheduler.scheduleDelay(300, this::fireSpaceShipWeapon);
     }

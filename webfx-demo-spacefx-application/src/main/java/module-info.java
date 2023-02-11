@@ -15,6 +15,7 @@ module webfx.demo.spacefx.application {
     requires webfx.platform.storage;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
+    requires webfx.platform.visibility;
 
     // Exported packages
     exports eu.hansolo.spacefx;
