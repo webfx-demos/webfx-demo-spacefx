@@ -1329,9 +1329,7 @@ public class SpaceFXView extends StackPane {
                     }
                 }
                 break;
-            case HARD:
-            case PRO:
-            case IMPOSSIBLE:
+            default: // HARD, HERO, etc...
                 if (levelKills < NO_OF_KILLS_STAGE_1 && !levelBossActive) {
                     if (RND.nextBoolean()) {
                         waves.add(new Wave(WAVE_TYPES_FAST[RND.nextInt(WAVE_TYPES_FAST.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, false));
