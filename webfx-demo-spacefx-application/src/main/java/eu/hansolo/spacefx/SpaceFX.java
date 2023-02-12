@@ -89,6 +89,9 @@ public final class SpaceFX extends Application {
                             torpedoArmed = false;
                         }
                         break;
+                    case B:
+                        view.toggleGamePause();
+                        break;
                 }
             } else if (view.isHallOfFameScreen()) {
                 switch (e.getCode()) {

@@ -105,7 +105,7 @@ public class InitialDigit extends Region implements Toggle {
         };
 
         toggle = false;
-        lastTimerCalled = WebFxUtil.nanoTime();
+        lastTimerCalled = System.nanoTime();
         timer = new AnimationTimer() {
             @Override public void handle(final long now) {
                 if (now > lastTimerCalled + BLINK_INTERVAL) {

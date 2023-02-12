@@ -3,7 +3,6 @@ package eu.hansolo.spacefx;
 import dev.webfx.platform.audio.Audio;
 import dev.webfx.platform.audio.AudioService;
 import dev.webfx.platform.resource.Resource;
-import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.shutdown.Shutdown;
 import javafx.scene.image.Image;
 
@@ -75,33 +74,6 @@ final class WebFxUtil {
                 runnable.run();
         });
         return true;
-    }
-
-    static boolean stopWatchPaused;
-    private static long stopWatchPauseNanoTime, stopWatchPauseNanoDuration;
-
-    static boolean isStopWatchPaused() {
-        return stopWatchPaused;
-    }
-
-    static void pauseStopWatch() {
-        if (!stopWatchPaused) {
-            stopWatchPauseNanoTime = Scheduler.nanoTime();
-            stopWatchPaused = true;
-        }
-    }
-
-    static void resumeStopWatch() {
-        if (stopWatchPaused) {
-            stopWatchPauseNanoDuration += Scheduler.nanoTime() - stopWatchPauseNanoTime;
-            stopWatchPaused = false;
-        }
-    }
-
-    static long nanoTime() {
-        if (stopWatchPaused)
-            return stopWatchPauseNanoTime;
-        return Scheduler.nanoTime() - stopWatchPauseNanoDuration;
     }
 
     static void exit(int status) {

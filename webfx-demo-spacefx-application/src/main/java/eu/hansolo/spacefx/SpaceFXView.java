@@ -196,6 +196,9 @@ public class SpaceFXView extends StackPane {
     private              double                     shipTouchGoalY;
     private              EventHandler<TouchEvent>   touchHandler;
     private              boolean                    autoFire; // WebFX addition for touch devices
+    private              boolean gamePaused;
+    private              long gamePauseNanoTime;
+    private              long gamePauseNanoDuration;
 
     // ******************** Constructor ***************************************
     public SpaceFXView(Stage stage) {
@@ -225,16 +228,18 @@ public class SpaceFXView extends StackPane {
             });
         } else {*/
         shipTouchArea.setOnMouseDragged(e -> {
-            shipTouchGoalX = e.getX();
-            shipTouchGoalY = e.getY();
-            double deltaGoalX = shipTouchGoalX - spaceShip.x;
-            double deltaGoalY = shipTouchGoalY - spaceShip.y;
-            double biggestDelta = Math.max(Math.abs(deltaGoalX), Math.abs(deltaGoalY));
-            if (biggestDelta > 0) {
-                spaceShip.vX = deltaGoalX / biggestDelta * 5;
-                spaceShip.vY = deltaGoalY / biggestDelta * 5;
+            if (!isGamePaused()) {
+                shipTouchGoalX = e.getX();
+                shipTouchGoalY = e.getY();
+                double deltaGoalX = shipTouchGoalX - spaceShip.x;
+                double deltaGoalY = shipTouchGoalY - spaceShip.y;
+                double biggestDelta = Math.max(Math.abs(deltaGoalX), Math.abs(deltaGoalY));
+                if (biggestDelta > 0) {
+                    spaceShip.vX = deltaGoalX / biggestDelta * 5;
+                    spaceShip.vY = deltaGoalY / biggestDelta * 5;
+                }
+                setAutoFire(true); // Activating auto fire when using mouse or touch (if not already done)
             }
-            setAutoFire(true); // Activating auto fire when using mouse or touch (if not already done)
         });
         // Space shield and rocket fire management
         if (!IS_BROWSER) // The problem with setOnDragDetected() in the browser is that it drags & move the shipTouchArea node
@@ -257,14 +262,13 @@ public class SpaceFXView extends StackPane {
         screenTimer.start();
     }
 
-
     // ******************** Methods *******************************************
     public void init(Stage stage) {
         scoreFont        = Fonts.spaceBoy(SCORE_FONT_SIZE);
         running          = false;
         gameOverScreen   = false;
         levelBossActive  = false;
-        lastScreenToggle = WebFxUtil.nanoTime();
+        lastScreenToggle = gameNanoTime();
         hallOfFameScreen = false;
 
         playerInitialsLabel = new Label("Type in your initials");
@@ -384,19 +388,20 @@ public class SpaceFXView extends StackPane {
         bigTorpedosEnabled            = false;
         starburstEnabled              = false;
         lastShieldActivated           = 0;
-        lastEnemyBossAttack           = WebFxUtil.nanoTime();
-        lastShieldUp                  = WebFxUtil.nanoTime();
-        lastLifeUp                    = WebFxUtil.nanoTime();
-        lastWave                      = WebFxUtil.nanoTime();
-        lastTorpedoFired              = WebFxUtil.nanoTime();
-        lastStarBlast                 = WebFxUtil.nanoTime();
-        lastBigTorpedoBonus           = WebFxUtil.nanoTime();
-        lastStarburstBonus            = WebFxUtil.nanoTime();
+        lastEnemyBossAttack           = gameNanoTime();
+        lastShieldUp                  = gameNanoTime();
+        lastLifeUp                    = gameNanoTime();
+        lastWave                      = gameNanoTime();
+        lastTorpedoFired              = gameNanoTime();
+        lastStarBlast                 = gameNanoTime();
+        lastBigTorpedoBonus           = gameNanoTime();
+        lastStarburstBonus            = gameNanoTime();
         long deltaTime                = FPS_60;
         timer = new AnimationTimer() {
-            @Override public void handle(final long now) {
-                if (WebFxUtil.isStopWatchPaused())
+            @Override public void handle(long now) {
+                if (gamePaused)
                     return;
+                now = gameNanoTime();
                 if (now > lastTimerCall) {
                     lastTimerCall = now + deltaTime;
                     updateAndDraw();
@@ -486,19 +491,12 @@ public class SpaceFXView extends StackPane {
         Visibility.addVisibilityListener(visibilityState -> {
             if (isRunning()) {
                 if (visibilityState == VisibilityState.HIDDEN) {
-                    WebFxUtil.pauseStopWatch();
-                    if (PLAY_MUSIC)
-                        WebFxUtil.pauseMusic(gameMusic);
+                    pauseGame();
                 } else {
-                    WebFxUtil.resumeStopWatch();
-                    if (PLAY_MUSIC)
-                        WebFxUtil.playMusic(gameMusic);
-                    if (autoFire)
-                        fireSpaceShipWeapon();
+                    resumeGame();
                 }
             }
         });
-
     }
 
     private void initOnBackground(Stage stage) {
@@ -1156,7 +1154,7 @@ public class SpaceFXView extends StackPane {
                 ctx.restore();
 
                 if (spaceShip.shield) {
-                    long delta = WebFxUtil.nanoTime() - lastShieldActivated;
+                    long delta = gameNanoTime() - lastShieldActivated;
                     if (delta > DEFLECTOR_SHIELD_TIME) {
                         spaceShip.shield = false;
                         noOfShields--;
@@ -1173,14 +1171,14 @@ public class SpaceFXView extends StackPane {
                 }
 
                 if (bigTorpedosEnabled) {
-                    long delta = WebFxUtil.nanoTime() - lastBigTorpedoBonus;
+                    long delta = gameNanoTime() - lastBigTorpedoBonus;
                     if (delta > BIG_TORPEDO_TIME) {
                         bigTorpedosEnabled = false;
                     }
                 }
 
                 if (starburstEnabled) {
-                    long delta = WebFxUtil.nanoTime() - lastStarburstBonus;
+                    long delta = gameNanoTime() - lastStarburstBonus;
                     if (delta > STARBURST_TIME) {
                         starburstEnabled = false;
                     }
@@ -1508,7 +1506,7 @@ public class SpaceFXView extends StackPane {
         levelDifficulty = level.getDifficulty();
         // Minimal difficulty management
         if (minLevelDifficulty == null) // happens when initialising the game
-            minLevelDifficulty = levelDifficulty; // actually = level1 difficulty = easy
+            minLevelDifficulty = Difficulty.PRO; // actually = level1 difficulty = easy
         else if (level == level1) { // returning to level 1 => increasing minimal difficulty
             Difficulty[] difficulties = Difficulty.values();
             // Increasing minimal difficulty, unless we already reach the most difficulty level
@@ -1547,8 +1545,8 @@ public class SpaceFXView extends StackPane {
     private long lastNextLevelTime; // To fix possible multiple shortly calls to nextLevel()
     // Iterate through levels
     private void nextLevel() {
-        long now = System.currentTimeMillis();
-        if (now > lastNextLevelTime + 10000) { // Waiting at least 10s since last call to go to next level
+        long now = gameNanoTime();
+        if (now > lastNextLevelTime + 10_000_000_000L) { // Waiting at least 10s since last call to go to next level
             lastNextLevelTime = now;
             playSound(levelUpSound);
             if (level3.equals(level)) {
@@ -1605,7 +1603,7 @@ public class SpaceFXView extends StackPane {
 
     public void activateSpaceShipShield() {
         if (noOfShields > 0 && !spaceShip.shield) {
-            lastShieldActivated = WebFxUtil.nanoTime();
+            lastShieldActivated = gameNanoTime();
             spaceShip.shield = true;
             playSound(deflectorShieldSound);
         }
@@ -1623,11 +1621,11 @@ public class SpaceFXView extends StackPane {
     public void fireSpaceShipWeapon() {
         if (autoFireScheduled != null)
             autoFireScheduled.cancel();
-        if (WebFxUtil.isStopWatchPaused())
+        if (gamePaused)
             return;
-        if (WebFxUtil.nanoTime() - lastTorpedoFired >= MIN_TORPEDO_INTERVAL) {
+        if (gameNanoTime() - lastTorpedoFired >= MIN_TORPEDO_INTERVAL) {
             spawnWeapon(spaceShip.x, spaceShip.y);
-            lastTorpedoFired = WebFxUtil.nanoTime();
+            lastTorpedoFired = gameNanoTime();
         }
         if (autoFire && isRunning())
             autoFireScheduled = Scheduler.scheduleDelay(300, this::fireSpaceShipWeapon);
@@ -1642,14 +1640,14 @@ public class SpaceFXView extends StackPane {
     }
 
     public void mouseFire(MouseEvent e) {
-        if (score > 0 && WebFxUtil.nanoTime() > spaceShip.born + SpaceShip.INVULNERABLE_TIME / 2) {
+        if (isRunning() && score > 0 && !isGamePaused() && gameNanoTime() > spaceShip.born + SpaceShip.INVULNERABLE_TIME / 2) {
             activateSpaceShipShield();
             fireSpaceShipRocket();
         }
     }
 
     public void fireStarburst() {
-        if (!starburstEnabled || (WebFxUtil.nanoTime() - lastStarBlast < MIN_STARBURST_INTERVAL)) { return; }
+        if (!starburstEnabled || (gameNanoTime() - lastStarBlast < MIN_STARBURST_INTERVAL)) { return; }
         double offset    = Math.toRadians(-135);
         double angleStep = Math.toRadians(22.5);
         double angle     = 0;
@@ -1663,7 +1661,7 @@ public class SpaceFXView extends StackPane {
             bigTorpedos.add(new BigTorpedo(bigTorpedoImg, x, y, vX * BIG_TORPEDO_SPEED, vY * BIG_TORPEDO_SPEED, Math.toDegrees(angle)));
             angle += angleStep;
         }
-        lastStarBlast = WebFxUtil.nanoTime();
+        lastStarBlast = gameNanoTime();
         playSound(laserSound);
     }
 
@@ -1965,12 +1963,12 @@ public class SpaceFXView extends StackPane {
 
         public void update(final GraphicsContext ctx) {
             if (isRunning) {
-                if (enemiesSpawned < noOfEnemies && WebFxUtil.nanoTime() - lastEnemySpawned > ENEMY_SPAWN_INTERVAL) {
+                if (enemiesSpawned < noOfEnemies && gameNanoTime() - lastEnemySpawned > ENEMY_SPAWN_INTERVAL) {
                     Enemy enemy = spawnEnemy();
                     if (smartEnemies.size() < levelDifficulty.noOfSmartEnemies && RND.nextBoolean()) {
                         smartEnemies.add(enemy);
                     }
-                    lastEnemySpawned = WebFxUtil.nanoTime();
+                    lastEnemySpawned = gameNanoTime();
                 }
 
                 enemies.forEach(enemy -> {
@@ -2100,7 +2098,7 @@ public class SpaceFXView extends StackPane {
 
 
         @Override protected void init() {
-            this.born         = WebFxUtil.nanoTime();
+            this.born         = gameNanoTime();
             this.x            = WIDTH * 0.5;
             computeImageSizeDependentFields();
             this.vX           = 0;
@@ -2118,12 +2116,12 @@ public class SpaceFXView extends StackPane {
             this.vX           = 0;
             this.vY           = 0;
             this.shield       = false;
-            this.born         = WebFxUtil.nanoTime();
+            this.born         = gameNanoTime();
             this.isVulnerable = false;
         }
 
         @Override public void update() {
-            if (!isVulnerable && WebFxUtil.nanoTime() - born > INVULNERABLE_TIME) {
+            if (!isVulnerable && gameNanoTime() - born > INVULNERABLE_TIME) {
                 isVulnerable = true;
             }
             x += vX;
@@ -2358,7 +2356,7 @@ public class SpaceFXView extends StackPane {
             vX = 0;
             vY = 1;
 
-            lastShot = WebFxUtil.nanoTime();
+            lastShot = gameNanoTime();
         }
 
         @Override public void update() {
@@ -2396,7 +2394,7 @@ public class SpaceFXView extends StackPane {
                 vY = y - oldY;
             }
 
-            long now = WebFxUtil.nanoTime();
+            long now = gameNanoTime();
 
             if (canFire) {
                 if (now - lastShot > TIME_BETWEEN_SHOTS) {
@@ -2571,7 +2569,7 @@ public class SpaceFXView extends StackPane {
 
             r = Math.toDegrees(Math.atan2(vY, vX)) - 90;
 
-            long now = WebFxUtil.nanoTime();
+            long now = gameNanoTime();
 
             if (hasRockets) {
                 if (now - lastRocket > TIME_BETWEEN_ROCKETS) {
@@ -2668,7 +2666,7 @@ public class SpaceFXView extends StackPane {
         public EnemyBossRocket(final SpaceShip spaceShip, final ScaledImage image, final double x, final double y) {
             super(image, x - image.getWidth() / 2.0, y, 0, 1);
             this.spaceShip = spaceShip;
-            this.born      = WebFxUtil.nanoTime();
+            this.born      = gameNanoTime();
         }
 
 
@@ -2710,7 +2708,7 @@ public class SpaceFXView extends StackPane {
             } else if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
                 toBeRemoved = true;
             }
-            if (WebFxUtil.nanoTime() - born > rocketLifespan) {
+            if (gameNanoTime() - born > rocketLifespan) {
                 enemyRocketExplosions.add(new EnemyRocketExplosion(x - ENEMY_ROCKET_EXPLOSION_FRAME_WIDTH * 0.25, y - ENEMY_ROCKET_EXPLOSION_FRAME_HEIGHT * 0.25, vX, vY, 0.5));
                 toBeRemoved = true;
             }
@@ -2786,7 +2784,7 @@ public class SpaceFXView extends StackPane {
                 vY = LEVEL_BOSS_SPEED;
             } else {
                 if (waitingStart == 0) {
-                    waitingStart = WebFxUtil.nanoTime();
+                    waitingStart = gameNanoTime();
                 }
                 dX     = spaceShip.x - x;
                 dY     = spaceShip.y - y;
@@ -2795,7 +2793,7 @@ public class SpaceFXView extends StackPane {
                 vpX    = dX * factor;
                 vpY    = dY * factor;
 
-                if (WebFxUtil.nanoTime() < waitingStart + WAITING_PHASE) {
+                if (gameNanoTime() < waitingStart + WAITING_PHASE) {
                     // Waiting
                     vX = dX * factor * 10;
                     vY = 0;
@@ -2810,7 +2808,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            long now = WebFxUtil.nanoTime();
+            long now = gameNanoTime();
 
             if (hasRockets) {
                 if (now - lastRocket > TIME_BETWEEN_ROCKETS) {
@@ -2916,7 +2914,7 @@ public class SpaceFXView extends StackPane {
         public LevelBossRocket(final SpaceShip spaceShip, final ScaledImage image, final double x, final double y) {
             super(image, x - image.getWidth() / 2.0, y, 0, 1);
             this.spaceShip = spaceShip;
-            this.born      = WebFxUtil.nanoTime();
+            this.born      = gameNanoTime();
         }
 
 
@@ -2958,7 +2956,7 @@ public class SpaceFXView extends StackPane {
             } else if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
                 toBeRemoved = true;
             }
-            if (WebFxUtil.nanoTime() - born > rocketLifespan) {
+            if (gameNanoTime() - born > rocketLifespan) {
                 enemyRocketExplosions.add(new EnemyRocketExplosion(x - ENEMY_ROCKET_EXPLOSION_FRAME_WIDTH * 0.25, y - ENEMY_ROCKET_EXPLOSION_FRAME_HEIGHT * 0.25, vX, vY, 0.5));
                 toBeRemoved = true;
             }
@@ -3502,5 +3500,40 @@ public class SpaceFXView extends StackPane {
     private static <T> void forEach(List<T> list, Consumer<? super T> action) {
         for (int i = 0; i < list.size(); i++)
             action.accept(list.get(i));
+    }
+
+    private long gameNanoTime() {
+        return gamePaused ? gamePauseNanoTime : System.nanoTime() - gamePauseNanoDuration;
+    }
+
+    boolean isGamePaused() {
+        return gamePaused;
+    }
+
+    void toggleGamePause() {
+        if (isGamePaused())
+            resumeGame();
+        else
+            pauseGame();
+    }
+
+    void pauseGame() {
+        if (!gamePaused) {
+            gamePauseNanoTime = gameNanoTime();
+            gamePaused = true;
+            if (PLAY_MUSIC)
+                WebFxUtil.pauseMusic(gameMusic);
+        }
+    }
+
+    void resumeGame() {
+        if (gamePaused) {
+            gamePaused = false;
+            gamePauseNanoDuration += gameNanoTime() - gamePauseNanoTime;
+            if (PLAY_MUSIC)
+                WebFxUtil.playMusic(gameMusic);
+            if (autoFire)
+                fireSpaceShipWeapon();
+        }
     }
 }
