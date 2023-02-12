@@ -47,8 +47,12 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static eu.hansolo.spacefx.Config.*;
@@ -1200,28 +1204,28 @@ public class SpaceFXView extends StackPane {
         }*/
 
         // Remove sprites
-        enemyBosses.removeIf(sprite -> sprite.toBeRemoved);
-        levelBosses.removeIf(sprite -> sprite.toBeRemoved);
-        bonuses.removeIf(sprite -> sprite.toBeRemoved);
-        torpedos.removeIf(sprite -> sprite.toBeRemoved);
-        bigTorpedos.removeIf(sprite -> sprite.toBeRemoved);
-        rockets.removeIf(sprite -> sprite.toBeRemoved);
-        enemyTorpedos.removeIf(sprite -> sprite.toBeRemoved);
-        enemyBombs.removeIf(sprite -> sprite.toBeRemoved);
-        enemyBossTorpedos.removeIf(sprite -> sprite.toBeRemoved);
-        enemyBossRockets.removeIf(sprite -> sprite.toBeRemoved);
-        levelBossTorpedos.removeIf(sprite -> sprite.toBeRemoved);
-        levelBossRockets.removeIf(sprite -> sprite.toBeRemoved);
-        levelBossBombs.removeIf(sprite -> sprite.toBeRemoved);
-        levelBossExplosions.removeIf(sprite -> sprite.toBeRemoved);
-        enemyBossExplosions.removeIf(sprite -> sprite.toBeRemoved);
-        enemyRocketExplosions.removeIf(sprite -> sprite.toBeRemoved);
-        rocketExplosions.removeIf(sprite -> sprite.toBeRemoved);
-        explosions.removeIf(sprite -> sprite.toBeRemoved);
-        asteroidExplosions.removeIf(sprite -> sprite.toBeRemoved);
-        upExplosions.removeIf(sprite -> sprite.toBeRemoved);
-        hits.removeIf(sprite -> sprite.toBeRemoved);
-        enemyHits.removeIf(sprite -> sprite.toBeRemoved);
+        removeIf(enemyBosses, sprite -> sprite.toBeRemoved);
+        removeIf(levelBosses, sprite -> sprite.toBeRemoved);
+        removeIf(bonuses, sprite -> sprite.toBeRemoved);
+        removeIf(torpedos, sprite -> sprite.toBeRemoved);
+        removeIf(bigTorpedos, sprite -> sprite.toBeRemoved);
+        removeIf(rockets, sprite -> sprite.toBeRemoved);
+        removeIf(enemyTorpedos, sprite -> sprite.toBeRemoved);
+        removeIf(enemyBombs, sprite -> sprite.toBeRemoved);
+        removeIf(enemyBossTorpedos, sprite -> sprite.toBeRemoved);
+        removeIf(enemyBossRockets, sprite -> sprite.toBeRemoved);
+        removeIf(levelBossTorpedos, sprite -> sprite.toBeRemoved);
+        removeIf(levelBossRockets, sprite -> sprite.toBeRemoved);
+        removeIf(levelBossBombs, sprite -> sprite.toBeRemoved);
+        removeIf(levelBossExplosions, sprite -> sprite.toBeRemoved);
+        removeIf(enemyBossExplosions, sprite -> sprite.toBeRemoved);
+        removeIf(enemyRocketExplosions, sprite -> sprite.toBeRemoved);
+        removeIf(rocketExplosions, sprite -> sprite.toBeRemoved);
+        removeIf(explosions, sprite -> sprite.toBeRemoved);
+        removeIf(asteroidExplosions, sprite -> sprite.toBeRemoved);
+        removeIf(upExplosions, sprite -> sprite.toBeRemoved);
+        removeIf(hits, sprite -> sprite.toBeRemoved);
+        removeIf(enemyHits, sprite -> sprite.toBeRemoved);
 
         // Remove waves
         wavesToRemove.clear();
@@ -1970,7 +1974,7 @@ public class SpaceFXView extends StackPane {
                     lastEnemySpawned = gameNanoTime();
                 }
 
-                enemies.forEach(enemy -> {
+                forEach(enemies, enemy -> {
                     if (level.getIndex() > 1 &&
                         !enemy.smart &&
                         enemy.frameCounter > waveType1.totalFrames * 0.35 &&
@@ -2058,7 +2062,7 @@ public class SpaceFXView extends StackPane {
                     }
                 });
 
-                enemies.removeIf(enemy -> enemy.toBeRemoved);
+                removeIf(enemies, enemy -> enemy.toBeRemoved);
                 if (enemies.isEmpty() && enemiesSpawned == noOfEnemies) { isRunning = false; }
             }
         }
@@ -3501,6 +3505,14 @@ public class SpaceFXView extends StackPane {
             T t = list.get(i);
             if (t != null) // Very rare, but it was observed that for any reason it could be null (causing NPE in action code)
                 action.accept(t);
+        }
+    }
+
+    private static <T> void removeIf(List<T> list, Predicate<? super T> filter) {
+        for (int i = 0; i < list.size(); i++) {
+            T t = list.get(i);
+            if (t != null && filter.test(t))
+                list.remove(i--);
         }
     }
 
