@@ -268,7 +268,7 @@ public class SpaceFXView extends StackPane {
         running          = false;
         gameOverScreen   = false;
         levelBossActive  = false;
-        lastScreenToggle = gameNanoTime();
+        //lastScreenToggle = System.nanoTime();
         hallOfFameScreen = false;
 
         playerInitialsLabel = new Label("Type in your initials");
@@ -349,7 +349,6 @@ public class SpaceFXView extends StackPane {
         bonusSound              = WebFxUtil.newSound("bonus.mp3");
 
         // Variable initialization
-        backgroundViewportY           = SWITCH_POINT;
         canvas                        = new Canvas(WIDTH, HEIGHT);
         ctx                           = canvas.getGraphicsContext2D();
         stars                         = new Star[NO_OF_STARS];
@@ -379,23 +378,6 @@ public class SpaceFXView extends StackPane {
         rocketExplosions              = new ArrayList<>();
         hits                          = new ArrayList<>();
         enemyHits                     = new ArrayList<>();
-        score                         = 0;
-        levelKills                    = 0;
-        kills                         = 0;
-        hasBeenHit                    = false;
-        noOfLifes                     = NO_OF_LIFES;
-        noOfShields                   = NO_OF_SHIELDS;
-        bigTorpedosEnabled            = false;
-        starburstEnabled              = false;
-        lastShieldActivated           = 0;
-        lastEnemyBossAttack           = gameNanoTime();
-        lastShieldUp                  = gameNanoTime();
-        lastLifeUp                    = gameNanoTime();
-        lastWave                      = gameNanoTime();
-        lastTorpedoFired              = gameNanoTime();
-        lastStarBlast                 = gameNanoTime();
-        lastBigTorpedoBonus           = gameNanoTime();
-        lastStarburstBonus            = gameNanoTime();
         long deltaTime                = FPS_60;
         timer = new AnimationTimer() {
             @Override public void handle(long now) {
@@ -433,7 +415,9 @@ public class SpaceFXView extends StackPane {
             }
         };
         screenTimer = new AnimationTimer() {
-            @Override public void handle(final long now) {
+            @Override public void handle(long now) {
+                if (lastScreenToggle == 0)
+                    lastScreenToggle = now;
                 if (!running && now > lastScreenToggle + SCREEN_TOGGLE_INTERVAL) {
                     hallOfFameScreen = !hallOfFameScreen;
                     if (hallOfFameScreen) {
@@ -1415,9 +1399,8 @@ public class SpaceFXView extends StackPane {
         timer.stop();
         running = false;
         gameOverScreen = true;
-        if (PLAY_MUSIC && gameMusic != null) {
-            gameMusic.pause();
-        }
+        if (PLAY_MUSIC)
+            WebFxUtil.stopMusic(gameMusic);
 
         boolean isInHallOfFame = score > hallOfFame.get(2).score;
 
@@ -1573,6 +1556,24 @@ public class SpaceFXView extends StackPane {
         }
         Helper.enableNode(hallOfFameBox, false);
         screenTimer.stop();
+        score                         = 0;
+        levelKills                    = 0;
+        kills                         = 0;
+        hasBeenHit                    = false;
+        noOfLifes                     = NO_OF_LIFES;
+        noOfShields                   = NO_OF_SHIELDS;
+        bigTorpedosEnabled            = false;
+        starburstEnabled              = false;
+        lastShieldActivated           = 0;
+        lastEnemyBossAttack           = gameNanoTime();
+        lastShieldUp                  = gameNanoTime();
+        lastLifeUp                    = gameNanoTime();
+        lastWave                      = gameNanoTime();
+        lastTorpedoFired              = gameNanoTime();
+        lastStarBlast                 = gameNanoTime();
+        lastBigTorpedoBonus           = gameNanoTime();
+        lastStarburstBonus            = gameNanoTime();
+        backgroundViewportY           = SWITCH_POINT;
         autoFire = false;
         running = true;
         timer.start();
@@ -1801,13 +1802,11 @@ public class SpaceFXView extends StackPane {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
-                    toBeRemoved = true;
-                }
-                countX = 0;
                 if (countY == maxFrameY) {
+                    toBeRemoved = true;
                     countY = 0;
                 }
+                countX = 0;
             }
         }
 
@@ -1955,7 +1954,7 @@ public class SpaceFXView extends StackPane {
             this.enemies           = new ArrayList<>(noOfEnemies);
             this.smartEnemies      = new ArrayList<>();
             this.enemiesSpawned    = 0;
-            this.alternateWaveType = null == waveType2 ? false : true;
+            this.alternateWaveType = waveType2 != null;
             this.toggle            = true;
             this.isRunning         = true;
         }
@@ -3498,8 +3497,11 @@ public class SpaceFXView extends StackPane {
 
     // Safe utility loop method that never raises ConcurrentModificationException
     private static <T> void forEach(List<T> list, Consumer<? super T> action) {
-        for (int i = 0; i < list.size(); i++)
-            action.accept(list.get(i));
+        for (int i = 0; i < list.size(); i++) {
+            T t = list.get(i);
+            if (t != null) // Very rare, but it was observed that for any reason it could be null (causing NPE in action code)
+                action.accept(t);
+        }
     }
 
     private long gameNanoTime() {

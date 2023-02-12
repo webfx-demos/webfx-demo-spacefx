@@ -77,10 +77,6 @@ final class WebFxUtil {
     }
 
     static void exit(int status) {
-/*
-        Platform.exit();
-        System.exit(status);
-*/
         Shutdown.softwareShutdown(true, status);
     }
 
