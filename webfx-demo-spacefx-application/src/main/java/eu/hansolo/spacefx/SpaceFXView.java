@@ -79,9 +79,9 @@ public class SpaceFXView extends StackPane {
     private              Level                      level;
     private              Difficulty                 minLevelDifficulty;
     private              Difficulty                 levelDifficulty;
-    private final        Image                      startImg                = WebFxUtil.newImage("startscreen.jpg");
-    private final        Image                      gameOverImg             = WebFxUtil.newImage("gameover.jpg");
-    private final        Image                      hallOfFameImg           = WebFxUtil.newImage("halloffamescreen.jpg");
+    private final        Image                      startImg                = WebFXUtil.newImage("startscreen.jpg");
+    private final        Image                      gameOverImg             = WebFXUtil.newImage("gameover.jpg");
+    private final        Image                      hallOfFameImg           = WebFXUtil.newImage("halloffamescreen.jpg");
     //private final        Image                      startImg                = isDesktop() ? WebFxUtil.newImage("startscreen.jpg")) : isIOS() ? WebFxUtil.newImage("startscreenIOS.jpg")) : WebFxUtil.newImage("startscreenAndroid.png"));
     //private final        Image                      gameOverImg             = isDesktop() ? WebFxUtil.newImage("gameover.jpg")) : isIOS() ? WebFxUtil.newImage("gameoverIOS.jpg")) : WebFxUtil.newImage("gameoverAndroid.png"));
     //private final        Image                      hallOfFameImg           = isDesktop() ? WebFxUtil.newImage("halloffamescreen.jpg")) : isIOS() ? WebFxUtil.newImage("halloffamescreenIOS.jpg")) : WebFxUtil.newImage("halloffamescreenAndroid.png"));
@@ -202,8 +202,8 @@ public class SpaceFXView extends StackPane {
 
     // ******************** Constructor ***************************************
     public SpaceFXView(Stage stage) {
-        gameMusic = WebFxUtil.newMusic("RaceToMars.mp3");
-        music = WebFxUtil.newMusic("CityStomper.mp3");
+        gameMusic = WebFXUtil.newMusic("RaceToMars.mp3");
+        music = WebFXUtil.newMusic("CityStomper.mp3");
 
         init(stage);
         initOnBackground(stage);
@@ -212,7 +212,7 @@ public class SpaceFXView extends StackPane {
             if(!value) {
                 screenTimer.stop();
                 timer.stop();
-                WebFxUtil.stopMusic(music);
+                WebFXUtil.stopMusic(music);
             }
         });
 
@@ -256,7 +256,7 @@ public class SpaceFXView extends StackPane {
         getChildren().add(pane);
 
         // Start playing background music
-        if (PLAY_MUSIC && !waitUserInteractionBeforePlayingSound) { WebFxUtil.playMusic(music); }
+        if (PLAY_MUSIC && !waitUserInteractionBeforePlayingSound) { WebFXUtil.playMusic(music); }
 
         // Start timer to toggle between start screen and hall of fame
         screenTimer.start();
@@ -317,36 +317,36 @@ public class SpaceFXView extends StackPane {
         Helper.enableNode(hallOfFameBox, false);
 
         // background music
-        WebFxUtil.setLooping(music, true);
-        WebFxUtil.setVolume(music, 1);
+        WebFXUtil.setLooping(music, true);
+        WebFXUtil.setVolume(music, 1);
 
         // for game background music
-        WebFxUtil.setLooping(gameMusic, true);
-        WebFxUtil.setVolume(gameMusic, 1);
+        WebFXUtil.setLooping(gameMusic, true);
+        WebFXUtil.setVolume(gameMusic, 1);
 
         // Load sounds
-        laserSound              = WebFxUtil.newSound("laserSound.mp3");
-        rocketLaunchSound       = WebFxUtil.newSound("rocketLaunch.mp3");
-        rocketExplosionSound    = WebFxUtil.newSound("rocketExplosion.mp3");
-        enemyLaserSound         = WebFxUtil.newSound("enemyLaserSound.mp3");
-        enemyBombSound          = WebFxUtil.newSound("enemyBomb.mp3");
-        explosionSound          = WebFxUtil.newSound("explosionSound.mp3");
-        asteroidExplosionSound  = WebFxUtil.newSound("asteroidExplosion.mp3");
-        torpedoHitSound         = WebFxUtil.newSound("hit.mp3");
-        spaceShipExplosionSound = WebFxUtil.newSound("spaceShipExplosionSound.mp3");
-        enemyBossExplosionSound = WebFxUtil.newSound("enemyBossExplosion.mp3");
-        gameoverSound           = WebFxUtil.newSound("gameover.mp3");
-        shieldHitSound          = WebFxUtil.newSound("shieldhit.mp3");
-        enemyHitSound           = WebFxUtil.newSound("enemyBossShieldHit.mp3");
-        deflectorShieldSound    = WebFxUtil.newSound("deflectorshieldSound.mp3");
-        levelBossTorpedoSound   = WebFxUtil.newSound("levelBossTorpedo.mp3");
-        levelBossRocketSound    = WebFxUtil.newSound("levelBossRocket.mp3");
-        levelBossBombSound      = WebFxUtil.newSound("levelBossBomb.mp3");
-        levelBossExplosionSound = WebFxUtil.newSound("explosionSound1.mp3");
-        shieldUpSound           = WebFxUtil.newSound("shieldUp.mp3");
-        lifeUpSound             = WebFxUtil.newSound("lifeUp.mp3");
-        levelUpSound            = WebFxUtil.newSound("levelUp.mp3");
-        bonusSound              = WebFxUtil.newSound("bonus.mp3");
+        laserSound              = WebFXUtil.newSound("laserSound.mp3");
+        rocketLaunchSound       = WebFXUtil.newSound("rocketLaunch.mp3");
+        rocketExplosionSound    = WebFXUtil.newSound("rocketExplosion.mp3");
+        enemyLaserSound         = WebFXUtil.newSound("enemyLaserSound.mp3");
+        enemyBombSound          = WebFXUtil.newSound("enemyBomb.mp3");
+        explosionSound          = WebFXUtil.newSound("explosionSound.mp3");
+        asteroidExplosionSound  = WebFXUtil.newSound("asteroidExplosion.mp3");
+        torpedoHitSound         = WebFXUtil.newSound("hit.mp3");
+        spaceShipExplosionSound = WebFXUtil.newSound("spaceShipExplosionSound.mp3");
+        enemyBossExplosionSound = WebFXUtil.newSound("enemyBossExplosion.mp3");
+        gameoverSound           = WebFXUtil.newSound("gameover.mp3");
+        shieldHitSound          = WebFXUtil.newSound("shieldhit.mp3");
+        enemyHitSound           = WebFXUtil.newSound("enemyBossShieldHit.mp3");
+        deflectorShieldSound    = WebFXUtil.newSound("deflectorshieldSound.mp3");
+        levelBossTorpedoSound   = WebFXUtil.newSound("levelBossTorpedo.mp3");
+        levelBossRocketSound    = WebFXUtil.newSound("levelBossRocket.mp3");
+        levelBossBombSound      = WebFXUtil.newSound("levelBossBomb.mp3");
+        levelBossExplosionSound = WebFXUtil.newSound("explosionSound1.mp3");
+        shieldUpSound           = WebFXUtil.newSound("shieldUp.mp3");
+        lifeUpSound             = WebFXUtil.newSound("lifeUp.mp3");
+        levelUpSound            = WebFXUtil.newSound("levelUp.mp3");
+        bonusSound              = WebFXUtil.newSound("bonus.mp3");
 
         // Variable initialization
         canvas                        = new Canvas(WIDTH, HEIGHT);
@@ -471,7 +471,7 @@ public class SpaceFXView extends StackPane {
         ctx.setFont(scoreFont);
         ctx.setTextAlign(TextAlignment.CENTER);
         ctx.setTextBaseline(VPos.CENTER);
-        WebFxUtil.onImageLoaded(startImg, () -> ctx.drawImage(startImg, 0, 0, WIDTH, HEIGHT));
+        WebFXUtil.onImageLoaded(startImg, () -> ctx.drawImage(startImg, 0, 0, WIDTH, HEIGHT));
         Visibility.addVisibilityListener(visibilityState -> {
             if (isRunning()) {
                 if (visibilityState == VisibilityState.HIDDEN) {
@@ -535,11 +535,11 @@ public class SpaceFXView extends StackPane {
         spaceShip               = new SpaceShip(spaceshipImg, spaceshipUpImg, spaceshipDownImg);
 
         // Adjust audio clip volumes
-        WebFxUtil.setVolume(explosionSound, 0.5); // explosionSound.mp3
-        WebFxUtil.setVolume(torpedoHitSound, 0.5); // hit.mp3
-        WebFxUtil.setVolume(laserSound, 0.3); // laserSound.mp3
-        WebFxUtil.setVolume(spaceShipExplosionSound, 0.5); // spaceShipExplosionSound.mp3
-        WebFxUtil.setVolume(asteroidExplosionSound, 0.7); // asteroidExplosion.mp3
+        WebFXUtil.setVolume(explosionSound, 0.5); // explosionSound.mp3
+        WebFXUtil.setVolume(torpedoHitSound, 0.5); // hit.mp3
+        WebFXUtil.setVolume(laserSound, 0.3); // laserSound.mp3
+        WebFXUtil.setVolume(spaceShipExplosionSound, 0.5); // spaceShipExplosionSound.mp3
+        WebFXUtil.setVolume(asteroidExplosionSound, 0.7); // asteroidExplosion.mp3
 
         initAsteroids();
 
@@ -1400,7 +1400,7 @@ public class SpaceFXView extends StackPane {
         running = false;
         gameOverScreen = true;
         if (PLAY_MUSIC)
-            WebFxUtil.stopMusic(gameMusic);
+            WebFXUtil.stopMusic(gameMusic);
 
         boolean isInHallOfFame = score > hallOfFame.get(2).score;
 
@@ -1473,7 +1473,7 @@ public class SpaceFXView extends StackPane {
         kills       = 0;
         levelKills  = 0;
         if (PLAY_MUSIC && !waitUserInteractionBeforePlayingSound) {
-            WebFxUtil.playMusic(music);
+            WebFXUtil.playMusic(music);
         }
 
         screenTimer.start();
@@ -1521,7 +1521,7 @@ public class SpaceFXView extends StackPane {
     // Play audio clips
     private void playSound(final Audio Audio) {
         if (PLAY_SOUND) {
-            WebFxUtil.playSound(Audio);
+            WebFXUtil.playSound(Audio);
         }
     }
 
@@ -1551,8 +1551,8 @@ public class SpaceFXView extends StackPane {
             level.getBackgroundImg().drawImage(ctx, 0, 0);
         }
         if (PLAY_MUSIC) {
-            WebFxUtil.pauseMusic(music);
-            WebFxUtil.playMusic(gameMusic);
+            WebFXUtil.pauseMusic(music);
+            WebFXUtil.playMusic(gameMusic);
         }
         Helper.enableNode(hallOfFameBox, false);
         screenTimer.stop();
@@ -1584,7 +1584,7 @@ public class SpaceFXView extends StackPane {
         if (waitUserInteractionBeforePlayingSound) {
             waitUserInteractionBeforePlayingSound = false;
             if (PLAY_MUSIC && !isRunning())
-                WebFxUtil.playMusic(music);
+                WebFXUtil.playMusic(music);
         }
     }
 
@@ -1751,7 +1751,7 @@ public class SpaceFXView extends StackPane {
             radius = size * 0.5;
             radiusX = width / 2;
             radiusY = height / 2;
-            WebFxUtil.onImageLoadedIfLoading(image.getImage(), () -> {
+            WebFXUtil.onImageLoadedIfLoading(image.getImage(), () -> {
                 computeImageSizeDependentFields();
                 update();
             });
@@ -3524,7 +3524,7 @@ public class SpaceFXView extends StackPane {
             gamePauseNanoTime = gameNanoTime();
             gamePaused = true;
             if (PLAY_MUSIC)
-                WebFxUtil.pauseMusic(gameMusic);
+                WebFXUtil.pauseMusic(gameMusic);
         }
     }
 
@@ -3533,7 +3533,7 @@ public class SpaceFXView extends StackPane {
             gamePaused = false;
             gamePauseNanoDuration += gameNanoTime() - gamePauseNanoTime;
             if (PLAY_MUSIC)
-                WebFxUtil.playMusic(gameMusic);
+                WebFXUtil.playMusic(gameMusic);
             if (autoFire)
                 fireSpaceShipWeapon();
         }

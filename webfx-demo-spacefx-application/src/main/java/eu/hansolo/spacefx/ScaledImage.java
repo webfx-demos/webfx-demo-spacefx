@@ -21,7 +21,7 @@ public final class ScaledImage {
     private final double height; // final requested scaled height
 
     public ScaledImage(String imageResourcePath, double naturalWidth, double naturalHeight, double scalingFactor) {
-        this(WebFxUtil.newImage(imageResourcePath), naturalWidth, naturalHeight, scalingFactor);
+        this(WebFXUtil.newImage(imageResourcePath), naturalWidth, naturalHeight, scalingFactor);
     }
 
     public ScaledImage(Image image, double originalWidth, double naturalHeight, double scalingFactor) {

@@ -9,10 +9,10 @@ import javafx.scene.image.Image;
 /**
  * @author Bruno Salmon
  */
-final class WebFxUtil {
+final class WebFXUtil {
 
     static String toResourceUrl(String resourceName) {
-        return Resource.toUrl(resourceName, WebFxUtil.class);
+        return Resource.toUrl(resourceName, WebFXUtil.class);
     }
 
     static Audio newMusic(String resourceName) {

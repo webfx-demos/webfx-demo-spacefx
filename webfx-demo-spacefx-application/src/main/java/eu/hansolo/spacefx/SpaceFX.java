@@ -53,7 +53,7 @@ public final class SpaceFX extends Application {
         // Now that config is ready, we can instantiate SpaceFXView and make it as root
         scene.setRoot(view = new SpaceFXView(stage));
 
-        scene.getStylesheets().add(WebFxUtil.toResourceUrl("css/spacefx.css"));
+        scene.getStylesheets().add(WebFXUtil.toResourceUrl("css/spacefx.css"));
 
         scene.setOnKeyPressed(e -> {
             if (view.isRunning()) {
@@ -170,6 +170,6 @@ public final class SpaceFX extends Application {
 
     @Override
     public void stop() {
-        WebFxUtil.exit(0);
+        WebFXUtil.exit(0);
     }
 }
