@@ -89,7 +89,7 @@ public final class SpaceFX extends Application {
                             torpedoArmed = false;
                         }
                         break;
-                    case B:
+                    case P:
                         view.toggleGamePause();
                         break;
                 }
