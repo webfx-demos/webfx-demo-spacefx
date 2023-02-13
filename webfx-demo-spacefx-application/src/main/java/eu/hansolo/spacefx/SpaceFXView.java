@@ -2051,6 +2051,8 @@ public class SpaceFXView extends StackPane {
                             } else {
                                 spaceShipExplosion.countX = 0;
                                 spaceShipExplosion.countY = 0;
+                                shipTouchGoalX = 0;
+                                shipTouchGoalY = 0;
                                 spaceShipExplosion.x      = spaceShip.x - SPACESHIP_EXPLOSION_FRAME_WIDTH;
                                 spaceShipExplosion.y      = spaceShip.y - SPACESHIP_EXPLOSION_FRAME_HEIGHT;
                                 playSound(spaceShipExplosionSound);
