@@ -1641,7 +1641,7 @@ public class SpaceFXView extends StackPane {
 
     public void fireSpaceShipRocket() {
         // Max 3 rockets at the same time -- Only 1 rocket in auto fire (otherwise too easy) except when level boss fired torpedos
-        if (rockets.size() < MAX_NO_OF_ROCKETS + (autoFire && levelBossTorpedos.isEmpty() ? -2 : 0)) {
+        if (rockets.size() < MAX_NO_OF_ROCKETS + (autoFire && !spaceShip.shield && levelBossTorpedos.isEmpty() ? -2 : 0)) {
             spawnRocket(spaceShip.x, spaceShip.y);
         }
     }
@@ -1657,7 +1657,7 @@ public class SpaceFXView extends StackPane {
             spawnWeapon(spaceShip.x, spaceShip.y);
             lastTorpedoFired = gameNanoTime();
             // Auto firing rockets when autoFire is on and levelBoss has fired rockets and torpedo
-            if (autoFire && (!levelBossRockets.isEmpty() || !levelBossTorpedos.isEmpty()))
+            if (autoFire && (spaceShip.shield || !levelBossRockets.isEmpty() || !levelBossTorpedos.isEmpty()))
                 fireSpaceShipRocket();
         }
         if (autoFire && isRunning())
