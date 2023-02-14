@@ -2481,7 +2481,9 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (spaceShip.isVulnerable && !hasBeenHit) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
+                toBeRemoved = true;
+            } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit;
                 if (spaceShip.shield) {
                     hit = isHitCircleCircle(x, y, radius, spaceShip.x, spaceShip.y, deflectorShieldRadius);
@@ -2501,8 +2503,6 @@ public class SpaceFXView extends StackPane {
                         }
                     }
                 }
-            } else if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
-                toBeRemoved = true;
             }
         }
     }
@@ -2518,7 +2518,9 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (spaceShip.isVulnerable && !hasBeenHit) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
+                toBeRemoved = true;
+            } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit;
                 if (spaceShip.shield) {
                     hit = isHitCircleCircle(x, y, radius, spaceShip.x, spaceShip.y, deflectorShieldRadius);
@@ -2538,8 +2540,6 @@ public class SpaceFXView extends StackPane {
                         }
                     }
                 }
-            } else if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
-                toBeRemoved = true;
             }
         }
     }
@@ -2660,7 +2660,9 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (spaceShip.isVulnerable && !hasBeenHit) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
+                toBeRemoved = true;
+            } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit;
                 if (spaceShip.shield) {
                     hit = isHitCircleCircle(x, y, radius, spaceShip.x, spaceShip.y, deflectorShieldRadius);
@@ -2680,8 +2682,6 @@ public class SpaceFXView extends StackPane {
                         }
                     }
                 }
-            } else if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
-                toBeRemoved = true;
             }
         }
     }
@@ -2718,7 +2718,9 @@ public class SpaceFXView extends StackPane {
 
             r = Math.toDegrees(Math.atan2(vY, vX)) - 90;
 
-            if (spaceShip.isVulnerable && !hasBeenHit) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
+                toBeRemoved = true;
+            } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit;
                 if (spaceShip.shield) {
                     hit = isHitCircleCircle(x, y, radius, spaceShip.x, spaceShip.y, deflectorShieldRadius);
@@ -2738,8 +2740,6 @@ public class SpaceFXView extends StackPane {
                         }
                     }
                 }
-            } else if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
-                toBeRemoved = true;
             }
             if (gameNanoTime() - born > rocketLifespan) {
                 enemyRocketExplosions.add(new EnemyRocketExplosion(x - ENEMY_ROCKET_EXPLOSION_FRAME_WIDTH * 0.25, y - ENEMY_ROCKET_EXPLOSION_FRAME_HEIGHT * 0.25, vX, vY, 0.5));
@@ -2908,7 +2908,9 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (spaceShip.isVulnerable && !hasBeenHit) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
+                toBeRemoved = true;
+            } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit;
                 if (spaceShip.shield) {
                     hit = isHitCircleCircle(x, y, radius, spaceShip.x, spaceShip.y, deflectorShieldRadius);
@@ -2928,8 +2930,6 @@ public class SpaceFXView extends StackPane {
                         }
                     }
                 }
-            } else if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
-                toBeRemoved = true;
             }
         }
     }
@@ -2966,7 +2966,9 @@ public class SpaceFXView extends StackPane {
 
             r = Math.toDegrees(Math.atan2(vY, vX)) - 90;
 
-            if (spaceShip.isVulnerable && !hasBeenHit) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
+                toBeRemoved = true;
+            } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit;
                 if (spaceShip.shield) {
                     hit = isHitCircleCircle(x, y, radius, spaceShip.x, spaceShip.y, deflectorShieldRadius);
@@ -2986,8 +2988,6 @@ public class SpaceFXView extends StackPane {
                         }
                     }
                 }
-            } else if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
-                toBeRemoved = true;
             }
             if (gameNanoTime() - born > rocketLifespan) {
                 enemyRocketExplosions.add(new EnemyRocketExplosion(x - ENEMY_ROCKET_EXPLOSION_FRAME_WIDTH * 0.25, y - ENEMY_ROCKET_EXPLOSION_FRAME_HEIGHT * 0.25, vX, vY, 0.5));
@@ -3007,7 +3007,9 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (spaceShip.isVulnerable && !hasBeenHit) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
+                toBeRemoved = true;
+            } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit;
                 if (spaceShip.shield) {
                     hit = isHitCircleCircle(x, y, radius, spaceShip.x, spaceShip.y, deflectorShieldRadius);
@@ -3027,8 +3029,6 @@ public class SpaceFXView extends StackPane {
                         }
                     }
                 }
-            } else if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) {
-                toBeRemoved = true;
             }
         }
     }
