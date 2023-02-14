@@ -128,6 +128,11 @@ public final class SpaceFX extends Application {
             } else if (e.getCode() == KeyCode.P && view.isReadyToStart()) {
                 view.startGame();
             }
+            switch (e.getText().toUpperCase()) {
+                case "M":
+                    view.toggleMuteSound();
+                    break;
+            }
             view.userInteracted();
         });
         scene.setOnKeyReleased(e -> {

@@ -260,7 +260,7 @@ public class SpaceFXView extends StackPane {
         getChildren().add(pane);
 
         // Start playing background music
-        if (PLAY_MUSIC && !waitUserInteractionBeforePlayingSound) { WebFXUtil.playMusic(music); }
+        applyGameMusic();
 
         // Start timer to toggle between start screen and hall of fame
         screenTimer.start();
@@ -1476,9 +1476,7 @@ public class SpaceFXView extends StackPane {
         score       = 0;
         kills       = 0;
         levelKills  = 0;
-        if (PLAY_MUSIC && !waitUserInteractionBeforePlayingSound) {
-            WebFXUtil.playMusic(music);
-        }
+        applyGameMusic();
 
         screenTimer.start();
     }
@@ -1521,11 +1519,41 @@ public class SpaceFXView extends StackPane {
         return entry;
     }
 
+    private void playMusic(Audio music) {
+        if (PLAY_MUSIC && !soundMuted && !waitUserInteractionBeforePlayingSound && !gamePaused)
+            WebFXUtil.playMusic(music);
+        else
+            pauseMusic(music);
+    }
+
+    private void pauseMusic(Audio music) {
+        WebFXUtil.pauseMusic(music);
+    }
 
     // Play audio clips
-    private void playSound(final Audio Audio) {
-        if (PLAY_SOUND) {
-            WebFXUtil.playSound(Audio);
+    private void playSound(final Audio sound) {
+        if (PLAY_SOUND && !soundMuted && !waitUserInteractionBeforePlayingSound && !gamePaused)
+            WebFXUtil.playSound(sound);
+    }
+
+    private boolean soundMuted;
+
+    void muteSound(boolean soundMuted) {
+        this.soundMuted = soundMuted;
+        applyGameMusic();
+    }
+
+    void toggleMuteSound() {
+        muteSound(!soundMuted);
+    }
+
+    private void applyGameMusic() {
+        if (isRunning()) {
+            pauseMusic(music);
+            playMusic(gameMusic);
+        } else {
+            pauseMusic(gameMusic);
+            playMusic(music);
         }
     }
 
@@ -1554,10 +1582,8 @@ public class SpaceFXView extends StackPane {
         if (SHOW_BACKGROUND) {
             level.getBackgroundImg().drawImage(ctx, 0, 0);
         }
-        if (PLAY_MUSIC) {
-            WebFXUtil.pauseMusic(music);
-            WebFXUtil.playMusic(gameMusic);
-        }
+        pauseMusic(music);
+        playMusic(gameMusic);
         Helper.enableNode(hallOfFameBox, false);
         screenTimer.stop();
         score                         = 0;
@@ -1587,8 +1613,7 @@ public class SpaceFXView extends StackPane {
     public void userInteracted() {
         if (waitUserInteractionBeforePlayingSound) {
             waitUserInteractionBeforePlayingSound = false;
-            if (PLAY_MUSIC && !isRunning())
-                WebFXUtil.playMusic(music);
+            applyGameMusic();
         }
     }
 
@@ -3540,8 +3565,7 @@ public class SpaceFXView extends StackPane {
         if (!gamePaused) {
             gamePauseNanoTime = gameNanoTime();
             gamePaused = true;
-            if (PLAY_MUSIC)
-                WebFXUtil.pauseMusic(gameMusic);
+            applyGameMusic();
         }
     }
 
@@ -3549,8 +3573,7 @@ public class SpaceFXView extends StackPane {
         if (gamePaused) {
             gamePaused = false;
             gamePauseNanoDuration += gameNanoTime() - gamePauseNanoTime;
-            if (PLAY_MUSIC)
-                WebFXUtil.playMusic(gameMusic);
+            applyGameMusic();
             if (autoFire)
                 fireSpaceShipWeapon();
         }
