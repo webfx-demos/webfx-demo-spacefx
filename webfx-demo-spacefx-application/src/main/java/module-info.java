@@ -13,6 +13,7 @@ module webfx.demo.spacefx.application {
     requires webfx.platform.scheduler;
     requires webfx.platform.shutdown;
     requires webfx.platform.storage;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.visibility;

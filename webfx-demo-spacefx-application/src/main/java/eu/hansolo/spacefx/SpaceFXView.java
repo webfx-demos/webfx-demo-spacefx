@@ -19,15 +19,17 @@ package eu.hansolo.spacefx;
 import dev.webfx.platform.audio.Audio;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.platform.uischeduler.AnimationFramePass;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.uuid.Uuid;
 import dev.webfx.platform.visibility.Visibility;
 import dev.webfx.platform.visibility.VisibilityState;
-import javafx.animation.AnimationTimer;
-import javafx.animation.PauseTransition;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -43,6 +45,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -78,9 +81,11 @@ public class SpaceFXView extends StackPane {
     private              InitialDigit               digit2;
     private              HBox                       playerInitialsDigits;
     private              Button                     saveInitialsButton;
+    private              Text                       levelDifficultyText;
     private              List<Player>               hallOfFame;
     private              VBox                       hallOfFameBox;
     private              Level                      level;
+    private              Difficulty                 initialDifficulty = Difficulty.EASY;
     private              Difficulty                 minLevelDifficulty;
     private              Difficulty                 levelDifficulty;
     private final        Image                      startImg                = WebFXUtil.newImage("startscreen.jpg");
@@ -220,7 +225,7 @@ public class SpaceFXView extends StackPane {
             }
         });
 
-        Pane pane = new Pane(canvas, shipTouchArea, hallOfFameBox, playerInitialsLabel, playerInitialsDigits, saveInitialsButton);
+        Pane pane = new Pane(canvas, shipTouchArea, hallOfFameBox, playerInitialsLabel, playerInitialsDigits, saveInitialsButton, levelDifficultyText);
         pane.setMaxSize(WIDTH, HEIGHT);
         pane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -319,6 +324,10 @@ public class SpaceFXView extends StackPane {
         hallOfFameBox.setMouseTransparent(true);
         hallOfFameBox.relocate((WIDTH - hallOfFameBox.getPrefWidth()) * 0.5, (HEIGHT - hallOfFameBox.getPrefHeight()) * 0.5 -HEIGHT * 0.1);
         Helper.enableNode(hallOfFameBox, false);
+
+        levelDifficultyText = new Text();
+        levelDifficultyText.setFont(Fonts.spaceBoy(WIDTH / 10));
+        levelDifficultyText.setMouseTransparent(true);
 
         // background music
         WebFXUtil.setLooping(music, true);
@@ -533,7 +542,6 @@ public class SpaceFXView extends StackPane {
 
         level2 = new Level2();
         level3 = new Level3();
-        initLevel();
 
         deflectorShieldRadius   = deflectorShieldImg.getWidth() * 0.5;
         spaceShip               = new SpaceShip(spaceshipImg, spaceshipUpImg, spaceshipDownImg);
@@ -559,6 +567,8 @@ public class SpaceFXView extends StackPane {
         shipTouchArea.setStroke(Color.TRANSPARENT);
         shipTouchArea.setFill(Color.TRANSPARENT);
         readyToStart = true;
+
+        displayDifficulty(initialDifficulty, false);
 /*
         });
         initTask.setOnFailed(e -> readyToStart = false);
@@ -1291,8 +1301,9 @@ public class SpaceFXView extends StackPane {
     }
 
     private void spawnStarburstBonus() {
-        if (level.equals(level1)) { return; }
-        bonuses.add(new StarburstBonus(starburstBonusImg));
+        //if (level.equals(level1)) { return; }
+        if (levelDifficulty != Difficulty.EASY)
+            bonuses.add(new StarburstBonus(starburstBonusImg));
     }
 
     private void spawnWave() {
@@ -1312,7 +1323,7 @@ public class SpaceFXView extends StackPane {
                     waves.add(new Wave(WAVE_TYPES_MEDIUM[RND.nextInt(WAVE_TYPES_MEDIUM.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], true, true));
                 }
                 break;
-            case NORMAL:
+            case RELAX:
                 if (levelKills < NO_OF_KILLS_STAGE_1 && !levelBossActive) {
                     if (RND.nextBoolean()) {
                         waves.add(new Wave(WAVE_TYPES_MEDIUM[RND.nextInt(WAVE_TYPES_MEDIUM.length)], spaceShip, levelDifficulty.noOfEnemies, level.getEnemyImages()[RND.nextInt(level.getEnemyImages().length)], false, false));
@@ -1472,7 +1483,7 @@ public class SpaceFXView extends StackPane {
         hasBeenHit  = false;
         noOfLifes   = NO_OF_LIFES;
         noOfShields = NO_OF_SHIELDS;
-        initLevel();
+        //initLevel();
         score       = 0;
         kills       = 0;
         levelKills  = 0;
@@ -1488,18 +1499,54 @@ public class SpaceFXView extends StackPane {
 
     private void setLevel(Level level) {
         this.level = level;
-        levelDifficulty = level.getDifficulty();
         // Minimal difficulty management
         if (minLevelDifficulty == null) // happens when initialising the game
-            minLevelDifficulty = Difficulty.PRO; // actually = level1 difficulty = easy
+            minLevelDifficulty = initialDifficulty; // initial difficulty = easy
         else if (level == level1) { // returning to level 1 => increasing minimal difficulty
-            Difficulty[] difficulties = Difficulty.values();
             // Increasing minimal difficulty, unless we already reach the most difficulty level
-            if (minLevelDifficulty != difficulties[difficulties.length - 1])
-                minLevelDifficulty = difficulties[minLevelDifficulty.ordinal() + 1];
+            minLevelDifficulty = increaseDifficulty(minLevelDifficulty, false);
         }
+        levelDifficulty = minLevelDifficulty;
+/*
+        levelDifficulty = level.getDifficulty();
         if (levelDifficulty.ordinal() < minLevelDifficulty.ordinal())
             levelDifficulty = minLevelDifficulty;
+        else
+            minLevelDifficulty = level.getDifficulty();
+*/
+        displayDifficulty(levelDifficulty, true);
+    }
+
+    private Difficulty increaseDifficulty(Difficulty difficulty, boolean loop) {
+        Difficulty[] difficulties = Difficulty.values();
+        // Increasing minimal difficulty, unless we already reach the most difficulty level
+        if (difficulty != difficulties[difficulties.length - 1])
+            return difficulties[difficulty.ordinal() + 1];
+        return loop ? difficulties[0] : difficulty;
+    }
+
+    private void displayDifficulty(Difficulty difficulty, boolean fade) {
+        levelDifficultyText.setText(difficulty.name());
+        UiScheduler.scheduleInAnimationFrame(() -> { // Necessary only for the web version to postpone, so getLayoutBounds() is called after the mapped html peer has been updated from the JavaFX Text
+            Bounds layoutBounds = levelDifficultyText.getLayoutBounds();
+            levelDifficultyText.relocate((WIDTH - layoutBounds.getWidth()) * 0.5, (HEIGHT - layoutBounds.getHeight()) * 0.5);
+        }, 2, AnimationFramePass.UI_UPDATE_PASS);
+        levelDifficultyText.setFill(difficulty.color);
+        levelDifficultyText.setOpacity(fade ? 0 : 1);
+        levelDifficultyText.setMouseTransparent(fade);
+        if (fade) {
+            Timeline timeline = new Timeline();
+            timeline.getKeyFrames().setAll(
+                    new KeyFrame(Duration.seconds(2), new KeyValue(levelDifficultyText.opacityProperty(), 1)),
+                    new KeyFrame(Duration.seconds(5), new KeyValue(levelDifficultyText.opacityProperty(), 0))
+            );
+            timeline.play();
+        } else {
+            levelDifficultyText.setOnMouseClicked(e -> {
+                displayDifficulty(initialDifficulty = increaseDifficulty(initialDifficulty, true), false);
+                e.consume();
+            });
+        }
     }
 
     // Create Hall of Fame entry
@@ -1561,7 +1608,7 @@ public class SpaceFXView extends StackPane {
     // Iterate through levels
     private void nextLevel() {
         long now = gameNanoTime();
-        if (now > lastNextLevelTime + 10_000_000_000L) { // Waiting at least 10s since last call to go to next level
+        if (now > lastNextLevelTime + 10_000_000_000L) { // Waiting at least 10s since last call (because sometimes nextLevel() is called multiple times)
             lastNextLevelTime = now;
             playSound(levelUpSound);
             if (level3.equals(level)) {
@@ -1578,6 +1625,7 @@ public class SpaceFXView extends StackPane {
     // ******************** Public Methods ************************************
     public void startGame() {
         if (gameOverScreen) { return; }
+        initLevel();
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
         if (SHOW_BACKGROUND) {
             level.getBackgroundImg().drawImage(ctx, 0, 0);

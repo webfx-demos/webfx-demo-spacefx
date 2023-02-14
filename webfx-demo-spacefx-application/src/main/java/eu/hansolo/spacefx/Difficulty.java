@@ -17,20 +17,27 @@
 package eu.hansolo.spacefx;
 
 
+import javafx.scene.paint.Color;
+
 public enum Difficulty {
-    EASY(5, 0),
-    NORMAL(7, 1),
-    HARD(10, 2),
-    PRO(15, 7),
-    HERO(20, 10),
-    KING(25, 12),
-    IMPOSSIBLE(30, 15);
+    EASY(5, 0, Color.web("#3AFE15")), // flashy green
+    RELAX(7, 1, Color.YELLOWGREEN),
+    FOCUS(10, 2, Color.YELLOW),
+    ADVANCED(15, 7, Color.WHITE),
+    PRO(20, 10, Color.CYAN),
+    HERO(25, 12, Color.ORANGE),
+    KING(30, 15, Color.GOLD),
+    APOCALYPSE(35, 17, Color.ORANGERED),
+    HELL(40, 20, Color.RED);
 
     public final int noOfEnemies;
     public final int noOfSmartEnemies;
 
-    Difficulty(final int noOfEnemies, final int noOfSmartEnemies) {
+    public final Color color;
+
+    Difficulty(final int noOfEnemies, final int noOfSmartEnemies, Color color) {
         this.noOfEnemies      = noOfEnemies;
         this.noOfSmartEnemies = noOfSmartEnemies;
+        this.color = color;
     }
 }
