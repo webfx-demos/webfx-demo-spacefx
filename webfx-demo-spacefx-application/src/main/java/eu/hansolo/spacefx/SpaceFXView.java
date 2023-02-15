@@ -19,8 +19,6 @@ package eu.hansolo.spacefx;
 import dev.webfx.platform.audio.Audio;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
-import dev.webfx.platform.uischeduler.AnimationFramePass;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.uuid.Uuid;
 import dev.webfx.platform.visibility.Visibility;
@@ -29,10 +27,8 @@ import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
-import javafx.geometry.Bounds;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
+import javafx.geometry.*;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -44,6 +40,7 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -81,7 +78,6 @@ public class SpaceFXView extends StackPane {
     private              InitialDigit               digit2;
     private              HBox                       playerInitialsDigits;
     private              Button                     saveInitialsButton;
-    private              Text                       levelDifficultyText;
     private              List<Player>               hallOfFame;
     private              VBox                       hallOfFameBox;
     private              Level                      level;
@@ -205,9 +201,13 @@ public class SpaceFXView extends StackPane {
     private              double                     shipTouchGoalY;
     private              EventHandler<TouchEvent>   touchHandler;
     private              boolean                    autoFire; // WebFX addition for touch devices
-    private              boolean gamePaused;
-    private              long gamePauseNanoTime;
-    private              long gamePauseNanoDuration;
+    private              boolean                    gamePaused;
+    private              long                       gamePauseNanoTime;
+    private              long                       gamePauseNanoDuration;
+    private              Text                       difficultyText;
+    private              Pane                       incrementDifficultyButton;
+    private              Pane                       decrementDifficultyButton;
+    private              VBox                       difficultyBox;
 
     // ******************** Constructor ***************************************
     public SpaceFXView(Stage stage) {
@@ -225,7 +225,13 @@ public class SpaceFXView extends StackPane {
             }
         });
 
-        Pane pane = new Pane(canvas, shipTouchArea, hallOfFameBox, playerInitialsLabel, playerInitialsDigits, saveInitialsButton, levelDifficultyText);
+        Pane pane = new Pane(canvas, difficultyBox, shipTouchArea, hallOfFameBox, playerInitialsLabel, playerInitialsDigits, saveInitialsButton) {
+            @Override
+            protected void layoutChildren() {
+                super.layoutChildren();
+                layoutInArea(difficultyBox, 0, isRunning() ? 0 : -140 * SCALING_FACTOR, WIDTH, HEIGHT, 0, HPos.CENTER, VPos.CENTER);
+            }
+        };
         pane.setMaxSize(WIDTH, HEIGHT);
         pane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -325,9 +331,17 @@ public class SpaceFXView extends StackPane {
         hallOfFameBox.relocate((WIDTH - hallOfFameBox.getPrefWidth()) * 0.5, (HEIGHT - hallOfFameBox.getPrefHeight()) * 0.5 -HEIGHT * 0.1);
         Helper.enableNode(hallOfFameBox, false);
 
-        levelDifficultyText = new Text();
-        levelDifficultyText.setFont(Fonts.spaceBoy(WIDTH / 10));
-        levelDifficultyText.setMouseTransparent(true);
+        difficultyText = new Text();
+        difficultyText.setFont(Fonts.spaceBoy(WIDTH / 10));
+
+        incrementDifficultyButton = createSvgButton(
+                "M 10.419383,2.7920361 0.44372521,19.200594 c -0.82159289,1.471294 0.2330761,3.327162 1.95783919,3.327162 H 21.793496 c 1.716023,0 2.779433,-1.847128 1.95784,-3.327162 L 14.335061,2.7920361 c -0.847814,-1.5295618 -3.059123,-1.5295618 -3.915678,0 z",
+                this::increaseDifficulty);
+        decrementDifficultyButton = createSvgButton(
+                "M 10.322413,21.701054 0.34675429,5.2924958 c -0.8215929,-1.471294 0.2330761,-3.327162 1.95783921,-3.327162 H 21.696526 c 1.716023,0 2.779433,1.847127 1.95784,3.327162 L 14.238091,21.701054 c -0.847814,1.529561 -3.059123,1.529561 -3.915678,0 z",
+                this::decreaseDifficulty);
+        difficultyBox = new VBox(30 * SCALING_FACTOR, incrementDifficultyButton, difficultyText, decrementDifficultyButton);
+        difficultyBox.setAlignment(Pos.CENTER);
 
         // background music
         WebFXUtil.setLooping(music, true);
@@ -433,13 +447,9 @@ public class SpaceFXView extends StackPane {
                     lastScreenToggle = now;
                 if (!running && now > lastScreenToggle + SCREEN_TOGGLE_INTERVAL) {
                     hallOfFameScreen = !hallOfFameScreen;
-                    if (hallOfFameScreen) {
-                        ctx.drawImage(hallOfFameImg, 0, 0, WIDTH, HEIGHT);
-                        Helper.enableNode(hallOfFameBox, true);
-                    } else {
-                        ctx.drawImage(startImg, 0, 0, WIDTH, HEIGHT);
-                        Helper.enableNode(hallOfFameBox, false);
-                    }
+                    Helper.enableNode(hallOfFameBox, hallOfFameScreen);
+                    Helper.enableNode(difficultyBox, !hallOfFameScreen);
+                    ctx.drawImage(hallOfFameScreen ? hallOfFameImg : startImg, 0, 0, WIDTH, HEIGHT);
                     lastScreenToggle = now;
                 }
             }
@@ -568,7 +578,7 @@ public class SpaceFXView extends StackPane {
         shipTouchArea.setFill(Color.TRANSPARENT);
         readyToStart = true;
 
-        displayDifficulty(initialDifficulty, false);
+        displayDifficulty();
 /*
         });
         initTask.setOnFailed(e -> readyToStart = false);
@@ -1129,13 +1139,15 @@ public class SpaceFXView extends StackPane {
         });
 
         // Draw Spaceship, score, lifes and shields
+        if (hasBeenHit) {
+            spaceShipExplosion.update();
+            spaceShipExplosion.drawFrame(ctx, spaceShipExplosionImg, SPACESHIP_EXPLOSION_FRAME_WIDTH, SPACESHIP_EXPLOSION_FRAME_HEIGHT, spaceShip.x - SPACESHIP_EXPLOSION_FRAME_CENTER, spaceShip.y - SPACESHIP_EXPLOSION_FRAME_CENTER);
+            if (noOfLifes > 0)
+                spaceShip.respawn();
+        }
         if (noOfLifes > 0) {
             // Draw Spaceship or it's explosion
-            if (hasBeenHit) {
-                spaceShipExplosion.update();
-                spaceShipExplosion.drawFrame(ctx, spaceShipExplosionImg, SPACESHIP_EXPLOSION_FRAME_WIDTH, SPACESHIP_EXPLOSION_FRAME_HEIGHT, spaceShip.x - SPACESHIP_EXPLOSION_FRAME_CENTER, spaceShip.y - SPACESHIP_EXPLOSION_FRAME_CENTER);
-                spaceShip.respawn();
-            } else {
+            if (!hasBeenHit) {
                 // Draw space ship
                 spaceShip.update();
 
@@ -1411,22 +1423,22 @@ public class SpaceFXView extends StackPane {
 
     // Game Over
     private void gameOver() {
-        timer.stop();
         running = false;
         gameOverScreen = true;
-        if (PLAY_MUSIC)
-            WebFXUtil.stopMusic(gameMusic);
 
         boolean isInHallOfFame = score > hallOfFame.get(2).score;
 
-        PauseTransition pauseBeforeGameOverScreen = new PauseTransition(Duration.millis(1000));
+        PauseTransition pauseBeforeGameOverScreen = new PauseTransition(Duration.millis(2000));
         pauseBeforeGameOverScreen.setOnFinished(e -> {
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
             ctx.drawImage(gameOverImg, 0, 0, WIDTH, HEIGHT);
             ctx.setFill(SPACEFX_COLOR);
             ctx.setFont(scoreFont);
             ctx.fillText(Long.toString(score), scorePosX, HEIGHT * 0.25);
+            timer.stop();
             playSound(gameoverSound);
+            if (PLAY_MUSIC)
+                WebFXUtil.stopMusic(gameMusic);
         });
         pauseBeforeGameOverScreen.play();
 
@@ -1489,6 +1501,7 @@ public class SpaceFXView extends StackPane {
         levelKills  = 0;
         applyGameMusic();
 
+        displayDifficulty();
         screenTimer.start();
     }
 
@@ -1500,53 +1513,64 @@ public class SpaceFXView extends StackPane {
     private void setLevel(Level level) {
         this.level = level;
         // Minimal difficulty management
-        if (minLevelDifficulty == null) // happens when initialising the game
+        if (minLevelDifficulty == null) { // happens when initialising the game
             minLevelDifficulty = initialDifficulty; // initial difficulty = easy
-        else if (level == level1) { // returning to level 1 => increasing minimal difficulty
+            displayDifficulty();
+        } else if (level == level1) { // returning to level 1 => increasing minimal difficulty
             // Increasing minimal difficulty, unless we already reach the most difficulty level
-            minLevelDifficulty = increaseDifficulty(minLevelDifficulty, false);
-        }
+            increaseDifficulty();
+        } else
+            displayDifficulty();
+
         levelDifficulty = minLevelDifficulty;
-/*
-        levelDifficulty = level.getDifficulty();
-        if (levelDifficulty.ordinal() < minLevelDifficulty.ordinal())
-            levelDifficulty = minLevelDifficulty;
-        else
-            minLevelDifficulty = level.getDifficulty();
-*/
-        displayDifficulty(levelDifficulty, true);
     }
 
-    private Difficulty increaseDifficulty(Difficulty difficulty, boolean loop) {
+    private void increaseDifficulty() {
+        Difficulty difficulty = isRunning() ? minLevelDifficulty : initialDifficulty;
         Difficulty[] difficulties = Difficulty.values();
         // Increasing minimal difficulty, unless we already reach the most difficulty level
         if (difficulty != difficulties[difficulties.length - 1])
-            return difficulties[difficulty.ordinal() + 1];
-        return loop ? difficulties[0] : difficulty;
+            difficulty = difficulties[difficulty.ordinal() + 1];
+        if (isRunning())
+            minLevelDifficulty = difficulty;
+        else
+            initialDifficulty = difficulty;
+        displayDifficulty();
     }
 
-    private void displayDifficulty(Difficulty difficulty, boolean fade) {
-        levelDifficultyText.setText(difficulty.name());
-        UiScheduler.scheduleInAnimationFrame(() -> { // Necessary only for the web version to postpone, so getLayoutBounds() is called after the mapped html peer has been updated from the JavaFX Text
-            Bounds layoutBounds = levelDifficultyText.getLayoutBounds();
-            levelDifficultyText.relocate((WIDTH - layoutBounds.getWidth()) * 0.5, (HEIGHT - layoutBounds.getHeight()) * 0.5);
-        }, 2, AnimationFramePass.UI_UPDATE_PASS);
-        levelDifficultyText.setFill(difficulty.color);
-        levelDifficultyText.setOpacity(fade ? 0 : 1);
-        levelDifficultyText.setMouseTransparent(fade);
-        if (fade) {
+    private void decreaseDifficulty() {
+        Difficulty difficulty = isRunning() ? minLevelDifficulty : initialDifficulty;
+        Difficulty[] difficulties = Difficulty.values();
+        // Increasing minimal difficulty, unless we already reach the most difficulty level
+        if (difficulty != difficulties[0])
+            difficulty = difficulties[difficulty.ordinal() - 1];
+        if (isRunning())
+            minLevelDifficulty = difficulty;
+        else
+            initialDifficulty = difficulty;
+        displayDifficulty();
+    }
+
+    private void displayDifficulty() {
+        boolean isRunning = isRunning();
+        Difficulty difficulty = isRunning ? minLevelDifficulty : initialDifficulty;
+        difficultyText.setText(difficulty.name());
+        difficultyText.setFill(difficulty.color);
+        double opacity = isRunning ? 0 : 1;
+        difficultyBox.setOpacity(opacity);
+        incrementDifficultyButton.setOpacity(opacity);
+        decrementDifficultyButton.setOpacity(opacity);
+        difficultyBox.setMouseTransparent(isRunning);
+        difficultyBox.requestLayout(); // In case the vertical position has changed (
+        if (isRunning) {
             Timeline timeline = new Timeline();
             timeline.getKeyFrames().setAll(
-                    new KeyFrame(Duration.seconds(2), new KeyValue(levelDifficultyText.opacityProperty(), 1)),
-                    new KeyFrame(Duration.seconds(5), new KeyValue(levelDifficultyText.opacityProperty(), 0))
+                    new KeyFrame(Duration.seconds(2), new KeyValue(difficultyBox.opacityProperty(), 1)),
+                    new KeyFrame(Duration.seconds(5), new KeyValue(difficultyBox.opacityProperty(), 0))
             );
             timeline.play();
-        } else {
-            levelDifficultyText.setOnMouseClicked(e -> {
-                displayDifficulty(initialDifficulty = increaseDifficulty(initialDifficulty, true), false);
-                e.consume();
-            });
         }
+        lastScreenToggle = 0; // resetting the screen toggle (especially when user increased or decreased difficulty)
     }
 
     // Create Hall of Fame entry
@@ -1625,6 +1649,7 @@ public class SpaceFXView extends StackPane {
     // ******************** Public Methods ************************************
     public void startGame() {
         if (gameOverScreen) { return; }
+        running = true;
         initLevel();
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
         if (SHOW_BACKGROUND) {
@@ -1653,7 +1678,6 @@ public class SpaceFXView extends StackPane {
         lastStarburstBonus            = gameNanoTime();
         backgroundViewportY           = SWITCH_POINT;
         autoFire = false;
-        running = true;
         timer.start();
         userInteracted();
     }
@@ -3626,4 +3650,31 @@ public class SpaceFXView extends StackPane {
                 fireSpaceShipWeapon();
         }
     }
+
+    private static Pane createSvgButton(String content, Runnable clickRunnable) {
+        SVGPath path = new SVGPath();
+        path.setContent(content);
+        path.setFill(Color.GRAY);
+        double scale = 2 * SCALING_FACTOR;
+        path.setScaleX(scale);
+        path.setScaleY(scale);
+        // We now embed the svg path in a pane. The reason is for a better click experience. Because in JavaFX (not in
+        // the browser), the clicking area is only the filled shape, not the empty space in that shape. So when clicking
+        // on a gear icon on a mobile for example, even if globally our finger covers the icon, the final click point
+        // may be in this empty space, making the button not reacting, leading to a frustrating experience.
+        Pane pane = new Pane(path); // Will act as the mouse click area covering the entire surface
+        // The pane needs to be reduced to the svg path size (which we can get using the layout bounds).
+        path.sceneProperty().addListener(p -> { // This postpone is necessary only when running in the browser, not in standard JavaFX
+            Bounds b = path.getLayoutBounds(); // Bounds computation should be correct now even in the browser
+            pane.setMinSize(b.getWidth(), b.getHeight());
+            pane.setMaxSize(b.getWidth(), b.getHeight());
+        });
+        pane.setCursor(Cursor.HAND);
+        pane.setOnMouseClicked(e -> {
+            clickRunnable.run();
+            e.consume();
+        });
+        return pane;
+    }
+
 }
