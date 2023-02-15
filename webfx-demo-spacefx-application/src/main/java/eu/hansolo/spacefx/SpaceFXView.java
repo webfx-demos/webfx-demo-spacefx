@@ -39,8 +39,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -208,6 +207,7 @@ public class SpaceFXView extends StackPane {
     private              Pane                       incrementDifficultyButton;
     private              Pane                       decrementDifficultyButton;
     private              VBox                       difficultyBox;
+    private              Pane                       volumeButton;
 
     // ******************** Constructor ***************************************
     public SpaceFXView(Stage stage) {
@@ -225,11 +225,12 @@ public class SpaceFXView extends StackPane {
             }
         });
 
-        Pane pane = new Pane(canvas, difficultyBox, shipTouchArea, hallOfFameBox, playerInitialsLabel, playerInitialsDigits, saveInitialsButton) {
+        Pane pane = new Pane(canvas, difficultyBox, volumeButton, shipTouchArea, hallOfFameBox, playerInitialsLabel, playerInitialsDigits, saveInitialsButton) {
             @Override
             protected void layoutChildren() {
                 super.layoutChildren();
-                layoutInArea(difficultyBox, 0, isRunning() ? 0 : -140 * SCALING_FACTOR, WIDTH, HEIGHT, 0, HPos.CENTER, VPos.CENTER);
+                layoutInArea(difficultyBox, 0, isRunning() ? 0 : -140 * SCALING_FACTOR, WIDTH, HEIGHT, 0, HPos.CENTER, VPos.TOP);
+                layoutInArea(volumeButton, WIDTH / 2 - 40 * SCALING_FACTOR, 45 * SCALING_FACTOR, 0, 0, 0, HPos.CENTER, VPos.TOP);
             }
         };
         pane.setMaxSize(WIDTH, HEIGHT);
@@ -336,12 +337,15 @@ public class SpaceFXView extends StackPane {
 
         incrementDifficultyButton = createSvgButton(
                 "M 10.419383,2.7920361 0.44372521,19.200594 c -0.82159289,1.471294 0.2330761,3.327162 1.95783919,3.327162 H 21.793496 c 1.716023,0 2.779433,-1.847128 1.95784,-3.327162 L 14.335061,2.7920361 c -0.847814,-1.5295618 -3.059123,-1.5295618 -3.915678,0 z",
-                this::increaseDifficulty);
+                true, false, this::increaseDifficulty);
         decrementDifficultyButton = createSvgButton(
                 "M 10.322413,21.701054 0.34675429,5.2924958 c -0.8215929,-1.471294 0.2330761,-3.327162 1.95783921,-3.327162 H 21.696526 c 1.716023,0 2.779433,1.847127 1.95784,3.327162 L 14.238091,21.701054 c -0.847814,1.529561 -3.059123,1.529561 -3.915678,0 z",
-                this::decreaseDifficulty);
+                true, false, this::decreaseDifficulty);
         difficultyBox = new VBox(30 * SCALING_FACTOR, incrementDifficultyButton, difficultyText, decrementDifficultyButton);
         difficultyBox.setAlignment(Pos.CENTER);
+
+        volumeButton = createSvgButton(null,false, true, () -> toggleMuteSound());
+        displayVolume();
 
         // background music
         WebFXUtil.setLooping(music, true);
@@ -448,6 +452,7 @@ public class SpaceFXView extends StackPane {
                 if (!running && now > lastScreenToggle + SCREEN_TOGGLE_INTERVAL) {
                     hallOfFameScreen = !hallOfFameScreen;
                     Helper.enableNode(hallOfFameBox, hallOfFameScreen);
+                    Helper.enableNode(volumeButton, !hallOfFameScreen);
                     Helper.enableNode(difficultyBox, !hallOfFameScreen);
                     ctx.drawImage(hallOfFameScreen ? hallOfFameImg : startImg, 0, 0, WIDTH, HEIGHT);
                     lastScreenToggle = now;
@@ -1475,6 +1480,7 @@ public class SpaceFXView extends StackPane {
         ctx.drawImage(startImg, 0, 0, WIDTH, HEIGHT);
 
         Helper.enableNode(hallOfFameBox, false);
+        Helper.enableNode(volumeButton, true);
         gameOverScreen = false;
         explosions.clear();
         torpedos.clear();
@@ -1502,6 +1508,7 @@ public class SpaceFXView extends StackPane {
         applyGameMusic();
 
         displayDifficulty();
+        displayVolume();
         screenTimer.start();
     }
 
@@ -1611,11 +1618,24 @@ public class SpaceFXView extends StackPane {
 
     void muteSound(boolean soundMuted) {
         this.soundMuted = soundMuted;
+        displayVolume();
         applyGameMusic();
     }
 
     void toggleMuteSound() {
-        muteSound(!soundMuted);
+        if (waitUserInteractionBeforePlayingSound) {
+            waitUserInteractionBeforePlayingSound = false;
+            applyGameMusic();
+        } else
+            muteSound(!soundMuted);
+        lastScreenToggle = 0; // resetting the screen toggle (especially when user increased or decreased difficulty)
+    }
+
+    private void displayVolume() {
+        volumeButton.getChildren().set(0, createSvgPath(
+                soundMuted ? "m 42.82353,13.646772 18.82353,22.588237 m 0,-22.588237 -18.82353,22.588237 M 33.411765,2.3526543 17.411764,16.470302 H 2.3529403 V 34.352655 H 17.411764 l 16.000001,14.117648 z"
+                        :                                            "m 53.5,5 q 16.409227,19.9254884 0,39.8509784 M 33.411765,2.3526543 17.411764,16.470302 H 2.3529403 V 34.352655 H 17.411764 l 16.000001,14.117648 z"
+                , false, true));
     }
 
     private void applyGameMusic() {
@@ -1658,6 +1678,7 @@ public class SpaceFXView extends StackPane {
         pauseMusic(music);
         playMusic(gameMusic);
         Helper.enableNode(hallOfFameBox, false);
+        Helper.enableNode(volumeButton, false);
         screenTimer.stop();
         score                         = 0;
         levelKills                    = 0;
@@ -3651,13 +3672,8 @@ public class SpaceFXView extends StackPane {
         }
     }
 
-    private static Pane createSvgButton(String content, Runnable clickRunnable) {
-        SVGPath path = new SVGPath();
-        path.setContent(content);
-        path.setFill(Color.GRAY);
-        double scale = 2 * SCALING_FACTOR;
-        path.setScaleX(scale);
-        path.setScaleY(scale);
+    private static Pane createSvgButton(String content, boolean fill, boolean stroke, Runnable clickRunnable) {
+        SVGPath path = createSvgPath(content, fill, stroke);
         // We now embed the svg path in a pane. The reason is for a better click experience. Because in JavaFX (not in
         // the browser), the clicking area is only the filled shape, not the empty space in that shape. So when clicking
         // on a gear icon on a mobile for example, even if globally our finger covers the icon, the final click point
@@ -3677,4 +3693,19 @@ public class SpaceFXView extends StackPane {
         return pane;
     }
 
+    private static SVGPath createSvgPath(String content, boolean fill, boolean stroke) {
+        SVGPath path = new SVGPath();
+        path.setContent(content);
+        path.setFill(fill ? Color.GRAY : Color.TRANSPARENT);
+        if (stroke) {
+            path.setStroke(Color.GRAY);
+            path.setStrokeWidth(7);
+            path.setStrokeLineJoin(StrokeLineJoin.ROUND);
+            path.setStrokeLineCap(StrokeLineCap.ROUND);
+        }
+        double scale = 2 * SCALING_FACTOR;
+        path.setScaleX(scale);
+        path.setScaleY(scale);
+        return path;
+    }
 }
