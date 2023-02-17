@@ -58,6 +58,8 @@ import static eu.hansolo.spacefx.Config.*;
 
 
 public class SpaceFXView extends StackPane {
+
+    private static final boolean                    ENABLE_NEW_VERSION = false;
     private static final long                       SCREEN_TOGGLE_INTERVAL  = 10_000_000_000L;
     private static final Random                     RND                     = new Random();
     private static final boolean                    IS_BROWSER              = UserAgent.isBrowser();
@@ -1519,17 +1521,21 @@ public class SpaceFXView extends StackPane {
 
     private void setLevel(Level level) {
         this.level = level;
-        // Minimal difficulty management
-        if (minLevelDifficulty == null) { // happens when initialising the game
-            minLevelDifficulty = initialDifficulty; // initial difficulty = easy
-            displayDifficulty();
-        } else if (level == level1) { // returning to level 1 => increasing minimal difficulty
-            // Increasing minimal difficulty, unless we already reach the most difficulty level
-            increaseDifficulty();
-        } else
-            displayDifficulty();
+        if (!ENABLE_NEW_VERSION)
+            levelDifficulty = level.getDifficulty();
+        else {
+            // Minimal difficulty management
+            if (minLevelDifficulty == null) { // happens when initialising the game
+                minLevelDifficulty = initialDifficulty; // initial difficulty = easy
+                displayDifficulty();
+            } else if (level == level1) { // returning to level 1 => increasing minimal difficulty
+                // Increasing minimal difficulty, unless we already reach the most difficulty level
+                increaseDifficulty();
+            } else
+                displayDifficulty();
 
-        levelDifficulty = minLevelDifficulty;
+            levelDifficulty = minLevelDifficulty;
+        }
     }
 
     private void increaseDifficulty() {
@@ -1577,6 +1583,8 @@ public class SpaceFXView extends StackPane {
             );
             timeline.play();
         }
+        if (!ENABLE_NEW_VERSION)
+            Helper.enableNode(difficultyBox, false);
         lastScreenToggle = 0; // resetting the screen toggle (especially when user increased or decreased difficulty)
     }
 
@@ -1636,6 +1644,8 @@ public class SpaceFXView extends StackPane {
                 soundMuted ? "m 42.82353,13.646772 18.82353,22.588237 m 0,-22.588237 -18.82353,22.588237 M 33.411765,2.3526543 17.411764,16.470302 H 2.3529403 V 34.352655 H 17.411764 l 16.000001,14.117648 z"
                         :                                            "m 53.5,5 q 16.409227,19.9254884 0,39.8509784 M 33.411765,2.3526543 17.411764,16.470302 H 2.3529403 V 34.352655 H 17.411764 l 16.000001,14.117648 z"
                 , false, true));
+        if (!ENABLE_NEW_VERSION)
+            Helper.enableNode(volumeButton, false);
     }
 
     private void applyGameMusic() {
@@ -3693,12 +3703,13 @@ public class SpaceFXView extends StackPane {
         return pane;
     }
 
+    private final static Color SVG_COLOR = Color.gray(0.75);
     private static SVGPath createSvgPath(String content, boolean fill, boolean stroke) {
         SVGPath path = new SVGPath();
         path.setContent(content);
-        path.setFill(fill ? Color.GRAY : Color.TRANSPARENT);
+        path.setFill(fill ? SVG_COLOR : Color.TRANSPARENT);
         if (stroke) {
-            path.setStroke(Color.GRAY);
+            path.setStroke(SVG_COLOR);
             path.setStrokeWidth(7);
             path.setStrokeLineJoin(StrokeLineJoin.ROUND);
             path.setStrokeLineCap(StrokeLineCap.ROUND);
