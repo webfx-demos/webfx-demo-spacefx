@@ -59,7 +59,7 @@ import static eu.hansolo.spacefx.Config.*;
 
 public class SpaceFXView extends StackPane {
 
-    private static final boolean                    ENABLE_NEW_VERSION = false;
+    private static final boolean                    ENABLE_NEW_VERSION = true;
     private static final long                       SCREEN_TOGGLE_INTERVAL  = 10_000_000_000L;
     private static final Random                     RND                     = new Random();
     private static final boolean                    IS_BROWSER              = UserAgent.isBrowser();
