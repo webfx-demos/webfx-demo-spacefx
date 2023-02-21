@@ -47,6 +47,7 @@ public class Config {
     public static final long        DEFLECTOR_SHIELD_TIME               = 5_000_000_000L;
     public static final long        BIG_TORPEDO_TIME                    = 40_000_000_000L;
     public static final long        STARBURST_TIME                      = 40_000_000_000L;
+    public static final long        SPEED_UP_TIME                       = 60_000_000_000L;
     public static final int         MAX_NO_OF_ROCKETS                   = 3;
     public static final double      TORPEDO_SPEED                       = 6 * VELOCITY_FACTOR_Y;
     public static final double      BIG_TORPEDO_SPEED                   = 3 * VELOCITY_FACTOR_Y;
@@ -66,6 +67,7 @@ public class Config {
     public static final int         BIG_TORPEDO_DAMAGE                  = 3;
     public static final int         ROCKET_DAMAGE                       = 3;
     public static final int         SHIELD_DAMAGE                       = 5;
+    public static final long        ENEMY_SPAWN_INTERVAL                = (long) (250_000_000L * SCALING_FACTOR);
     public static final long        ENEMY_BOSS_ATTACK_INTERVAL          = 25_000_000_000L;
     public static final long        SHIELD_UP_SPAWN_INTERVAL            = 25_000_000_000L;
     public static final long        LIFE_UP_SPAWN_INTERVAL              = 55_000_000_000L;
@@ -75,6 +77,7 @@ public class Config {
     public static final long        MIN_BIG_TORPEDO_INTERVAL            = 50_000_000L;
     public static final long        MIN_STARBURST_INTERVAL              = 300_000_000L;
     public static final long        BIG_TORPEDO_BONUS_INTERVAL          = 60_000_000_000L;
+    public static final long        SPEED_UP_BONUS_INTERVAL             = 70_000_000_000L;
     public static final long        STARBURST_BONUS_INTERVAL            = 100_000_000_000L;
     public static final int         NO_OF_KILLS_STAGE_1                 = 50;
     public static final int         NO_OF_KILLS_STAGE_2                 = 100;

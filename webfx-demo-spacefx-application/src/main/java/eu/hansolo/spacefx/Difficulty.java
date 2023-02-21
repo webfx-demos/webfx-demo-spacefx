@@ -25,10 +25,11 @@ public enum Difficulty {
     FOCUS(10, 2, Color.YELLOW),
     ADVANCED(15, 7, Color.WHITE),
     PRO(20, 10, Color.CYAN),
-    HERO(25, 12, Color.ORANGE),
-    KING(30, 15, Color.GOLD),
-    APOCALYPSE(35, 17, Color.ORANGERED),
-    HELL(40, 20, Color.RED);
+    HERO(30, 12, Color.ORANGE),
+    KING(40, 15, Color.GOLD),
+    NINJA(50, 17, Color.ORANGERED),
+    JEDI(75, 20, Color.RED),
+    NEO(100, 30, Color.BLACK);
 
     public final int noOfEnemies;
     public final int noOfSmartEnemies;
