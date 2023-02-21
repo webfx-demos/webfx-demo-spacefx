@@ -25,10 +25,12 @@ import dev.webfx.platform.visibility.Visibility;
 import dev.webfx.platform.visibility.VisibilityState;
 import javafx.animation.*;
 import javafx.application.Platform;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
-import javafx.geometry.*;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -41,7 +43,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -355,7 +360,10 @@ public class SpaceFXView extends StackPane {
                 true, false, this::decreaseDifficulty);
         difficultyBox = new VBox(incrementDifficultyButton, difficultyText, decrementDifficultyButton);
         difficultyBox.setAlignment(Pos.CENTER);
-        difficultyText.setOnMouseClicked(Event::consume); // Not starting game when clicking on difficulty
+        difficultyText.setOnMouseClicked(e -> {
+            userInteracted();
+            e.consume(); // Not starting game when clicking on difficulty
+        });
 
         volumeButton = createSvgButton(null,false, true, this::toggleMuteSound);
         displayVolume();
@@ -1694,10 +1702,9 @@ public class SpaceFXView extends StackPane {
     }
 
     void toggleMuteSound() {
-        if (waitUserInteractionBeforePlayingSound) {
-            waitUserInteractionBeforePlayingSound = false;
-            applyGameMusic();
-        } else
+        if (waitUserInteractionBeforePlayingSound)
+            userInteracted();
+        else
             muteSound(!soundMuted);
         lastScreenToggle = 0; // resetting the screen toggle (especially when user increased or decreased difficulty)
     }
@@ -3822,7 +3829,7 @@ public class SpaceFXView extends StackPane {
         return nanoTime + (long) (RND.nextDouble() * 5_000_000_000L);
     }
 
-    private static Pane createSvgButton(String content, boolean fill, boolean stroke, Runnable clickRunnable) {
+    private Pane createSvgButton(String content, boolean fill, boolean stroke, Runnable clickRunnable) {
         SVGPath path = createSvgPath(content, fill, stroke);
         // We now embed the svg path in a pane. The reason is for a better click experience. Because in JavaFX (not in
         // the browser), the clicking area is only the filled shape, not the empty space in that shape. So when clicking
@@ -3836,6 +3843,7 @@ public class SpaceFXView extends StackPane {
         pane.setCursor(Cursor.HAND);
         pane.setOnMouseClicked(e -> {
             clickRunnable.run();
+            userInteracted();
             e.consume();
         });
         return pane;
