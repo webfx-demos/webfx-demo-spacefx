@@ -1715,12 +1715,13 @@ public class SpaceFXView extends StackPane {
             WebFXUtil.playSound(sound);
     }
 
-    private boolean soundMuted;
+    private boolean soundMuted = PropertyManager.INSTANCE.getBoolean("soundMuted");
 
     void muteSound(boolean soundMuted) {
         this.soundMuted = soundMuted;
         displayVolume();
         applyGameMusic();
+        PropertyManager.INSTANCE.set("soundMuted", Boolean.toString(soundMuted));
     }
 
     void toggleMuteSound() {
