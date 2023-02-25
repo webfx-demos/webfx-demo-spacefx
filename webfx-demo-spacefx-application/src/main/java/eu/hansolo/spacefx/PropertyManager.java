@@ -67,6 +67,8 @@ public enum PropertyManager {
 
     public boolean getBoolean(String key) { return Boolean.parseBoolean(properties.getOrDefault(key, "false")); }
 
+    public String getDifficultyString(String key) { return properties.getOrDefault(key, Difficulty.EASY.toString()); }
+
 
     // ******************** Properties ****************************************
     private void createProperties(final Map<String, String> properties) {

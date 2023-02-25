@@ -89,7 +89,7 @@ public class SpaceFXView extends StackPane {
     private              List<Player>               hallOfFame;
     private              VBox                       hallOfFameBox;
     private              Level                      level;
-    private              Difficulty                 initialDifficulty = Difficulty.EASY;
+    private              Difficulty                 initialDifficulty = Difficulty.valueOf(PropertyManager.INSTANCE.getDifficultyString("initialDifficulty"));
     private              Difficulty                 minLevelDifficulty;
     private              Difficulty                 levelDifficulty;
     private final        Image                      startImg                = WebFXUtil.newImage("startscreen.jpg");
@@ -1614,11 +1614,7 @@ public class SpaceFXView extends StackPane {
         // Increasing minimal difficulty, unless we already reach the most difficulty level
         if (difficulty != difficulties[difficulties.length - 1])
             difficulty = difficulties[difficulty.ordinal() + 1];
-        if (isRunning())
-            minLevelDifficulty = difficulty;
-        else
-            initialDifficulty = difficulty;
-        displayDifficulty();
+        setDifficulty(difficulty);
     }
 
     private void decreaseDifficulty() {
@@ -1627,10 +1623,16 @@ public class SpaceFXView extends StackPane {
         // Increasing minimal difficulty, unless we already reach the most difficulty level
         if (difficulty != difficulties[0])
             difficulty = difficulties[difficulty.ordinal() - 1];
+        setDifficulty(difficulty);
+    }
+
+    private void setDifficulty(Difficulty difficulty) {
         if (isRunning())
             minLevelDifficulty = difficulty;
-        else
+        else {
             initialDifficulty = difficulty;
+            PropertyManager.INSTANCE.set("initialDifficulty", difficulty.toString());
+        }
         displayDifficulty();
     }
 
