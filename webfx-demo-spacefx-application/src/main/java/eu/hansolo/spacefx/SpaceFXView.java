@@ -1727,9 +1727,14 @@ public class SpaceFXView extends StackPane {
     }
 
     void toggleMuteSound() {
+        // If the music is not initially playing in the browser (because it is waiting for user interaction first), and
+        // the user clicks on the volume button, it's probably because he actually wants to turn on the music, and not
+        // turn it off! So in that case, the call to userInteracted() should turn on the music like the user expects,
+        // and we don't toggle the soundMuted (otherwise this would turn off the music).
+        boolean skip = waitUserInteractionBeforePlayingSound && !soundMuted;
         if (waitUserInteractionBeforePlayingSound)
             userInteracted();
-        else
+        if (!skip)
             muteSound(!soundMuted);
         lastScreenToggle = 0; // resetting the screen toggle (especially when user increased or decreased difficulty)
     }
