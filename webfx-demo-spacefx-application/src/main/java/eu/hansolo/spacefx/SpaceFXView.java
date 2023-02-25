@@ -247,7 +247,7 @@ public class SpaceFXView extends StackPane {
             protected void layoutChildren() {
                 super.layoutChildren();
                 layoutInArea(difficultyBox, 0, isRunning() ? 0 : -140 * SCALING_FACTOR, WIDTH, HEIGHT, 0, HPos.CENTER, VPos.TOP);
-                layoutInArea(volumeButton, WIDTH / 2 - 5 * SCALING_FACTOR, 45 * SCALING_FACTOR, 0, 0, 0, HPos.CENTER, VPos.TOP);
+                layoutInArea(volumeButton, WIDTH / 2 - 6 * SCALING_FACTOR, 37 * SCALING_FACTOR, 0, 0, 0, HPos.CENTER, VPos.TOP);
             }
         };
         pane.setMaxSize(WIDTH, HEIGHT);
