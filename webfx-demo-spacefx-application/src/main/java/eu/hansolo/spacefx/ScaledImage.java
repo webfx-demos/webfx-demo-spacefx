@@ -20,17 +20,17 @@ public final class ScaledImage {
     private final double width; // final requested scaled width
     private final double height; // final requested scaled height
 
-    public ScaledImage(String imageResourcePath, double naturalWidth, double naturalHeight, double scalingFactor) {
-        this(WebFXUtil.newImage(imageResourcePath), naturalWidth, naturalHeight, scalingFactor);
+    public ScaledImage(String imageResourcePath, double originalWidth, double originalHeight, double scalingFactor) {
+        this(WebFXUtil.newImage(imageResourcePath), originalWidth, originalHeight, scalingFactor);
     }
 
-    public ScaledImage(Image image, double originalWidth, double naturalHeight, double scalingFactor) {
+    public ScaledImage(Image image, double originalWidth, double originalHeight, double scalingFactor) {
         this.image = image;
         this.originalWidth = originalWidth;
-        this.originalHeight = naturalHeight;
+        this.originalHeight = originalHeight;
         this.scalingFactor = scalingFactor;
         this.width = originalWidth * scalingFactor;
-        this.height = naturalHeight * scalingFactor;
+        this.height = originalHeight * scalingFactor;
     }
 
     public Image getImage() {
