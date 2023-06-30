@@ -16,7 +16,6 @@
 
 package eu.hansolo.spacefx;
 
-import dev.webfx.platform.audio.Audio;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.useragent.UserAgent;
@@ -42,6 +41,8 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
@@ -127,30 +128,30 @@ public class SpaceFXView extends StackPane {
     private              ScaledImage                upExplosionImg;
     private              ScaledImage                rocketExplosionImg;
     private              ScaledImage                rocketImg;
-    private              Audio                      laserSound;
-    private              Audio                      rocketLaunchSound;
-    private              Audio                      rocketExplosionSound;
-    private              Audio                      enemyLaserSound;
-    private              Audio                      enemyBombSound;
-    private              Audio                      explosionSound;
-    private              Audio                      asteroidExplosionSound;
-    private              Audio                      torpedoHitSound;
-    private              Audio                      spaceShipExplosionSound;
-    private              Audio                      enemyBossExplosionSound;
-    private              Audio                      gameoverSound;
-    private              Audio                      shieldHitSound;
-    private              Audio                      enemyHitSound;
-    private              Audio                      deflectorShieldSound;
-    private              Audio                      levelBossTorpedoSound;
-    private              Audio                      levelBossRocketSound;
-    private              Audio                      levelBossBombSound;
-    private              Audio                      levelBossExplosionSound;
-    private              Audio                      shieldUpSound;
-    private              Audio                      lifeUpSound;
-    private              Audio                      levelUpSound;
-    private              Audio                      bonusSound;
-    private final        Audio                      gameMusic;
-    private final        Audio                      music;
+    private              AudioClip                  laserSound;
+    private              AudioClip                  rocketLaunchSound;
+    private              AudioClip                  rocketExplosionSound;
+    private              AudioClip                  enemyLaserSound;
+    private              AudioClip                  enemyBombSound;
+    private              AudioClip                  explosionSound;
+    private              AudioClip                  asteroidExplosionSound;
+    private              AudioClip                  torpedoHitSound;
+    private              AudioClip                  spaceShipExplosionSound;
+    private              AudioClip                  enemyBossExplosionSound;
+    private              AudioClip                  gameoverSound;
+    private              AudioClip                  shieldHitSound;
+    private              AudioClip                  enemyHitSound;
+    private              AudioClip                  deflectorShieldSound;
+    private              AudioClip                  levelBossTorpedoSound;
+    private              AudioClip                  levelBossRocketSound;
+    private              AudioClip                  levelBossBombSound;
+    private              AudioClip                  levelBossExplosionSound;
+    private              AudioClip                  shieldUpSound;
+    private              AudioClip                  lifeUpSound;
+    private              AudioClip                  levelUpSound;
+    private              AudioClip                  bonusSound;
+    private final        MediaPlayer                gameMusic;
+    private final        MediaPlayer                music;
     private              double                     deflectorShieldRadius;
     private              boolean                    levelBossActive;
     private              Font                       scoreFont;
@@ -1678,41 +1679,41 @@ public class SpaceFXView extends StackPane {
         return entry;
     }
 
-    private static Audio newMusic(String resourceName) {
+    private static MediaPlayer newMusic(String resourceName) {
         return setMusicVolume(WebFXUtil.newMusic(resourceName), 1);
     }
 
-    private static Audio newSound(String resourceName) {
+    private static AudioClip newSound(String resourceName) {
         return setSoundVolume(WebFXUtil.newSound(resourceName), 1);
     }
 
-    private static Audio setMusicVolume(Audio music, double volume) {
+    private static MediaPlayer setMusicVolume(MediaPlayer music, double volume) {
         if (music != null) {
             music.setVolume(volume);
         }
         return music;
     }
 
-    private static Audio setSoundVolume(Audio sound, double volume) {
+    private static AudioClip setSoundVolume(AudioClip sound, double volume) {
         if (sound != null) {
             sound.setVolume(volume * 0.5); // Applying a 0.5 factor (otherwise sounds are too loud compared to music when there is a lot of ennemies)
         }
         return sound;
     }
 
-    private void playMusic(Audio music) {
+    private void playMusic(MediaPlayer music) {
         if (PLAY_MUSIC && !soundMuted && !waitUserInteractionBeforePlayingSound && !gamePaused)
             WebFXUtil.playMusic(music);
         else
             pauseMusic(music);
     }
 
-    private void pauseMusic(Audio music) {
+    private void pauseMusic(MediaPlayer music) {
         WebFXUtil.pauseMusic(music);
     }
 
     // Play audio clips
-    private void playSound(final Audio sound) {
+    private void playSound(final AudioClip sound) {
         if (PLAY_SOUND && !soundMuted && !waitUserInteractionBeforePlayingSound && !gamePaused)
             WebFXUtil.playSound(sound);
     }
