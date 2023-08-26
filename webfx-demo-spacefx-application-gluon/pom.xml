@@ -125,7 +125,7 @@
                         <list>dev/webfx/platform/meta/exe/[^/]+$</list>
                         <list>eu/hansolo/spacefx/[^/]+$</list>
                         <list>eu/hansolo/spacefx/css/[^/]+$</list>
-                        <list>images/checkbox/[^/]+$</list>
+                        <list>javafx/scene/control/skin/checkbox/[^/]+$</list>
                     </resourcesList>
                     <appIdentifier>dev.webfx.demo.spacefx</appIdentifier>
                     <releaseConfiguration>
