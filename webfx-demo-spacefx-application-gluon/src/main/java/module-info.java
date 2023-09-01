@@ -18,7 +18,4 @@ module webfx.demo.spacefx.application.gluon {
     requires webfx.platform.useragent.gluon;
     requires webfx.platform.visibility.gluon;
 
-    // Meta Resource package
-    opens dev.webfx.platform.meta.exe;
-
 }
