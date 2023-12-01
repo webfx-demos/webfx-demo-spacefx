@@ -26,6 +26,7 @@ name: Multi-OS builds
 on:
   push:
     branches: [ new-version ]
+  workflow_dispatch:
 
 jobs:
   build:
