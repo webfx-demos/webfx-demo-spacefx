@@ -5,7 +5,7 @@ module webfx.demo.spacefx.application.openjfx {
     // Direct dependencies modules
     requires javafx.media;
     requires webfx.demo.spacefx.application;
-    requires webfx.kit.openjfx;
+    requires webfx.kit.javafxgraphics.openjfx;
     requires webfx.kit.platform.visibility.openjfx;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;

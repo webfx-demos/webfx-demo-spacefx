@@ -221,7 +221,7 @@ public class InitialDigit extends Region implements Toggle {
     @Override public void setToggleGroup(final ToggleGroup toggleGroup) { toggleGroupProperty().set(toggleGroup); }
     @Override public ObjectProperty<ToggleGroup> toggleGroupProperty() {
         if (null == toggleGroup) {
-            toggleGroup = new ObjectPropertyBase<>() {
+            toggleGroup = new ObjectPropertyBase<ToggleGroup>() {
                 private ToggleGroup old;
                 private ChangeListener<Toggle> listener = (o, oV, nV) -> {
                     //getImpl_traversalEngine().setOverriddenFocusTraversability(nV != null ? isSelected() : null);
