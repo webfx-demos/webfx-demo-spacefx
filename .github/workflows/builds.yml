@@ -25,7 +25,7 @@ name: Multi-OS builds
 
 on:
   push:
-    branches: [ webfx-original ]
+    branches: [ webfx-new ]
   workflow_dispatch:
 
 jobs:
@@ -33,13 +33,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        app: [{name: 'SpaceFx', module-token: 'webfx-demo-spacefx', gwt-token: 'webfx_demo_spacefx', gluon-token: 'WebFXDemoSpacefx', gwt-push-branch: 'spacefx-original', android-package-name: 'dev.webfx.demo.spacefx', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.spacefx', version: '0.1.0-SNAPSHOT'}]
+        app: [{name: 'SpaceFX', module-token: 'webfx-demo-spacefx', gwt-token: 'webfx_demo_spacefx', gluon-token: 'WebFXDemoSpacefx', gwt-push-branch: 'spacefx-gwt', j2cl-push-branch: 'spacefx', android-package-name: 'dev.webfx.demo.spacefx', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.spacefx', version: '0.1.0-SNAPSHOT'}]
         os-config:  [1, 2, 3, 4]
         include:
           - os-config: 1 # Generates builds 1) 2) 3) 4) & 5)
             os: ubuntu-latest
             # Note: 1) must run on Ubuntu because the GitHub push action (to update the web-build branch) works only on Ubuntu
-            gwt-artifact-suffix:           'Web.war'                            # build 1)
+            j2cl-artifact-suffix:          'Web.war'                            # build 1)
             fatjar-artifact-suffix:        'Linux-x64-runnable.jar'             # build 2)
             jvm-deb-artifact-suffix:       'Linux-x64-jvm-package.deb'          # build 3)
             jvm-rpm-artifact-suffix:       'Linux-x64-jvm-package.rpm'          # build 4)

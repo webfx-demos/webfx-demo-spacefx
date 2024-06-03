@@ -38,9 +38,6 @@
         <module>webfx-demo-spacefx-application-gwt</module>
         <module>webfx-demo-spacefx-application-j2cl</module>
         <module>webfx-demo-spacefx-application-openjfx</module>
-        <module>webfx-demo-spacefx-css</module>
-        <module>webfx-demo-spacefx-css-java</module>
-        <module>webfx-demo-spacefx-css-web</module>
     </modules>
 
 </project>

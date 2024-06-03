@@ -36,12 +36,6 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-demo-spacefx-css-web</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-javafxcontrols-registry-gwt-j2cl</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -55,12 +49,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-javafxmedia-registry-gwt-j2cl</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-platform-audio-openjfx-gwt-j2cl</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -171,12 +159,6 @@
                                             <artifactId>webfx-kit-javafxcontrols-emul</artifactId>
                                             <version>0.1.0-SNAPSHOT</version>
                                             <includes>javafx/scene/control/skin/checkbox/</includes>
-                                        </artifactItem>
-                                        <artifactItem>
-                                            <groupId>dev.webfx</groupId>
-                                            <artifactId>webfx-demo-spacefx-css-web</artifactId>
-                                            <version>0.1.0-SNAPSHOT</version>
-                                            <includes>eu/hansolo/spacefx/css/</includes>
                                         </artifactItem>
                                     </artifactItems>
                                     <excludes>**/*.java,**/*.class</excludes>

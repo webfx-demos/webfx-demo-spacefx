@@ -1,10 +1,11 @@
 package eu.hansolo.spacefx;
 
-import dev.webfx.platform.audio.Audio;
-import dev.webfx.platform.audio.AudioService;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.shutdown.Shutdown;
 import javafx.scene.image.Image;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 /**
  * @author Bruno Salmon
@@ -15,40 +16,40 @@ final class WebFXUtil {
         return Resource.toUrl(resourceName, WebFXUtil.class);
     }
 
-    static Audio newMusic(String resourceName) {
-        return AudioService.loadMusic(toResourceUrl(resourceName));
+    static MediaPlayer newMusic(String resourceName) {
+        return new MediaPlayer(new Media(toResourceUrl(resourceName)));
     }
 
-    static Audio newSound(String resourceName) {
-        return AudioService.loadSound(toResourceUrl(resourceName));
+    static AudioClip newSound(String resourceName) {
+        return new AudioClip(toResourceUrl(resourceName));
     }
 
-    static void setLooping(Audio audio, boolean looping) {
+    static void setLooping(MediaPlayer audio, boolean looping) {
         if (audio != null)
-            audio.setLooping(looping);
+            audio.setCycleCount(looping ? AudioClip.INDEFINITE : 1);
     }
 
-    static void setVolume(Audio audio, double volume) {
+    static void setVolume(AudioClip audio, double volume) {
         if (audio != null)
             audio.setVolume(volume);
     }
 
-    static void playMusic(Audio music) {
+    static void playMusic(MediaPlayer music) {
         if (music != null)
             music.play();
     }
 
-    static void pauseMusic(Audio music) {
+    static void pauseMusic(MediaPlayer music) {
         if (music != null)
             music.pause();
     }
 
-    static void stopMusic(Audio music) {
+    static void stopMusic(MediaPlayer music) {
         if (music != null)
             music.stop();
     }
 
-    static void playSound(Audio sound) {
+    static void playSound(AudioClip sound) {
         if (sound != null)
             sound.play();
     }

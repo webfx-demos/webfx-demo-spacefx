@@ -55,6 +55,18 @@ input[type="text"], input[type="password"] {
 
 /*===== webfx-kit-javafxgraphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
 
+/* Mocking some basic JavaFX behaviours */
+body {
+    overflow: hidden; /* Disabling browser horizontal and vertical scroll bars */
+    margin: 0; /* Removing the default margin around the body */
+    /* Disabling user selection by default */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 /* Making disabled nodes semi-transparent */
 .disabled {
     opacity: 50%;
@@ -65,4 +77,57 @@ input[type="text"], input[type="password"] {
 fx-svgpath svg {
     fill: none;
     stroke: none;
+}
+/*===== webfx-kit-javafxgraphics-web@main.css from webfx-kit-javafxgraphics-fat-j2cl =====*/
+
+/* Mocking some basic JavaFX behaviours */
+body {
+    overflow: hidden; /* Disabling browser horizontal and vertical scroll bars */
+    margin: 0; /* Removing the default margin around the body */
+    /* Disabling user selection by default */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Making disabled nodes semi-transparent */
+.disabled {
+    opacity: 50%;
+}
+
+/* When fill and stroke are not set by application code, we make them transparent by default like in JavaFX (otherwise
+ the browser will make them black). */
+fx-svgpath svg {
+    fill: none;
+    stroke: none;
+}
+/*===== spacefx-web@main.css from webfx-demo-spacefx-application =====*/
+
+
+.label {
+    color  : rgb(51, 210, 206);
+    font-family: "Spaceboy";
+    font-size  : 1.8em;
+    alignment  : center;
+}
+
+fx-button fx-text {
+    alignment          : center;
+    font-family        : "Spaceboy";
+    font-size          : 1.5em;
+    color              : rgb(51, 210, 206);
+}
+
+fx-button > fx-background {
+    background-color   : transparent;
+    faint-focus-color  : transparent;
+    background-insets  : 0;
+    background-radius  : 0;
+    highlight-fill     : transparent;
+    padding            : 0 0 0.5em 0;
+    border-color       : rgb(51, 210, 206);
+    border-width       : 0.08333333em;
+    border-radius      : 1em;
 }

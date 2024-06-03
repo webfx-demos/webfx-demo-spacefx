@@ -90,9 +90,6 @@
     <source path="eu/hansolo/spacefx"/>
     <resource path="eu/hansolo/spacefx"/>
     <public includes="eu/hansolo/spacefx/" path=""/>
-    <!--===========================< webfx-demo-spacefx-css-web >===========================-->
-    <resource path="eu/hansolo/spacefx/css"/>
-    <public includes="eu/hansolo/spacefx/css/" path=""/>
     <!--======================< webfx-kit-javafxcontrols-peers-base >=======================-->
     <source path="dev/webfx/kit/mapper/peers/javafxcontrols/base"/>
     <!--====================< webfx-kit-javafxcontrols-peers-gwt-j2cl >=====================-->
@@ -123,16 +120,11 @@
     <source path="dev/webfx/kit/launcher"/>
     <source path="dev/webfx/kit/launcher/spi"/>
     <source path="dev/webfx/kit/launcher/spi/impl/base"/>
-    <!--===================< webfx-kit-platform-audio-openjfx-gwt-j2cl >====================-->
-    <source path="dev/webfx/kit/platform/audio/spi/impl/openjfxgwtj2cl"/>
     <!--=================================< webfx-kit-util >=================================-->
     <source path="dev/webfx/kit/util/properties"/>
     <source path="dev/webfx/kit/util/properties/conversion"/>
     <!--==============================< webfx-kit-util-scene >==============================-->
     <source path="dev/webfx/kit/util/scene"/>
-    <!--==============================< webfx-platform-audio >==============================-->
-    <source path="dev/webfx/platform/audio"/>
-    <source path="dev/webfx/platform/audio/spi"/>
     <!--==============================< webfx-platform-boot >===============================-->
     <source path="dev/webfx/platform/boot"/>
     <source path="dev/webfx/platform/boot/spi"/>
