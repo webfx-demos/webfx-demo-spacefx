@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project applicationId="dev.webfx.demo.spacefx" applicationLabel="SpaceFX">
+
+    <exported-packages>
+        <source-packages/>
+        <resource-package>eu.hansolo.spacefx</resource-package>
+    </exported-packages>
+
+    <providers>
+        <provider interface="javafx.application.Application">eu.hansolo.spacefx.SpaceFX</provider>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules/>
+        <plugin-module>webfx-demo-spacefx-css</plugin-module>
+    </dependencies>
+
+</project>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project executable="true">
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module scope="runtime">javafx-media</undetected-module> <!-- because otherwise just scope="provided" from webfx-kit-platform-audio-openjfx-gwt -->
+        </used-by-source-modules>
+    </dependencies>
+
+</project>
