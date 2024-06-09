@@ -79,6 +79,7 @@ public class Config {
     public static final long        BIG_TORPEDO_BONUS_INTERVAL          = 60_000_000_000L;
     public static final long        SPEED_UP_BONUS_INTERVAL             = 80_000_000_000L;
     public static final long        STARBURST_BONUS_INTERVAL            = 100_000_000_000L;
+    public static final long        BLASTER_BONUS_INTERVAL              = 50_000_000_000L;
     public static final int         NO_OF_KILLS_STAGE_1                 = 50;
     public static final int         NO_OF_KILLS_STAGE_2                 = 100;
     public static final double      FIRST_QUARTER_WIDTH                 = WIDTH * 0.25;
