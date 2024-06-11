@@ -41,12 +41,13 @@ public class Config {
     //public static final boolean     SHOW_BUTTONS                        = !isDesktop();
     //public static final boolean     SHOW_BUTTONS                        = false; //Platform.isSupported(ConditionalFeature.INPUT_MULTITOUCH);
     public static final int         NO_OF_STARS                         = SHOW_STARS ? (int) (SCALING_FACTOR * 200) : 0;
-    public static final int         NO_OF_ASTEROIDS = SHOW_ASTEROIDS ? (int) (SCALING_FACTOR * 10) : 0;
-    public static final int         NO_OF_LIFES                         = 5;
+    public static final int         NO_OF_ASTEROIDS                     = SHOW_ASTEROIDS ? (int) (SCALING_FACTOR * 10) : 0;
+    public static final int         NO_OF_LIVES = 5;
     public static final int         NO_OF_SHIELDS                       = 10;
     public static final long        DEFLECTOR_SHIELD_TIME               = 5_000_000_000L;
     public static final long        BIG_TORPEDO_TIME                    = 40_000_000_000L;
     public static final long        STARBURST_TIME                      = 40_000_000_000L;
+    public static final long        STARBURST360_TIME                   = 30_000_000_000L;
     public static final long        SPEED_UP_TIME                       = 60_000_000_000L;
     public static final int         MAX_NO_OF_ROCKETS                   = 3;
     public static final double      TORPEDO_SPEED                       = 6 * VELOCITY_FACTOR_Y;
