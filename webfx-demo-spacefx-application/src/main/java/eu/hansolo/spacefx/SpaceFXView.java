@@ -69,7 +69,6 @@ public class SpaceFXView extends StackPane {
     private static final Random                     RND                     = new Random();
     private static final boolean                    IS_BROWSER              = UserAgent.isBrowser();
 
-    //private              Task<Boolean>              initTask;
     private              Level1                     level1;
     private              Level2                     level2;
     private              Level3                     level3;
@@ -79,7 +78,6 @@ public class SpaceFXView extends StackPane {
     private              boolean                    running;
     private              boolean                    gameOverScreen;
     private              boolean                    hallOfFameScreen;
-    //private              Properties                 properties;
     private              Label                      playerInitialsLabel;
     private              InitialDigit               digit1;
     private              InitialDigit               digit2;
@@ -94,13 +92,7 @@ public class SpaceFXView extends StackPane {
     private final        Image                      startImg                = WebFXUtil.newImage("startscreen.jpg");
     private final        Image                      gameOverImg             = WebFXUtil.newImage("gameover.jpg");
     private final        Image                      hallOfFameImg           = WebFXUtil.newImage("halloffamescreen.jpg");
-    //private final        Image                      startImg                = isDesktop() ? WebFxUtil.newImage("startscreen.jpg")) : isIOS() ? WebFxUtil.newImage("startscreenIOS.jpg")) : WebFxUtil.newImage("startscreenAndroid.png"));
-    //private final        Image                      gameOverImg             = isDesktop() ? WebFxUtil.newImage("gameover.jpg")) : isIOS() ? WebFxUtil.newImage("gameoverIOS.jpg")) : WebFxUtil.newImage("gameoverAndroid.png"));
-    //private final        Image                      hallOfFameImg           = isDesktop() ? WebFxUtil.newImage("halloffamescreen.jpg")) : isIOS() ? WebFxUtil.newImage("halloffamescreenIOS.jpg")) : WebFxUtil.newImage("halloffamescreenAndroid.png"));
     private              ScaledImage[]              asteroidImages;
-    //private              Image                      torpedoButtonImg;
-    //private              Image                      rocketButtonImg;
-    //private              Image                      shieldButtonImg;
     private              ScaledImage                spaceshipImg;
     private              ScaledImage                spaceshipUpImg;
     private              ScaledImage                spaceshipDownImg;
@@ -190,7 +182,6 @@ public class SpaceFXView extends StackPane {
     private              Blaster                    blaster;
     private              long                       score;
     private              long                       levelKills;
-    private              long                       kills;
     private              double                     scorePosX;
     private              double                     scorePosY;
     private              double                     mobileOffsetY;
@@ -222,7 +213,6 @@ public class SpaceFXView extends StackPane {
     private              Circle                     shipTouchArea;
     private              double                     shipTouchGoalX;
     private              double                     shipTouchGoalY;
-    //private              EventHandler<TouchEvent>   touchHandler;
     private              boolean                    autoFire;
     private              boolean                    gamePaused;
     private              long                       gamePauseNanoTime;
@@ -1407,7 +1397,6 @@ public class SpaceFXView extends StackPane {
                     new EnemyBossExplosion(enemyBoss.x - ENEMY_BOSS_EXPLOSION_FRAME_CENTER * 0.5, enemyBoss.y - ENEMY_BOSS_EXPLOSION_FRAME_CENTER * 0.5, enemyBoss.vX,
                             enemyBoss.vY, 0.5));
             score += enemyBoss.value;
-            kills++;
             levelKills++;
             enemyBoss.toBeRemoved = true;
             playSound(enemyBossExplosionSound);
@@ -1421,7 +1410,6 @@ public class SpaceFXView extends StackPane {
         if (levelBoss.hits <= 0) {
             levelBossExplosions.add(new LevelBossExplosion(levelBoss.x - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.y - LEVEL_BOSS_EXPLOSION_FRAME_CENTER, levelBoss.vX, levelBoss.vY, 1.0));
             score += levelBoss.value;
-            kills++;
             levelBoss.toBeRemoved = true;
             levelBossActive = false;
             levelKills = 0;
@@ -1721,7 +1709,6 @@ public class SpaceFXView extends StackPane {
         noOfLives   = NO_OF_LIVES;
         noOfShields = NO_OF_SHIELDS;
         score       = 0;
-        kills       = 0;
         levelKills  = 0;
         applyGameMusic();
 
@@ -1941,7 +1928,6 @@ public class SpaceFXView extends StackPane {
         long now                      = gameNanoTime();
         score                         = 0;
         levelKills                    = 0;
-        kills                         = 0;
         hasBeenHit                    = false;
         noOfLives                     = NO_OF_LIVES;
         noOfShields                   = NO_OF_SHIELDS;
@@ -1957,7 +1943,7 @@ public class SpaceFXView extends StackPane {
         lastStarBlast                 = now;
         lastBigTorpedoBonus           = randomiseBonusNanoTime(now);
         lastStarburstBonus            = randomiseBonusNanoTime(now);
-        lastBlasterBonus              = randomiseBonusNanoTime(now);
+        lastBlasterBonus              = randomiseBonusNanoTime(now - BLASTER_BONUS_INTERVAL);
         lastSpeedUp                   = randomiseBonusNanoTime(now);
         backgroundViewportY           = SWITCH_POINT;
         autoFire = false;
@@ -2285,7 +2271,7 @@ public class SpaceFXView extends StackPane {
         private void update() {
             factor = factor * 0.96;
             radius *= (1 + factor);
-            if (radius > HEIGHT)
+            if (y - radius < -0.25 * HEIGHT && y + radius > 1.25 * HEIGHT)
                 toBeRemoved = true;
         }
     }
@@ -2449,7 +2435,6 @@ public class SpaceFXView extends StackPane {
 
         private void onEnemyHit(Enemy enemy, boolean rocket) {
             score += enemy.value;
-            kills++;
             levelKills++;
             enemy.toBeRemoved = true;
             if (rocket) {
