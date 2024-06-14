@@ -1362,10 +1362,9 @@ public class SpaceFXView extends StackPane {
             blasterWave = new BlasterWave();
             lastBlasterBonus = randomiseBonusNanoTime(gameNanoTime());
             playSound(blasterSound);
-            return false;
         }
-        // If ship inside blaster circle, it's protected
-        if (isHitBlasterWaveCircle(spaceShip.x, spaceShip.y, spaceShip.radius))
+        // The spaceship is protected during the blaster wave
+        if (blasterWave != null)
             return false;
         spaceShipExplosion.countX = 0;
         spaceShipExplosion.countY = 0;
@@ -1951,7 +1950,7 @@ public class SpaceFXView extends StackPane {
         lastStarBlast                 = now;
         lastBigTorpedoBonus           = randomiseBonusNanoTime(now);
         lastStarburstBonus            = randomiseBonusNanoTime(now);
-        lastBlasterBonus              = now - BLASTER_BONUS_INTERVAL;
+        lastBlasterBonus              = randomiseBonusNanoTime(now - BLASTER_BONUS_INTERVAL);
         lastSpeedUp                   = randomiseBonusNanoTime(now);
         backgroundViewportY           = SWITCH_POINT;
         autoFire = false;
