@@ -1204,14 +1204,14 @@ public class SpaceFXView extends StackPane {
                 blasterWave = null;
             else {
                 ctx.save();
+                blasterWaveColor = blasterWaveColor.deriveColor(10, 1, 1, 1);
                 double x = blasterWave.x, y = blasterWave.y, r = blasterWave.radius, r2 = blasterWave.radius2, rm = (r + r2) / 2;
                 ctx.setStroke(Color.WHITE);
                 ctx.setLineWidth(50);
                 ctx.strokeOval(x - r2, y - r2, 2 * r2, 2 * r2);
-                ctx.setStroke(new Color(1, 1, 1, 0.2));
+                ctx.setStroke(blasterWaveColor.deriveColor(1, 1, 1, 0.3));
                 ctx.setLineWidth(r2 - r);
                 ctx.strokeOval(x - rm, y - rm, 2 * rm, 2 * rm);
-                blasterWaveColor = blasterWaveColor.deriveColor(10, 1, 1, 1);
                 ctx.setStroke(blasterWaveColor);
                 ctx.setLineWidth(20);
                 ctx.strokeOval(x - r, y - r, 2 * r, 2 * r);
