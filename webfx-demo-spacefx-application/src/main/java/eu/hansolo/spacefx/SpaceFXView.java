@@ -62,9 +62,8 @@ import static eu.hansolo.spacefx.Config.*;
 
 public class SpaceFXView extends StackPane {
 
-    private static final Color                      STAR_COLOR = Color.rgb(255, 255, 255, 0.9);
-    private static final Color                      BLASTER_COLOR = Color.rgb(228, 72, 228);
-    private static final boolean                    ENABLE_NEW_VERSION = true;
+    private static final Color                      STAR_COLOR              = Color.rgb(255, 255, 255, 0.9);
+    private static final boolean                    ENABLE_NEW_VERSION      = true;
     private static final long                       SCREEN_TOGGLE_INTERVAL  = 10_000_000_000L;
     private static final Random                     RND                     = new Random();
     private static final boolean                    IS_BROWSER              = UserAgent.isBrowser();
@@ -179,7 +178,8 @@ public class SpaceFXView extends StackPane {
     private              List<UpExplosion>          upExplosions;
     private              List<Hit>                  hits;
     private              List<EnemyHit>             enemyHits;
-    private              Blaster                    blaster;
+    private              BlasterWave                blasterWave;
+    private              Color                      blasterWaveColor = Color.rgb(228, 72, 228, 0.5);
     private              long                       score;
     private              long                       levelKills;
     private              double                     scorePosX;
@@ -804,16 +804,14 @@ public class SpaceFXView extends StackPane {
         // Draw Stars
         if (SHOW_STARS) {
             ctx.setFill(STAR_COLOR);
-            for (int i = 0; i < NO_OF_STARS; i++) {
-                Star star = stars[i];
+            forEach(stars, star -> {
                 star.update();
                 ctx.fillOval(star.x, star.y, star.size, star.size);
-            }
+            });
         }
 
         // Draw Asteroids
-        for (int i = 0 ; i < NO_OF_ASTEROIDS ; i++) {
-            Asteroid asteroid = asteroids[i];
+        forEach(asteroids, asteroid -> {
             asteroid.update();
             ctx.save();
             ctx.translate(asteroid.cX, asteroid.cY);
@@ -824,9 +822,10 @@ public class SpaceFXView extends StackPane {
             ctx.restore();
 
             // Check for blaster hit with enemy boss
-            if (isHitBlasterCircle(asteroid.x, asteroid.y, asteroid.radius)) {
+            if (isHitBlasterWaveCircle(asteroid.x, asteroid.y, asteroid.radius)) {
                 asteroid.hits = 0;
                 onAsteroidHit(asteroid, asteroid.x, asteroid.y, false);
+                return;
             }
 
             // Check for torpedo hits
@@ -869,7 +868,7 @@ public class SpaceFXView extends StackPane {
                     asteroid.respawn();
                 }
             }
-        }
+        });
 
         // Draw Wave
         forEach(waves, wave -> {
@@ -895,9 +894,9 @@ public class SpaceFXView extends StackPane {
             ctx.restore();
 
             // Check for blaster hit with enemy boss
-            if (isHitBlasterCircle(enemyBoss.x, enemyBoss.y, enemyBoss.radius)) {
+            if (isHitBlasterWaveCircle(enemyBoss.x, enemyBoss.y, enemyBoss.radius)) {
                 enemyBoss.hits = 0;
-                onEnemyBossHit(enemyBoss, blaster.x, blaster.y);
+                onEnemyBossHit(enemyBoss, blasterWave.x, blasterWave.y);
             }
 
             // Check for torpedo hits with enemy boss
@@ -958,7 +957,7 @@ public class SpaceFXView extends StackPane {
             double lbx = levelBoss.x, lby = levelBoss.y + levelBoss.radiusY - levelBoss.radiusX;
 
             // Check for blaster hit with level boss
-            if (isHitBlasterCircle(levelBoss.x, levelBoss.y, levelBoss.radius)) {
+            if (isHitBlasterWaveCircle(levelBoss.x, levelBoss.y, levelBoss.radius)) {
                 levelBoss.hits -= 2;
                 onLevelBossHit(levelBoss, levelBoss.x, levelBoss.y);
             }
@@ -1199,16 +1198,25 @@ public class SpaceFXView extends StackPane {
         });
 
         // Draw Blaster
-        if (blaster != null) {
-            ctx.save();
-            ctx.setStroke(BLASTER_COLOR);
-            ctx.setLineWidth(7);
-            blaster.update();
-            if (blaster.toBeRemoved)
-                blaster = null;
-            else
-                ctx.strokeOval(blaster.x - blaster.radius, blaster.y - blaster.radius, 2 * blaster.radius, 2 * blaster.radius);
-            ctx.restore();
+        if (blasterWave != null) {
+            blasterWave.update();
+            if (blasterWave.toBeRemoved)
+                blasterWave = null;
+            else {
+                ctx.save();
+                double x = blasterWave.x, y = blasterWave.y, r = blasterWave.radius, r2 = blasterWave.radius2, rm = (r + r2) / 2;
+                ctx.setStroke(Color.WHITE);
+                ctx.setLineWidth(50);
+                ctx.strokeOval(x - r2, y - r2, 2 * r2, 2 * r2);
+                ctx.setStroke(new Color(1, 1, 1, 0.2));
+                ctx.setLineWidth(r2 - r);
+                ctx.strokeOval(x - rm, y - rm, 2 * rm, 2 * rm);
+                blasterWaveColor = blasterWaveColor.deriveColor(10, 1, 1, 1);
+                ctx.setStroke(blasterWaveColor);
+                ctx.setLineWidth(20);
+                ctx.strokeOval(x - r, y - r, 2 * r, 2 * r);
+                ctx.restore();
+            }
         }
 
         // Draw Spaceship, score, lives and shields
@@ -1351,13 +1359,13 @@ public class SpaceFXView extends StackPane {
     private boolean onSpaceshipHit() { // returns true if game over
         if (blasterEnabled) {
             blasterEnabled = false;
-            blaster = new Blaster();
+            blasterWave = new BlasterWave();
             lastBlasterBonus = randomiseBonusNanoTime(gameNanoTime());
             playSound(blasterSound);
             return false;
         }
         // If ship inside blaster circle, it's protected
-        if (isHitBlasterCircle(spaceShip.x, spaceShip.y, spaceShip.radius))
+        if (isHitBlasterWaveCircle(spaceShip.x, spaceShip.y, spaceShip.radius))
             return false;
         spaceShipExplosion.countX = 0;
         spaceShipExplosion.countY = 0;
@@ -1598,9 +1606,9 @@ public class SpaceFXView extends StackPane {
     }
 
 
-    // Blaster hit test
-    private boolean isHitBlasterCircle(final double c2X, final double c2Y, final double c2R) {
-        return blaster != null && isHitCircleCircle(blaster.x, blaster.y, blaster.radius, c2X, c2Y, c2R);
+    // Blaster wave hit test
+    private boolean isHitBlasterWaveCircle(final double c2X, final double c2Y, final double c2R) {
+        return blasterWave != null && isHitCircleCircle(blasterWave.x, blasterWave.y, blasterWave.radius, c2X, c2Y, c2R);
     }
 
     // Hit test
@@ -1943,7 +1951,7 @@ public class SpaceFXView extends StackPane {
         lastStarBlast                 = now;
         lastBigTorpedoBonus           = randomiseBonusNanoTime(now);
         lastStarburstBonus            = randomiseBonusNanoTime(now);
-        lastBlasterBonus              = randomiseBonusNanoTime(now - BLASTER_BONUS_INTERVAL);
+        lastBlasterBonus              = now - BLASTER_BONUS_INTERVAL;
         lastSpeedUp                   = randomiseBonusNanoTime(now);
         backgroundViewportY           = SWITCH_POINT;
         autoFire = false;
@@ -2261,8 +2269,9 @@ public class SpaceFXView extends StackPane {
         }
     }
 
-    private class Blaster {
-        private       double radius = spaceShip.radius / 2;
+    private class BlasterWave {
+        private double radius = spaceShip.radius / 2;
+        private double radius2;
         private final double x = spaceShip.x;
         private final double y = spaceShip.y;
         private double factor = 0.2;
@@ -2271,6 +2280,7 @@ public class SpaceFXView extends StackPane {
         private void update() {
             factor = factor * 0.96;
             radius *= (1 + factor);
+            radius2 = 8 * radius;
             if (y - radius < -0.25 * HEIGHT && y + radius > 1.25 * HEIGHT)
                 toBeRemoved = true;
         }
@@ -2385,7 +2395,7 @@ public class SpaceFXView extends StackPane {
                     ctx.restore();
 
                     // Check for blaster hit
-                    if (isHitBlasterCircle(enemy.x, enemy.y, enemy.radius)) {
+                    if (isHitBlasterWaveCircle(enemy.x, enemy.y, enemy.radius)) {
                         onEnemyHit(enemy, false);
                     }
 
@@ -2833,7 +2843,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -2860,7 +2870,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -2994,7 +3004,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3042,7 +3052,7 @@ public class SpaceFXView extends StackPane {
 
             r = Math.toDegrees(Math.atan2(vY, vX)) - 90;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3222,7 +3232,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3270,7 +3280,7 @@ public class SpaceFXView extends StackPane {
 
             r = Math.toDegrees(Math.atan2(vY, vX)) - 90;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3301,7 +3311,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3954,6 +3964,14 @@ public class SpaceFXView extends StackPane {
             T t = list.get(i);
             if (t != null && filter.test(t))
                 list.remove(i--);
+        }
+    }
+
+    private static <T> void forEach(T array[], Consumer<? super T> action) {
+        for (int i = 0; i < array.length; i++) {
+            T t = array[i];
+            if (t != null) // Very rare, but it was observed that for any reason it could be null (causing NPE in action code)
+                action.accept(t);
         }
     }
 
