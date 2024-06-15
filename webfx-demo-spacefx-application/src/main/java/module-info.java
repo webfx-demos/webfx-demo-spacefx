@@ -15,6 +15,8 @@ module webfx.demo.spacefx.application {
     requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.visibility;
+    requires jdk.jconsole;
+    requires webfx.platform.console;
 
     // Exported packages
     exports eu.hansolo.spacefx;
