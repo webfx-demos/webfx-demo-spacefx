@@ -516,11 +516,9 @@ public class SpaceFXView extends StackPane {
 
         // background music
         WebFXUtil.setLooping(music, true);
-        setMusicVolume(music, 1);
 
         // for game background music
         WebFXUtil.setLooping(gameMusic, true);
-        setMusicVolume(gameMusic, 1);
 
         // Load sounds
         laserSound              = newSound("laserSound.mp3");
@@ -711,15 +709,6 @@ public class SpaceFXView extends StackPane {
 
         deflectorShieldRadius   = deflectorShieldImg.getWidth() * 0.5;
         spaceShip               = new SpaceShip(spaceshipImg, spaceshipUpImg, spaceshipDownImg);
-
-        // Adjust audio clip volumes (volume is relative to sound, a 0.5 factor will be applied in addition compared to music)
-        setSoundVolume(explosionSound, 0.5); // explosionSound.mp3
-        setSoundVolume(torpedoHitSound, 0.5); // hit.mp3
-        setSoundVolume(laserSound, 0.3); // laserSound.mp3
-        setSoundVolume(spaceShipExplosionSound, 0.5); // spaceShipExplosionSound.mp3
-        setSoundVolume(asteroidExplosionSound, 0.7); // asteroidExplosion.mp3
-        setSoundVolume(shieldUpSound, 2); // asteroidExplosion.mp3
-        setSoundVolume(rainbowBlasterSound, 2); // asteroidExplosion.mp3
 
         initAsteroids();
 
@@ -1728,9 +1717,10 @@ public class SpaceFXView extends StackPane {
                 // Increasing minimal difficulty, unless we already reach the most difficulty level
                 increaseDifficulty();
             } else {
-                if (level.getDifficulty().compareTo(minLevelDifficulty) > 0)
+                if (level.getDifficulty().compareTo(minLevelDifficulty) > 0) {
                     minLevelDifficulty = level.getDifficulty();
-                displayDifficulty();
+                    displayDifficulty();
+                }
             }
 
             levelDifficulty = minLevelDifficulty;
@@ -1806,24 +1796,35 @@ public class SpaceFXView extends StackPane {
     }
 
     private static MediaPlayer newMusic(String resourceName) {
-        return setMusicVolume(WebFXUtil.newMusic(resourceName), 1);
+        return WebFXUtil.newMusic(resourceName);
     }
 
     private static AudioClip newSound(String resourceName) {
-        return setSoundVolume(WebFXUtil.newSound(resourceName), 1);
-    }
-
-    private static MediaPlayer setMusicVolume(MediaPlayer music, double volume) {
-        if (music != null) {
-            music.setVolume(volume);
+        // Adjusting sounds volume, because they are not all the same level and many are too loud compared to the music
+        // especially when there are lots of ennemies.
+        double volume;
+        switch (resourceName) {
+            case "explosionSound.mp3":
+            case "hit.mp3":
+            case "spaceShipExplosionSound.mp3":
+                volume = 0.25;
+                break;
+            case "laserSound.mp3":
+                volume = 0.15;
+                break;
+            case "asteroidExplosion.mp3":
+                volume = 0.35;
+                break;
+            case "shieldUp.mp3":
+            case "rainbowBlasterSound.mp3":
+            case "levelUp.mp3":
+                volume = 1;
+                break;
+            default:
+                volume = 0.5;
         }
-        return music;
-    }
-
-    private static AudioClip setSoundVolume(AudioClip sound, double volume) {
-        if (sound != null) {
-            sound.setVolume(volume * 0.5); // Applying a 0.5 factor (otherwise sounds are too loud compared to music when there is a lot of ennemies)
-        }
+        AudioClip sound = WebFXUtil.newSound(resourceName);
+        sound.setVolume(volume);
         return sound;
     }
 
