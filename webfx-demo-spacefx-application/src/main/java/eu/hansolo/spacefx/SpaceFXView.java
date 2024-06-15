@@ -67,6 +67,23 @@ public class SpaceFXView extends StackPane {
     private static final long                       SCREEN_TOGGLE_INTERVAL  = 10_000_000_000L;
     private static final Random                     RND                     = new Random();
     private static final boolean                    IS_BROWSER              = UserAgent.isBrowser();
+    private static final Color[] RAINBOW_BLASTER_WAVES_COLORS = {
+            whiten(Color.rgb(255, 0,   0,   0.50), 0), // red
+            whiten(Color.rgb(255, 165, 0,   0.40), 1), // orange
+            whiten(Color.rgb(255, 255, 0,   0.35), 2), // yellow
+            whiten(Color.rgb(0,   128, 0,   0.30), 3), // green
+            whiten(Color.rgb(0,   255, 255, 0.25), 4), // cyan
+            whiten(Color.rgb(0,   0,   255, 0.20), 5)  // blue
+    };
+
+    private static Color whiten(Color rainbowColor, int waveIndex) {
+        // Whiten color (making outer wave whiter)
+        double rainbowFactor = 1.0 + ((0.1 - 1.0) * waveIndex) / 5; // from 1.0 (red => keeps red) to 0.1 (blue => more white)
+        double red   = Math.min(1, rainbowColor.getRed()   * rainbowFactor + 1 - rainbowFactor);
+        double green = Math.min(1, rainbowColor.getGreen() * rainbowFactor + 1 - rainbowFactor);
+        double blue  = Math.min(1, rainbowColor.getBlue()  * rainbowFactor + 1 - rainbowFactor);
+        return Color.color(red, green, blue, rainbowColor.getOpacity());
+    }
 
     private              Level1                     level1;
     private              Level2                     level2;
@@ -109,12 +126,12 @@ public class SpaceFXView extends StackPane {
     private              ScaledImage                bigTorpedoBonusImg;
     private              ScaledImage                starburstBonusImg;
     private              ScaledImage                starburst360BonusImg;
-    private              ScaledImage                blasterBonusImg;
+    private              ScaledImage                rainbowBlasterBonusImg;
     private              ScaledImage                speedUpImg;
     private              ScaledImage                miniBigTorpedoBonusImg;
     private              ScaledImage                miniStarburstBonusImg;
     private              ScaledImage                miniStarburst360BonusImg;
-    private              ScaledImage                miniBlasterBonusImg;
+    private              ScaledImage                miniRainbowBlasterBonusImg;
     private              ScaledImage                miniSpeedUpImg;
     private              ScaledImage                upExplosionImg;
     private              ScaledImage                rocketExplosionImg;
@@ -129,7 +146,7 @@ public class SpaceFXView extends StackPane {
     private              AudioClip                  torpedoHitSound;
     private              AudioClip                  spaceShipExplosionSound;
     private              AudioClip                  enemyBossExplosionSound;
-    private              AudioClip                  blasterSound;
+    private              AudioClip                  rainbowBlasterSound;
     private              AudioClip                  gameOverSound;
     private              AudioClip                  shieldHitSound;
     private              AudioClip                  enemyHitSound;
@@ -178,8 +195,7 @@ public class SpaceFXView extends StackPane {
     private              List<UpExplosion>          upExplosions;
     private              List<Hit>                  hits;
     private              List<EnemyHit>             enemyHits;
-    private              BlasterWave                blasterWave;
-    private              Color                      blasterWaveColor = Color.rgb(228, 72, 228, 0.5);
+    private              RainbowBlasterWaves        rainbowBlasterWaves;
     private              long                       score;
     private              long                       levelKills;
     private              double                     scorePosX;
@@ -192,8 +208,8 @@ public class SpaceFXView extends StackPane {
     private              boolean                    starburstEnabled;
     private              boolean                    starburst360Enabled;
     private              boolean                    speedUpEnabled;
-    private              boolean                    blasterEnabled;
-    private              boolean                    blasterBonusShowing;
+    private              boolean                    rainbowBlasterEnabled;
+    private              boolean                    rainbowBlasterBonusShowing;
     private              long                       lastShieldActivated;
     private              long                       lastStarburstActivated;
     private              long                       lastEnemyBossAttack;
@@ -205,7 +221,7 @@ public class SpaceFXView extends StackPane {
     private              long                       lastStarBlast;
     private              long                       lastBigTorpedoBonus;
     private              long                       lastStarburstBonus;
-    private              long                       lastBlasterBonus;
+    private              long lastRainbowBlasterBonus;
     private              long                       lastSpeedUp;
     private              long                       lastTimerCall;
     private              AnimationTimer             timer;
@@ -529,7 +545,7 @@ public class SpaceFXView extends StackPane {
         lifeUpSound             = newSound("lifeUp.mp3");
         levelUpSound            = newSound("levelUp.mp3");
         bonusSound              = newSound("bonus.mp3");
-        blasterSound            = newSound("blasterSound.mp3");
+        rainbowBlasterSound     = newSound("rainbowBlasterSound.mp3");
 
         // Variable initialization
         canvas                        = new Canvas(WIDTH, HEIGHT);
@@ -599,9 +615,9 @@ public class SpaceFXView extends StackPane {
                     spawnSpeedUp();
                     lastSpeedUp = randomiseBonusNanoTime(now);
                 }
-                if (!blasterEnabled && !blasterBonusShowing && now > lastBlasterBonus + BLASTER_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.NINJA) >= 0) {
+                if (!rainbowBlasterEnabled && !rainbowBlasterBonusShowing && now > lastRainbowBlasterBonus + RAINBOW_BLASTER_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.NINJA) >= 0) {
                     spawnBlasterBonus();
-                    lastBlasterBonus = randomiseBonusNanoTime(now);
+                    lastRainbowBlasterBonus = randomiseBonusNanoTime(now);
                 }
             }
         };
@@ -621,31 +637,6 @@ public class SpaceFXView extends StackPane {
         };
 
         shipTouchArea = new Circle();
-
-/*
-        touchHandler = e -> {
-            EventType<TouchEvent>  type  = e.getEventType();
-            if (TouchEvent.TOUCH_PRESSED.equals(type)) {
-                if (SHOW_BUTTONS) {
-                    double x = e.getTouchPoint().getX();
-                    double y = e.getTouchPoint().getY();
-                    if (Helper.isInsideCircle(TORPEDO_BUTTON_CX, TORPEDO_BUTTON_CY, TORPEDO_BUTTON_R, x, y)) {
-                        spawnWeapon(spaceShip.x, spaceShip.y);
-                    } else if (Helper.isInsideCircle(ROCKET_BUTTON_CX, ROCKET_BUTTON_CY, ROCKET_BUTTON_R, x, y)) {
-                        if (rockets.size() < MAX_NO_OF_ROCKETS) {
-                            spawnRocket(spaceShip.x, spaceShip.y);
-                        }
-                    } else if (Helper.isInsideCircle(SHIELD_BUTTON_CX, SHIELD_BUTTON_CY, SHIELD_BUTTON_R, x, y)) {
-                        if (noOfShields > 0 && !spaceShip.shield) {
-                            lastShieldActivated = WebFxUtil.nanoTime();
-                            spaceShip.shield = true;
-                            playSound(deflectorShieldSound);
-                        }
-                    }
-                }
-            }
-        };
-*/
 
         initStars();
 
@@ -691,31 +682,27 @@ public class SpaceFXView extends StackPane {
                 ScaledImage.create("asteroid9.png", 130, 130),
                 ScaledImage.create("asteroid10.png", 120, 120),
                 ScaledImage.create("asteroid11.png", 140, 140)};
-                //torpedoButtonImg        = WebFxUtil.newScaledImage("torpedoButton.png", 64, 64);
-                //rocketButtonImg         = WebFxUtil.newScaledImage("rocketButton.png", 64, 64);
-                //shieldButtonImg         = WebFxUtil.newScaledImage("shieldButton.png", 64, 64);
-        asteroidExplosionImg    = ScaledImage.create("asteroidExplosion.png", 1024, 896);
-
-        spaceShipExplosionImg   = ScaledImage.create("spaceshipexplosion.png", 800, 600);
-        deflectorShieldImg      = ScaledImage.create("deflectorshield.png", 100, 100);
-        miniDeflectorShieldImg  = ScaledImage.create("deflectorshield.png", 16, 16);
-        bigTorpedoImg           = ScaledImage.create("bigtorpedo.png", 22, 40);
-        bigTorpedo360Img        = ScaledImage.create("bigtorpedo360.png", 22, 40);
-        shieldUpImg             = ScaledImage.create("shieldUp.png", 50, 50);
-        lifeUpImg               = ScaledImage.create("lifeUp.png", 50, 50);
-        bigTorpedoBonusImg      = ScaledImage.create("bigTorpedoBonus.png", 50, 50);
-        starburstBonusImg       = ScaledImage.create("starburstBonus.png", 50, 50);
-        starburst360BonusImg    = ScaledImage.create("starburst360Bonus.png", 50, 50);
-        speedUpImg              = ScaledImage.create("speedUp.png", 50, 50);
-        blasterBonusImg         = ScaledImage.create("blasterBonus.png", 50, 50);
-        miniBigTorpedoBonusImg  = ScaledImage.create("bigTorpedoBonus.png", 20, 20);
-        miniStarburstBonusImg   = ScaledImage.create("starburstBonus.png", 20, 20);
-        miniStarburst360BonusImg= ScaledImage.create("starburst360Bonus.png", 20, 20);
-        miniSpeedUpImg          = ScaledImage.create("speedUp.png", 20, 20);
-        miniBlasterBonusImg     = ScaledImage.create("blasterBonus.png", 20, 20);
-        upExplosionImg          = ScaledImage.create("upExplosion.png", 400, 700);
-        rocketExplosionImg      = ScaledImage.create("rocketExplosion.png", 960, 768);
-        rocketImg               = ScaledImage.create("rocket.png", 17, 50);
+        asteroidExplosionImg       = ScaledImage.create("asteroidExplosion.png", 1024, 896);
+        spaceShipExplosionImg      = ScaledImage.create("spaceshipexplosion.png", 800, 600);
+        deflectorShieldImg         = ScaledImage.create("deflectorshield.png", 100, 100);
+        miniDeflectorShieldImg     = ScaledImage.create("deflectorshield.png", 16, 16);
+        bigTorpedoImg              = ScaledImage.create("bigtorpedo.png", 22, 40);
+        bigTorpedo360Img           = ScaledImage.create("bigtorpedo360.png", 22, 40);
+        shieldUpImg                = ScaledImage.create("shieldUp.png", 50, 50);
+        lifeUpImg                  = ScaledImage.create("lifeUp.png", 50, 50);
+        bigTorpedoBonusImg         = ScaledImage.create("bigTorpedoBonus.png", 50, 50);
+        starburstBonusImg          = ScaledImage.create("starburstBonus.png", 50, 50);
+        starburst360BonusImg       = ScaledImage.create("starburst360Bonus.png", 50, 50);
+        speedUpImg                 = ScaledImage.create("speedUp.png", 50, 50);
+        rainbowBlasterBonusImg     = ScaledImage.create("rainbowBlasterBonus.png", 50, 50);
+        miniBigTorpedoBonusImg     = ScaledImage.create("bigTorpedoBonus.png", 20, 20);
+        miniStarburstBonusImg      = ScaledImage.create("starburstBonus.png", 20, 20);
+        miniStarburst360BonusImg   = ScaledImage.create("starburst360Bonus.png", 20, 20);
+        miniSpeedUpImg             = ScaledImage.create("speedUp.png", 20, 20);
+        miniRainbowBlasterBonusImg = ScaledImage.create("rainbowBlasterBonus.png", 20, 20);
+        upExplosionImg             = ScaledImage.create("upExplosion.png", 400, 700);
+        rocketExplosionImg         = ScaledImage.create("rocketExplosion.png", 960, 768);
+        rocketImg                  = ScaledImage.create("rocket.png", 17, 50);
 
         // Init levels
         level1 = new Level1();
@@ -732,7 +719,7 @@ public class SpaceFXView extends StackPane {
         setSoundVolume(spaceShipExplosionSound, 0.5); // spaceShipExplosionSound.mp3
         setSoundVolume(asteroidExplosionSound, 0.7); // asteroidExplosion.mp3
         setSoundVolume(shieldUpSound, 2); // asteroidExplosion.mp3
-        setSoundVolume(blasterSound, 2); // asteroidExplosion.mp3
+        setSoundVolume(rainbowBlasterSound, 2); // asteroidExplosion.mp3
 
         initAsteroids();
 
@@ -821,8 +808,8 @@ public class SpaceFXView extends StackPane {
             asteroid.drawImage(ctx);
             ctx.restore();
 
-            // Check for blaster hit with enemy boss
-            if (isHitBlasterWaveCircle(asteroid.x, asteroid.y, asteroid.radius)) {
+            // Check for rainbow blaster waves hit with enemy boss
+            if (isHitRainbowBlasterWavesCircle(asteroid.x, asteroid.y, asteroid.radius)) {
                 asteroid.hits = 0;
                 onAsteroidHit(asteroid, asteroid.x, asteroid.y, false);
                 return;
@@ -893,10 +880,10 @@ public class SpaceFXView extends StackPane {
             ctx.restore();
             ctx.restore();
 
-            // Check for blaster hit with enemy boss
-            if (isHitBlasterWaveCircle(enemyBoss.x, enemyBoss.y, enemyBoss.radius)) {
+            // Check for rainbow blaster waves hit with enemy boss
+            if (isHitRainbowBlasterWavesCircle(enemyBoss.x, enemyBoss.y, enemyBoss.radius)) {
                 enemyBoss.hits = 0;
-                onEnemyBossHit(enemyBoss, blasterWave.x, blasterWave.y);
+                onEnemyBossHit(enemyBoss, rainbowBlasterWaves.x, rainbowBlasterWaves.y);
             }
 
             // Check for torpedo hits with enemy boss
@@ -956,8 +943,8 @@ public class SpaceFXView extends StackPane {
 
             double lbx = levelBoss.x, lby = levelBoss.y + levelBoss.radiusY - levelBoss.radiusX;
 
-            // Check for blaster hit with level boss
-            if (isHitBlasterWaveCircle(levelBoss.x, levelBoss.y, levelBoss.radius)) {
+            // Check for rainbow blaster waves hit with level boss
+            if (isHitRainbowBlasterWavesCircle(levelBoss.x, levelBoss.y, levelBoss.radius)) {
                 levelBoss.hits -= 2;
                 onLevelBossHit(levelBoss, levelBoss.x, levelBoss.y);
             }
@@ -1039,8 +1026,8 @@ public class SpaceFXView extends StackPane {
                     lastStarburstActivated = gameNanoTime();
                     playSound(bonusSound);
                 } else if (bonus instanceof BlasterBonus) {
-                    blasterEnabled = true;
-                    blasterBonusShowing = false;
+                    rainbowBlasterEnabled = true;
+                    rainbowBlasterBonusShowing = false;
                     playSound(shieldUpSound);
                 } else if (bonus instanceof SpeedUp) {
                     speedUpEnabled = true;
@@ -1152,7 +1139,8 @@ public class SpaceFXView extends StackPane {
         // Draw Asteroid Explosions
         forEach(asteroidExplosions, asteroidExplosion -> {
             asteroidExplosion.update();
-            asteroidExplosion.drawFrame(ctx, asteroidExplosionImg, ASTEROID_EXPLOSION_FRAME_WIDTH, ASTEROID_EXPLOSION_FRAME_HEIGHT);
+            if (!asteroidExplosion.toBeRemoved) // may happen
+                asteroidExplosion.drawFrame(ctx, asteroidExplosionImg, ASTEROID_EXPLOSION_FRAME_WIDTH, ASTEROID_EXPLOSION_FRAME_HEIGHT);
         });
 
         // Draw Rocket Explosions
@@ -1198,23 +1186,27 @@ public class SpaceFXView extends StackPane {
         });
 
         // Draw Blaster
-        if (blasterWave != null) {
-            blasterWave.update();
-            if (blasterWave.toBeRemoved)
-                blasterWave = null;
-            else {
+        if (rainbowBlasterWaves != null) {
+            rainbowBlasterWaves.update();
+            if (rainbowBlasterWaves.toBeRemoved)
+                rainbowBlasterWaves = null;
+            else { // drawing rainbow blaster waves
                 ctx.save();
-                blasterWaveColor = blasterWaveColor.deriveColor(10, 1, 1, 1);
-                double x = blasterWave.x, y = blasterWave.y, r = blasterWave.radius, r2 = blasterWave.radius2, rm = (r + r2) / 2;
-                ctx.setStroke(Color.WHITE);
-                ctx.setLineWidth(50);
-                ctx.strokeOval(x - r2, y - r2, 2 * r2, 2 * r2);
-                ctx.setStroke(blasterWaveColor.deriveColor(1, 1, 1, 0.3));
-                ctx.setLineWidth(r2 - r);
-                ctx.strokeOval(x - rm, y - rm, 2 * rm, 2 * rm);
-                ctx.setStroke(blasterWaveColor);
-                ctx.setLineWidth(20);
-                ctx.strokeOval(x - r, y - r, 2 * r, 2 * r);
+                double x = rainbowBlasterWaves.x;
+                double y = rainbowBlasterWaves.y;
+                double r = rainbowBlasterWaves.radius; // internal radius of the current rainbow wave to draw
+                double w = 20; // width of the current rainbow wave to draw (20 = with of inner red wave)
+                for (int i = 0; i < RAINBOW_BLASTER_WAVES_COLORS.length; i++) { // iterating waves from inner to outer
+                    ctx.setStroke(RAINBOW_BLASTER_WAVES_COLORS[i]);
+                    double ra = r + w / 2; // average radius between inner and outer radius of the current wave
+                    ctx.setLineWidth(w);
+                    ctx.strokeOval(x - ra, y - ra, 2 * ra, 2 * ra);
+                    // Preparing next rainbow wave
+                    r += w;
+                    w *= 1.4; // increasing factor (outer waves are larger than inner waves)
+                    // Rainbow color hue rotating effect (for next animation frame)
+                    RAINBOW_BLASTER_WAVES_COLORS[i] = RAINBOW_BLASTER_WAVES_COLORS[i].deriveColor(10, 1, 1, 1);
+                }
                 ctx.restore();
             }
         }
@@ -1312,21 +1304,14 @@ public class SpaceFXView extends StackPane {
                 miniBigTorpedoBonusImg.drawImage(ctx, x, 40 + mobileOffsetY);
                 x += miniBigTorpedoBonusImg.getWidth() + 5;
             }
-            if (blasterEnabled) {
-                miniBlasterBonusImg.drawImage(ctx, x, 40 + mobileOffsetY);
-                x += miniBlasterBonusImg.getWidth() + 5;
+            if (rainbowBlasterEnabled) {
+                miniRainbowBlasterBonusImg.drawImage(ctx, x, 40 + mobileOffsetY);
+                x += miniRainbowBlasterBonusImg.getWidth() + 5;
             }
             if (speedUpEnabled) {
                 miniSpeedUpImg.drawImage(ctx, x, 40 + mobileOffsetY);
             }
         }
-
-        // Draw Buttons
-        /*if (SHOW_BUTTONS) {
-            ctx.drawImage(torpedoButtonImg, TORPEDO_BUTTON_X, TORPEDO_BUTTON_Y);
-            ctx.drawImage(rocketButtonImg, ROCKET_BUTTON_X, ROCKET_BUTTON_Y);
-            ctx.drawImage(shieldButtonImg, SHIELD_BUTTON_X, SHIELD_BUTTON_Y);
-        }*/
 
         // Remove sprites
         removeIf(enemyBosses, sprite -> sprite.toBeRemoved);
@@ -1357,14 +1342,14 @@ public class SpaceFXView extends StackPane {
     }
 
     private boolean onSpaceshipHit() { // returns true if game over
-        if (blasterEnabled) {
-            blasterEnabled = false;
-            blasterWave = new BlasterWave();
-            lastBlasterBonus = randomiseBonusNanoTime(gameNanoTime());
-            playSound(blasterSound);
+        if (rainbowBlasterEnabled) {
+            rainbowBlasterEnabled = false;
+            rainbowBlasterWaves = new RainbowBlasterWaves();
+            lastRainbowBlasterBonus = randomiseBonusNanoTime(gameNanoTime());
+            playSound(rainbowBlasterSound);
         }
-        // The spaceship is protected during the blaster wave
-        if (blasterWave != null)
+        // The spaceship is protected with rainbow blaster waves
+        if (rainbowBlasterWaves != null)
             return false;
         spaceShipExplosion.countX = 0;
         spaceShipExplosion.countY = 0;
@@ -1498,8 +1483,8 @@ public class SpaceFXView extends StackPane {
     }
 
     private void spawnBlasterBonus() {
-        bonuses.add(new BlasterBonus(blasterBonusImg));
-        blasterBonusShowing = true;
+        bonuses.add(new BlasterBonus(rainbowBlasterBonusImg));
+        rainbowBlasterBonusShowing = true;
     }
 
     private void spawnWave() {
@@ -1606,8 +1591,8 @@ public class SpaceFXView extends StackPane {
 
 
     // Blaster wave hit test
-    private boolean isHitBlasterWaveCircle(final double c2X, final double c2Y, final double c2R) {
-        return blasterWave != null && isHitCircleCircle(blasterWave.x, blasterWave.y, blasterWave.radius, c2X, c2Y, c2R);
+    private boolean isHitRainbowBlasterWavesCircle(final double c2X, final double c2Y, final double c2R) {
+        return rainbowBlasterWaves != null && isHitCircleCircle(rainbowBlasterWaves.x, rainbowBlasterWaves.y, rainbowBlasterWaves.radius, c2X, c2Y, c2R);
     }
 
     // Hit test
@@ -1679,7 +1664,7 @@ public class SpaceFXView extends StackPane {
         bigTorpedoesEnabled = false;
         starburstEnabled = false;
         starburst360Enabled = false;
-        blasterEnabled = false;
+        rainbowBlasterEnabled = false;
         speedUpEnabled = false;
         levelBossActive = false;
         torpedoArmed = true;
@@ -1950,7 +1935,7 @@ public class SpaceFXView extends StackPane {
         lastStarBlast                 = now;
         lastBigTorpedoBonus           = randomiseBonusNanoTime(now);
         lastStarburstBonus            = randomiseBonusNanoTime(now);
-        lastBlasterBonus              = randomiseBonusNanoTime(now - BLASTER_BONUS_INTERVAL);
+        lastRainbowBlasterBonus       = randomiseBonusNanoTime(now - RAINBOW_BLASTER_BONUS_INTERVAL);
         lastSpeedUp                   = randomiseBonusNanoTime(now);
         backgroundViewportY           = SWITCH_POINT;
         autoFire = false;
@@ -2167,12 +2152,10 @@ public class SpaceFXView extends StackPane {
         protected       int    countY;
 
 
-        public AnimatedSprite(final int maxFrameX, final int maxFrameY, final double scale) {
-            this(0, 0, 0, 0, 0, 0, maxFrameX, maxFrameY, scale);
-        }
         public AnimatedSprite(final double x, final double y, final double vX, final double vY, final int maxFrameX, final int maxFrameY, final double scale) {
             this(x, y, 0, vX, vY, 0, maxFrameX, maxFrameY, scale);
         }
+
         public AnimatedSprite(final double x, final double y, final double r, final double vX, final double vY, final double vR, final int maxFrameX, final int maxFrameY, final double scale) {
             super(null, x, y, r, vX, vY, vR);
             this.maxFrameX = maxFrameX;
@@ -2268,9 +2251,8 @@ public class SpaceFXView extends StackPane {
         }
     }
 
-    private class BlasterWave {
+    private class RainbowBlasterWaves {
         private double radius = spaceShip.radius / 2;
-        private double radius2;
         private final double x = spaceShip.x;
         private final double y = spaceShip.y;
         private double factor = 0.2;
@@ -2279,7 +2261,6 @@ public class SpaceFXView extends StackPane {
         private void update() {
             factor = factor * 0.96;
             radius *= (1 + factor);
-            radius2 = 8 * radius;
             if (y - radius < -0.25 * HEIGHT && y + radius > 1.25 * HEIGHT)
                 toBeRemoved = true;
         }
@@ -2393,8 +2374,8 @@ public class SpaceFXView extends StackPane {
                     ctx.restore();
                     ctx.restore();
 
-                    // Check for blaster hit
-                    if (isHitBlasterWaveCircle(enemy.x, enemy.y, enemy.radius)) {
+                    // Check for rainbow blaster waves hit
+                    if (isHitRainbowBlasterWavesCircle(enemy.x, enemy.y, enemy.radius)) {
                         onEnemyHit(enemy, false);
                     }
 
@@ -2641,7 +2622,7 @@ public class SpaceFXView extends StackPane {
     private class Torpedo extends Sprite {
 
         public Torpedo(final ScaledImage image, final double x, final double y) {
-            super(image, x, y - image.getWidth(), 0, TORPEDO_SPEED);
+            super(image, x, y - image.getHeight(), 0, TORPEDO_SPEED);
         }
 
 
@@ -2842,7 +2823,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitRainbowBlasterWavesCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -2869,7 +2850,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitRainbowBlasterWavesCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3003,7 +2984,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitRainbowBlasterWavesCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3051,7 +3032,7 @@ public class SpaceFXView extends StackPane {
 
             r = Math.toDegrees(Math.atan2(vY, vX)) - 90;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitRainbowBlasterWavesCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3231,7 +3212,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitRainbowBlasterWavesCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3279,7 +3260,7 @@ public class SpaceFXView extends StackPane {
 
             r = Math.toDegrees(Math.atan2(vY, vX)) - 90;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitRainbowBlasterWavesCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3310,7 +3291,7 @@ public class SpaceFXView extends StackPane {
             x += vX;
             y += vY;
 
-            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitBlasterWaveCircle(x, y, radius)) {
+            if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT || isHitRainbowBlasterWavesCircle(x, y, radius)) {
                 toBeRemoved = true;
             } else if (spaceShip.isVulnerable && !hasBeenHit) {
                 boolean hit = isHitSpaceshipCircle(x, y, radius);
@@ -3342,7 +3323,7 @@ public class SpaceFXView extends StackPane {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
+                if (countY == maxFrameY) {
                     toBeRemoved = true;
                 }
                 countX = 0;
@@ -3367,7 +3348,7 @@ public class SpaceFXView extends StackPane {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
+                if (countY == maxFrameY) {
                     toBeRemoved = true;
                 }
                 countX = 0;
@@ -3395,7 +3376,7 @@ public class SpaceFXView extends StackPane {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
+                if (countY == maxFrameY) {
                     toBeRemoved = true;
                 }
                 countX = 0;
@@ -3445,7 +3426,7 @@ public class SpaceFXView extends StackPane {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
+                if (countY == maxFrameY) {
                     toBeRemoved = true;
                 }
                 countX = 0;
@@ -3470,7 +3451,7 @@ public class SpaceFXView extends StackPane {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
+                if (countY == maxFrameY) {
                     toBeRemoved = true;
                 }
                 countX = 0;
@@ -3496,7 +3477,7 @@ public class SpaceFXView extends StackPane {
                 if (countY == maxFrameY) {
                     countY = 0;
                 }
-                if (countX == 0 && countY == 0) {
+                if (countY == 0) {
                     hasBeenHit = false;
                     spaceShip.x = WIDTH * 0.5;
                     spaceShip.y = HEIGHT - 2 * spaceShip.height;
@@ -3521,7 +3502,7 @@ public class SpaceFXView extends StackPane {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
+                if (countY == maxFrameY) {
                     toBeRemoved = true;
                 }
                 countX = 0;
@@ -3546,7 +3527,7 @@ public class SpaceFXView extends StackPane {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
+                if (countY == maxFrameY) {
                     toBeRemoved = true;
                 }
                 countX = 0;
@@ -3571,7 +3552,7 @@ public class SpaceFXView extends StackPane {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
+                if (countY == maxFrameY) {
                     toBeRemoved = true;
                 }
                 countX = 0;
@@ -3943,7 +3924,7 @@ public class SpaceFXView extends StackPane {
             // Remove lifeUp
             if (x < -size || x - radius > WIDTH || y - height > HEIGHT) {
                 toBeRemoved = true;
-                blasterBonusShowing = false;
+                rainbowBlasterBonusShowing = false;
             }
         }
     }
