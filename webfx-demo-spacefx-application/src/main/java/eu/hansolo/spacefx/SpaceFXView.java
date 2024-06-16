@@ -16,7 +16,6 @@
 
 package eu.hansolo.spacefx;
 
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.useragent.UserAgent;
@@ -610,19 +609,19 @@ public class SpaceFXView extends StackPane {
                     spawnBigTorpedoBonus();
                     lastBigTorpedoBonus = randomiseBonusNanoTime(now);
                 }
-                if (!furyEnabled && now > lastFury + FURY_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.NINJA) >= 0) {
-                    spawnFuryBonus();
-                    lastFury = randomiseBonusNanoTime(now);
-                }
-                if (!starburstEnabled && now > lastStarburstBonus + STARBURST_BONUS_INTERVAL) {
-                    spawnStarburstBonus();
-                    lastStarburstBonus = randomiseBonusNanoTime(now);
-                }
-                if (!speedUpEnabled && now > lastSpeedUp + SPEED_UP_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.NINJA) >= 0) {
+                if (!speedUpEnabled && now > lastSpeedUp + SPEED_UP_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.HERO) >= 0) {
                     spawnSpeedUp();
                     lastSpeedUp = randomiseBonusNanoTime(now);
                 }
-                if (!rainbowBlasterEnabled && !rainbowBlasterBonusShowing && now > lastRainbowBlasterBonus + RAINBOW_BLASTER_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.NINJA) >= 0) {
+                if (!starburstEnabled && now > lastStarburstBonus + STARBURST_BONUS_INTERVAL) {
+                    spawnStarburstBonus(); // Can be starburst 360 if level >= ninja
+                    lastStarburstBonus = randomiseBonusNanoTime(now);
+                }
+                if (!furyEnabled && now > lastFury + FURY_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.JEDI) >= 0) {
+                    spawnFuryBonus();
+                    lastFury = randomiseBonusNanoTime(now);
+                }
+                if (!rainbowBlasterEnabled && !rainbowBlasterBonusShowing && now > lastRainbowBlasterBonus + RAINBOW_BLASTER_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.NEO) >= 0) {
                     spawnBlasterBonus();
                     lastRainbowBlasterBonus = randomiseBonusNanoTime(now);
                 }
@@ -1287,7 +1286,6 @@ public class SpaceFXView extends StackPane {
 
                 if (furyEnabled && !starburstEnabled) {
                     long delta = now - lastFuryActivated;
-                    Console.log(delta);
                     if (delta > FURY_TIME) {
                         furyEnabled = false;
                     }
@@ -1445,12 +1443,15 @@ public class SpaceFXView extends StackPane {
     private void spawnWeapon(final double x, final double y) {
         if (starburstEnabled) {
             fireStarburst();
-        } else if (bigTorpedoesEnabled) {
-            bigTorpedoes.add(new BigTorpedo(bigTorpedoImg, x, y, 0, -BIG_TORPEDO_SPEED * 2.333333, 45));
-            playSound(laserSound);
-        } else {
-            torpedoes.add(new Torpedo(torpedoImg, x, y));
-            playSound(laserSound);
+        } else if (gameNanoTime() - lastTorpedoFired >= MIN_TORPEDO_INTERVAL) {
+            if (bigTorpedoesEnabled) {
+                bigTorpedoes.add(new BigTorpedo(bigTorpedoImg, x, y, 0, -BIG_TORPEDO_SPEED * 2.333333, 45));
+                playSound(laserSound);
+            } else {
+                torpedoes.add(new Torpedo(torpedoImg, x, y));
+                playSound(laserSound);
+            }
+            lastTorpedoFired = gameNanoTime();
         }
     }
 
@@ -1503,7 +1504,7 @@ public class SpaceFXView extends StackPane {
     private void spawnStarburstBonus() {
         //if (level.equals(level1)) { return; }
         if (levelDifficulty == Difficulty.EASY) { return; }
-        boolean is360 = levelDifficulty.compareTo(Difficulty.JEDI) >= 0 && randomBoolean();
+        boolean is360 = levelDifficulty.compareTo(Difficulty.NINJA) >= 0 && randomBoolean() || levelDifficulty == Difficulty.NINJA && score < 100;
         bonuses.add(new StarburstBonus(is360 ? starburst360BonusImg : starburstBonusImg, is360));
     }
 
@@ -1789,11 +1790,14 @@ public class SpaceFXView extends StackPane {
     }
 
     private void setDifficulty(Difficulty difficulty) {
+        boolean changed = minLevelDifficulty != difficulty || initialDifficulty != difficulty;
         if (isRunning())
             minLevelDifficulty = difficulty;
         initialDifficulty = difficulty;
-        PropertyManager.INSTANCE.set("initialDifficulty", difficulty.toString());
-        displayDifficulty();
+        if (changed) {
+            PropertyManager.INSTANCE.set("initialDifficulty", difficulty.toString());
+            displayDifficulty();
+        }
     }
 
     private void displayDifficulty() {
@@ -1979,9 +1983,10 @@ public class SpaceFXView extends StackPane {
         lastStarBlast                 = now;
         lastBigTorpedoBonus           = randomiseBonusNanoTime(now);
         lastStarburstBonus            = randomiseBonusNanoTime(now);
-        lastRainbowBlasterBonus       = randomiseBonusNanoTime(now - RAINBOW_BLASTER_BONUS_INTERVAL);
-        lastSpeedUp                   = randomiseBonusNanoTime(now);
-        lastFury                      = now - FURY_BONUS_INTERVAL;
+        lastSpeedUp                   = initialDifficulty != Difficulty.HERO ? randomiseBonusNanoTime(now) : now - SPEED_UP_BONUS_INTERVAL + 5_000_000_000L;
+        lastStarburstBonus            = initialDifficulty != Difficulty.NINJA ? randomiseBonusNanoTime(now) : now - STARBURST_BONUS_INTERVAL + 5_000_000_000L;
+        lastFury                      = initialDifficulty != Difficulty.JEDI ? randomiseBonusNanoTime(now) : now - FURY_BONUS_INTERVAL + 5_000_000_000L;
+        lastRainbowBlasterBonus       = initialDifficulty != Difficulty.NEO ? randomiseBonusNanoTime(now) : now - RAINBOW_BLASTER_BONUS_INTERVAL + 5_000_000_000L;
         backgroundViewportY           = SWITCH_POINT;
         autoFire = false;
         timer.start();
@@ -2033,15 +2038,12 @@ public class SpaceFXView extends StackPane {
             autoFireScheduled.cancel();
         if (gamePaused)
             return;
-        if (gameNanoTime() - lastTorpedoFired >= MIN_TORPEDO_INTERVAL) {
-            spawnWeapon(spaceShip.x, spaceShip.y);
-            lastTorpedoFired = gameNanoTime();
-            // Auto firing rockets when autoFire is on and levelBoss has fired rockets and torpedo
-            if (autoFire && (spaceShip.shield || !levelBossRockets.isEmpty() || !levelBossTorpedoes.isEmpty()))
-                fireSpaceShipRocket();
-        }
+        spawnWeapon(spaceShip.x, spaceShip.y);
+        // Auto firing rockets when autoFire is on and levelBoss has fired rockets and torpedo
+        if (autoFire && (spaceShip.shield || !levelBossRockets.isEmpty() || !levelBossTorpedoes.isEmpty()))
+            fireSpaceShipRocket();
         if (autoFire && isRunning())
-            autoFireScheduled = Scheduler.scheduleDelay( (furyEnabled ? FURY_AUTO_FIRE_TORPEDO_INTERVAL : AUTO_FIRE_TORPEDO_INTERVAL) / 1_000_000L, this::fireSpaceShipWeapon);
+            autoFireScheduled = Scheduler.scheduleDelay( (furyEnabled && !starburstEnabled ? FURY_AUTO_FIRE_TORPEDO_INTERVAL : AUTO_FIRE_TORPEDO_INTERVAL) / 1_000_000L, this::fireSpaceShipWeapon);
     }
 
     public void setAutoFire(boolean autoFire) {
@@ -2064,7 +2066,7 @@ public class SpaceFXView extends StackPane {
     }
 
     public void fireStarburst() {
-        if (!starburstEnabled || (gameNanoTime() - lastStarBlast < MIN_STARBURST_INTERVAL)) { return; }
+        if (!starburstEnabled/* || (gameNanoTime() - lastStarBlast < MIN_STARBURST_INTERVAL)*/) { return; }
         double offset    = Math.toRadians(-135);
         double angleStep = Math.toRadians(22.5);
         double angle     = 0;

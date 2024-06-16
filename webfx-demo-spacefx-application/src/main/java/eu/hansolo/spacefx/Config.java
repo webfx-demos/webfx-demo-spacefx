@@ -45,7 +45,7 @@ public class Config {
     public static final long        STARBURST_TIME                      = 40_000_000_000L;
     public static final long        STARBURST360_TIME                   = 30_000_000_000L;
     public static final long        SPEED_UP_TIME                       = 60_000_000_000L;
-    public static final long        FURY_TIME                           = 25_000_000_000L;
+    public static final long        FURY_TIME                           = 30_000_000_000L;
     public static final int         MAX_NO_OF_ROCKETS                   = 3;
     public static final double      TORPEDO_SPEED                       = 6 * VELOCITY_FACTOR_Y;
     public static final double      BIG_TORPEDO_SPEED                   = 3 * VELOCITY_FACTOR_Y;
@@ -72,6 +72,7 @@ public class Config {
     public static final long        WAVE_SPAWN_INTERVAL                 = 10_000_000_000L;
     public static final long        BOMB_DROP_INTERVAL                  = 1_000_000_000L;
     public static final long        MIN_TORPEDO_INTERVAL                = 50_000_000L;
+    public static final long        MIN_KEYBOARD_TORPEDO_INTERVAL       = 200_000_000L;
     public static final long        AUTO_FIRE_TORPEDO_INTERVAL          = 300_000_000L;
     public static final long        FURY_AUTO_FIRE_TORPEDO_INTERVAL     = 100_000_000L;
     public static final long        MIN_STARBURST_INTERVAL              = 300_000_000L;
