@@ -613,17 +613,17 @@ public class SpaceFXView extends StackPane {
                     spawnSpeedUp();
                     lastSpeedUp = randomiseBonusNanoTime(now);
                 }
-                if (!starburstEnabled && now > lastStarburstBonus + STARBURST_BONUS_INTERVAL) {
+                if (!starburstEnabled && now > lastStarburstBonus + (levelDifficulty.compareTo(Difficulty.NINJA) >= 0 ? 0.8 : 1) * STARBURST_BONUS_INTERVAL) {
                     spawnStarburstBonus(); // Can be starburst 360 if level >= ninja
                     lastStarburstBonus = randomiseBonusNanoTime(now);
                 }
-                if (!furyEnabled && now > lastFury + FURY_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.JEDI) >= 0) {
-                    spawnFuryBonus();
-                    lastFury = randomiseBonusNanoTime(now);
-                }
-                if (!rainbowBlasterEnabled && !rainbowBlasterBonusShowing && now > lastRainbowBlasterBonus + RAINBOW_BLASTER_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.NEO) >= 0) {
+                if (!rainbowBlasterEnabled && !rainbowBlasterBonusShowing && now > lastRainbowBlasterBonus + RAINBOW_BLASTER_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.JEDI) >= 0) {
                     spawnBlasterBonus();
                     lastRainbowBlasterBonus = randomiseBonusNanoTime(now);
+                }
+                if (!furyEnabled && now > lastFury + FURY_BONUS_INTERVAL && levelDifficulty.compareTo(Difficulty.NEO) >= 0) {
+                    spawnFuryBonus();
+                    lastFury = randomiseBonusNanoTime(now);
                 }
             }
         };
@@ -1985,8 +1985,8 @@ public class SpaceFXView extends StackPane {
         lastStarburstBonus            = randomiseBonusNanoTime(now);
         lastSpeedUp                   = initialDifficulty != Difficulty.HERO ? randomiseBonusNanoTime(now) : now - SPEED_UP_BONUS_INTERVAL + 5_000_000_000L;
         lastStarburstBonus            = initialDifficulty != Difficulty.NINJA ? randomiseBonusNanoTime(now) : now - STARBURST_BONUS_INTERVAL + 5_000_000_000L;
-        lastFury                      = initialDifficulty != Difficulty.JEDI ? randomiseBonusNanoTime(now) : now - FURY_BONUS_INTERVAL + 5_000_000_000L;
-        lastRainbowBlasterBonus       = initialDifficulty != Difficulty.NEO ? randomiseBonusNanoTime(now) : now - RAINBOW_BLASTER_BONUS_INTERVAL + 5_000_000_000L;
+        lastRainbowBlasterBonus       = initialDifficulty != Difficulty.JEDI ? randomiseBonusNanoTime(now) : now - RAINBOW_BLASTER_BONUS_INTERVAL + 5_000_000_000L;
+        lastFury                      = initialDifficulty != Difficulty.NEO ? randomiseBonusNanoTime(now) : now - FURY_BONUS_INTERVAL + 5_000_000_000L;
         backgroundViewportY           = SWITCH_POINT;
         autoFire = false;
         timer.start();

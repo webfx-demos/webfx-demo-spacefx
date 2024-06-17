@@ -25,8 +25,8 @@ public enum Difficulty {
     WARRIOR(15, 2, Color.YELLOW),
     HERO(20, 10, Color.ORANGE), // + speed up bonus
     NINJA(50, 17, Color.ORANGERED), // + starburst 360 bonus
-    JEDI(75, 20, Color.RED), // + auto fire fury bonus
-    NEO(100, 30, Color.BLACK); // + rainbow blaster bonus
+    JEDI(75, 20, Color.RED),  // + rainbow blaster bonus
+    NEO(100, 30, Color.BLACK); // + auto fire fury bonus
 
     public final int noOfEnemies;
     public final int noOfSmartEnemies;

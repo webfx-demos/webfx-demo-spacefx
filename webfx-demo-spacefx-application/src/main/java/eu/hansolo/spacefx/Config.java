@@ -77,7 +77,7 @@ public class Config {
     public static final long        FURY_AUTO_FIRE_TORPEDO_INTERVAL     = 100_000_000L;
     public static final long        MIN_STARBURST_INTERVAL              = 300_000_000L;
     public static final long        BIG_TORPEDO_BONUS_INTERVAL          = 60_000_000_000L;
-    public static final long        SPEED_UP_BONUS_INTERVAL             = 80_000_000_000L;
+    public static final long        SPEED_UP_BONUS_INTERVAL             = 70_000_000_000L;
     public static final long        FURY_BONUS_INTERVAL                 = 160_000_000_000L;
     public static final long        STARBURST_BONUS_INTERVAL            = 100_000_000_000L;
     public static final long        RAINBOW_BLASTER_BONUS_INTERVAL      = 45_000_000_000L;
