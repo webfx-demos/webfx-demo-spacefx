@@ -1865,6 +1865,13 @@ public class SpaceFXView extends StackPane {
             case "shieldUp.mp3":
             case "rainbowBlasterSound.mp3":
             case "levelUp.mp3":
+            case "shieldhit.mp3":
+            case "rocketExplosion.mp3":
+            case "levelBossBomb.mp3":
+            case "explosionSound1.mp3":
+            case "enemyBossShieldHit.mp3":
+            case "enemyBossExplosion.mp3":
+            case "deflectorshieldSound.mp3":
                 volume = 1;
                 break;
             default:
