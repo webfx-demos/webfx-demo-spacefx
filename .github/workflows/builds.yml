@@ -25,7 +25,7 @@ name: Multi-OS builds
 
 on:
   push:
-    branches: [ webfx-next ]
+    branches: [ webfx-new ]
   workflow_dispatch:
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        app: [{name: 'SpaceFX', module-token: 'webfx-demo-spacefx', gwt-token: 'webfx_demo_spacefx', gluon-token: 'WebFXDemoSpacefx', j2cl-push-branch: 'spacefx-next', android-package-name: 'dev.webfx.demo.spacefx', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.spacefx', version: '0.1.0-SNAPSHOT'}]
+        app: [{name: 'SpaceFX', module-token: 'webfx-demo-spacefx', gwt-token: 'webfx_demo_spacefx', gluon-token: 'WebFXDemoSpacefx', gwt-push-branch: 'spacefx-gwt', j2cl-push-branch: 'spacefx', android-package-name: 'dev.webfx.demo.spacefx', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.spacefx', version: '0.1.0-SNAPSHOT'}]
         os-config:  [1, 2, 3, 4]
         include:
           - os-config: 1 # Generates builds 1) 2) 3) 4) & 5)
