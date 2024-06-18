@@ -20,8 +20,6 @@ import javafx.scene.paint.Color;
 
 
 public class Config {
-    //public static final String      PROPERTIES_FILE_NAME                = "spacefx.properties";
-    //public static final Rectangle2D VISUAL_BOUNDS                       = isDesktop() ? new Rectangle2D(0, 0, 700, 900) : Screen.getPrimary().getVisualBounds();
     public static final double      WIDTH                               = SpaceFX.WINDOW_WIDTH;
     public static final double      HEIGHT                              = SpaceFX.WINDOW_HEIGHT;
     public static final boolean     IS_PORTRAIT_MODE                    = HEIGHT > WIDTH;
@@ -38,16 +36,16 @@ public class Config {
     public static final boolean     SHOW_ENEMY_BOSS                     = true;
     public static final boolean     SHOW_ENEMIES                        = true;
     public static final boolean     SHOW_ASTEROIDS                      = true;
-    //public static final boolean     SHOW_BUTTONS                        = !isDesktop();
-    //public static final boolean     SHOW_BUTTONS                        = false; //Platform.isSupported(ConditionalFeature.INPUT_MULTITOUCH);
     public static final int         NO_OF_STARS                         = SHOW_STARS ? (int) (SCALING_FACTOR * 200) : 0;
-    public static final int         NO_OF_ASTEROIDS = SHOW_ASTEROIDS ? (int) (SCALING_FACTOR * 10) : 0;
-    public static final int         NO_OF_LIFES                         = 5;
+    public static final int         NO_OF_ASTEROIDS                     = SHOW_ASTEROIDS ? (int) (SCALING_FACTOR * 10) : 0;
+    public static final int         NO_OF_LIVES = 5;
     public static final int         NO_OF_SHIELDS                       = 10;
     public static final long        DEFLECTOR_SHIELD_TIME               = 5_000_000_000L;
     public static final long        BIG_TORPEDO_TIME                    = 40_000_000_000L;
     public static final long        STARBURST_TIME                      = 40_000_000_000L;
+    public static final long        STARBURST360_TIME                   = 30_000_000_000L;
     public static final long        SPEED_UP_TIME                       = 60_000_000_000L;
+    public static final long        FURY_TIME                           = 30_000_000_000L;
     public static final int         MAX_NO_OF_ROCKETS                   = 3;
     public static final double      TORPEDO_SPEED                       = 6 * VELOCITY_FACTOR_Y;
     public static final double      BIG_TORPEDO_SPEED                   = 3 * VELOCITY_FACTOR_Y;
@@ -69,16 +67,20 @@ public class Config {
     public static final int         SHIELD_DAMAGE                       = 5;
     public static final long        ENEMY_SPAWN_INTERVAL                = (long) (250_000_000L * SCALING_FACTOR);
     public static final long        ENEMY_BOSS_ATTACK_INTERVAL          = 25_000_000_000L;
-    public static final long        SHIELD_UP_SPAWN_INTERVAL            = 25_000_000_000L;
+    public static final long        SHIELD_UP_SPAWN_INTERVAL            = 40_000_000_000L;
     public static final long        LIFE_UP_SPAWN_INTERVAL              = 55_000_000_000L;
     public static final long        WAVE_SPAWN_INTERVAL                 = 10_000_000_000L;
     public static final long        BOMB_DROP_INTERVAL                  = 1_000_000_000L;
     public static final long        MIN_TORPEDO_INTERVAL                = 50_000_000L;
-    public static final long        MIN_BIG_TORPEDO_INTERVAL            = 50_000_000L;
+    public static final long        MIN_KEYBOARD_TORPEDO_INTERVAL       = 200_000_000L;
+    public static final long        AUTO_FIRE_TORPEDO_INTERVAL          = 300_000_000L;
+    public static final long        FURY_AUTO_FIRE_TORPEDO_INTERVAL     = 100_000_000L;
     public static final long        MIN_STARBURST_INTERVAL              = 300_000_000L;
     public static final long        BIG_TORPEDO_BONUS_INTERVAL          = 60_000_000_000L;
-    public static final long        SPEED_UP_BONUS_INTERVAL             = 80_000_000_000L;
+    public static final long        SPEED_UP_BONUS_INTERVAL             = 70_000_000_000L;
+    public static final long        FURY_BONUS_INTERVAL                 = 160_000_000_000L;
     public static final long        STARBURST_BONUS_INTERVAL            = 100_000_000_000L;
+    public static final long        RAINBOW_BLASTER_BONUS_INTERVAL      = 45_000_000_000L;
     public static final int         NO_OF_KILLS_STAGE_1                 = 50;
     public static final int         NO_OF_KILLS_STAGE_2                 = 100;
     public static final double      FIRST_QUARTER_WIDTH                 = WIDTH * 0.25;
@@ -88,9 +90,6 @@ public class Config {
     public static final double      SHIELD_INDICATOR_WIDTH              = WIDTH * 0.26;
     public static final double      SHIELD_INDICATOR_HEIGHT             = HEIGHT * 0.01428571;
     public static final long        FPS_60                              = 16_666_666L;
-    public static final long        FPS_30                              = 33_333_333L;
-    public static final long        FPS_10                              = 100_000_000L;
-    public static final long        FPS_2                               = 500_000_000L;
     public static final Color       SPACEFX_COLOR                       = Color.rgb(51, 210, 206);
     public static final Color       SPACEFX_COLOR_TRANSLUCENT           = Color.rgb(51, 210, 206, 0.5);
     public static final WaveType[]  WAVE_TYPES_SLOW                     = { WaveType.TYPE_1_SLOW,
@@ -132,21 +131,6 @@ public class Config {
                                                                             WaveType.TYPE_11_FAST,
                                                                             WaveType.TYPE_12_FAST,
                                                                             WaveType.TYPE_13_FAST};
-    public static final double      TORPEDO_BUTTON_X                    = 15;
-    public static final double      TORPEDO_BUTTON_Y                    = HEIGHT * 0.7;
-    public static final double      TORPEDO_BUTTON_R                    = 64 * SCALING_FACTOR * 0.5;
-    public static final double      TORPEDO_BUTTON_CX                   = TORPEDO_BUTTON_X + TORPEDO_BUTTON_R;
-    public static final double      TORPEDO_BUTTON_CY                   = TORPEDO_BUTTON_Y + TORPEDO_BUTTON_R;
-    public static final double      ROCKET_BUTTON_X                     = 15;
-    public static final double      ROCKET_BUTTON_Y                     = HEIGHT * 0.8;
-    public static final double      ROCKET_BUTTON_R                     = 64 * SCALING_FACTOR * 0.5;
-    public static final double      ROCKET_BUTTON_CX                    = ROCKET_BUTTON_X + ROCKET_BUTTON_R;
-    public static final double      ROCKET_BUTTON_CY                    = ROCKET_BUTTON_Y + ROCKET_BUTTON_R;
-    public static final double      SHIELD_BUTTON_X                     = 15;
-    public static final double      SHIELD_BUTTON_Y                     = HEIGHT * 0.9;
-    public static final double      SHIELD_BUTTON_R                     = 64 * SCALING_FACTOR * 0.5;
-    public static final double      SHIELD_BUTTON_CX                    = SHIELD_BUTTON_X + SHIELD_BUTTON_R;
-    public static final double      SHIELD_BUTTON_CY                    = SHIELD_BUTTON_Y + SHIELD_BUTTON_R;
     public static final double      ENEMY_ROCKET_EXPLOSION_FRAME_WIDTH  = 128 * SCALING_FACTOR;
     public static final double      ENEMY_ROCKET_EXPLOSION_FRAME_HEIGHT = 128 * SCALING_FACTOR;
     public static final double      ASTEROID_EXPLOSION_FRAME_WIDTH      = 128 * SCALING_FACTOR;
