@@ -78,7 +78,7 @@ final class WebFXUtil {
     }
 
     static void exit(int status) {
-        Shutdown.softwareShutdown(true, status);
+        Shutdown.exit(status);
     }
 
 }
