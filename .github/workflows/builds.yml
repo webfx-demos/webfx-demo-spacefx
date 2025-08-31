@@ -34,7 +34,7 @@ jobs:
     strategy:
       matrix:
         app: [{name: 'SpaceFX', module-token: 'webfx-demo-spacefx', gwt-token: 'webfx_demo_spacefx', gluon-token: 'WebFXDemoSpacefx', gwt-push-branch: 'spacefx', android-package-name: 'dev.webfx.demo.spacefx', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.spacefx', version: '0.1.0-SNAPSHOT'}]
-        os-config:  [1, 2, 3, 4]
+        os-config:  [1]
         include:
           - os-config: 1 # Generates builds 1) 2) 3) 4) & 5)
             os: ubuntu-latest
@@ -45,37 +45,6 @@ jobs:
             jvm-rpm-artifact-suffix:       'Linux-x64-jvm-package.rpm'          # build 4)
             gluon-desktop-arch-token:      'x86_64-linux'                       # build 5)
             gluon-desktop-artifact-suffix: 'Linux-x64-native-runnable'          # build 5)
-            MVN:                           '/tmp/maven/apache-maven-3.8.8/bin/mvn'
-
-          - os-config: 2 # Generates build 6) - Could be in os-config 1 but moved it a separate config to speed up (parallel run)
-            os: ubuntu-latest
-            gluon-android-arch-token:      'aarch64-android'                    # build 6)
-            gluon-android-apk-suffix:      'Android-aarch64.apk'                # build 6)
-            gluon-android-aab-suffix:      'Android-aarch64.aab'                # build 6)
-            MVN:                           '/tmp/maven/apache-maven-3.8.8/bin/mvn'
-
-          - os-config: 3 # Generates builds 7) 8) 9) & 10)
-            os: windows-latest
-            fatjar-artifact-suffix:        'Windows-x64-runnable.jar'           # build 7)
-            jvm-exe-artifact-suffix:       'Windows-x64-jvm-installer.exe'      # build 8)
-            jvm-msi-artifact-suffix:       'Windows-x64-jvm-installer.msi'      # build 9)
-            gluon-desktop-arch-token:      'x86_64-windows'                     # build 10)
-            # Commented as getting error: Error running candle to generate wixobj
-            # gluon-desktop-artifact-suffix: 'Windows-x64-native-runnable.exe'    # build 10)
-            # msi-desktop-artifact-suffix:   'Windows-x64-jvm-installer.msi'      # build 9)
-            MVN:                           'mvn -D"javafx.platform"="win"'
-
-          - os-config: 4 # Generates builds 11) 12) 13) 14) & 15)
-            os: macos-latest
-            fatjar-artifact-suffix:        'MacOS-x64.jar'                      # build 11)
-            jvm-dmg-artifact-suffix:       'MacOS-x64-jvm.dmg'                  # build 12)
-            jvm-pkg-artifact-suffix:       'MacOS-x64-jvm.pkg'                  # build 13)
-            # Commented MacOS Desktop due to new error from Gluon plugin: No valid Identity (Certificate) found for macOS development.
-            # gluon-desktop-arch-token:      'x86_64-darwin'                      # build 14)
-            # gluon-desktop-Artifact-suffix: 'MacOS-x64-native-runnable'          # build 14)
-            # Note: the iOS build needs the Apple certificate in secrets (the steps will be skipped otherwise)
-            gluon-ios-arch-token:          'arm64-ios'                          # build 15)
-            gluon-ios-artifact-suffix:     'iOS-arm64-native.ipa'               # build 15)
             MVN:                           '/tmp/maven/apache-maven-3.8.8/bin/mvn'
 
     env:
