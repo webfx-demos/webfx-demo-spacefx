@@ -33,7 +33,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        app: [{name: 'SpaceFX', module-token: 'webfx-demo-spacefx', gwt-token: 'webfx_demo_spacefx', gluon-token: 'WebFXDemoSpacefx', gwt-push-branch: 'spacefx-gwt', j2cl-push-branch: 'spacefx', android-package-name: 'dev.webfx.demo.spacefx', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.spacefx', version: '0.1.0-SNAPSHOT'}]
+        app: [{name: 'SpaceFX', module-token: 'webfx-demo-spacefx', gwt-token: 'webfx_demo_spacefx', gluon-token: 'WebFXDemoSpacefx', gwt-push-branch: 'spacefx', android-package-name: 'dev.webfx.demo.spacefx', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.spacefx', version: '0.1.0-SNAPSHOT'}]
         os-config:  [1, 2, 3, 4]
         include:
           - os-config: 1 # Generates builds 1) 2) 3) 4) & 5)
@@ -134,7 +134,7 @@ jobs:
           mkdir /tmp/download
           mkdir /tmp/maven/
           cd /tmp/download
-          curl -O https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
+          curl -O https://archive.apache.org/dist/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
           tar -xzf apache-maven-3.8.8-bin.tar.gz -C /tmp/maven/
           ${{ matrix.MVN }} -version
 
@@ -186,8 +186,8 @@ jobs:
 
       # Building OpenJFX fat jar and installers (if required)
       - if: matrix.fatjar-artifact-suffix != null
-        name: Build OpenJFX fat jar and installers
-        run: ${{ matrix.MVN }} -B -P 'openjfx-fatjar,openjfx-desktop' package
+        name: Build OpenJFX fat jar
+        run: ${{ matrix.MVN }} -B -P 'openjfx-fatjar' package # ${{ matrix.MVN }} -B -P 'openjfx-fatjar,openjfx-desktop'
         working-directory: ${{ env.app-parent-module-dir }}
 
 
@@ -418,7 +418,7 @@ jobs:
           cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.apk staging/${{ env.app-name }}-${{ matrix.gluon-android-apk-suffix }}
           cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.aab staging/${{ env.app-name }}-${{ matrix.gluon-android-aab-suffix }}
 
-      # Uploading to Google Play (if json provided)
+      # Uploading to Google Play (if JSON provided)
       - if: matrix.gluon-ios-arch-token != null && env.GLUON_ANDROID_SERVICE_ACCOUNT_JSON != ''
         name: Upload to Google Play
         uses: r0adkll/upload-google-play@v1.0.19
@@ -505,7 +505,7 @@ jobs:
 
       # Uploading all artifacts in the assets of this workflow run
       - name: Upload artifacts in the assets of this workflow run
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.os-config }}-assets
           path: staging/*
@@ -531,14 +531,14 @@ jobs:
       # Note: each asset will be a folder containing the artifacts
       - if: env.API_GITHUB_TOKEN != ''
         name: Download artifacts into staging directory
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: download
 
       - name: Make upload directory
         run: mkdir upload
 
-      # Moving all artifact into the upload directory
+      # Moving all artifacts into the upload directory
       - run: find download -type f -exec mv -t upload {} +
 
       # Clearing SNAPSHOT release assets
