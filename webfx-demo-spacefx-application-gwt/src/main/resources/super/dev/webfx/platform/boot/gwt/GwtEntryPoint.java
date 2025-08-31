@@ -3,6 +3,8 @@ package dev.webfx.platform.boot.gwt;
 import com.google.gwt.core.client.EntryPoint;
 import dev.webfx.platform.boot.ApplicationBooter;
 import dev.webfx.platform.boot.spi.ApplicationBooterProvider;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.ServiceWorkerContainer;
 
 import static dev.webfx.platform.service.gwtj2cl.ServiceRegistry.*;
 
@@ -10,16 +12,17 @@ public final class GwtEntryPoint implements ApplicationBooterProvider, EntryPoin
 
     @Override
     public void onModuleLoad() {
+        registerPwa();
         registerArrayConstructors();
         registerServiceProviders();
         ApplicationBooter.start(this, null);
     }
 
-    public static void registerArrayConstructors() {
+    private static void registerArrayConstructors() {
 
     }
 
-    public static void registerServiceProviders() {
+    private static void registerServiceProviders() {
         register(dev.webfx.kit.launcher.spi.WebFxKitLauncherProvider.class, dev.webfx.kit.launcher.spi.impl.gwtj2cl.GwtJ2clWebFxKitLauncherProvider::new);
         register(dev.webfx.kit.mapper.peers.javafxmedia.spi.WebFxKitMediaMapperProvider.class, dev.webfx.kit.mapper.peers.javafxmedia.spi.gwtj2cl.GwtJ2clWebFxKitMediaMapperProvider::new);
         register(dev.webfx.kit.mapper.spi.WebFxKitMapperProvider.class, dev.webfx.kit.mapper.spi.impl.gwtj2cl.GwtJ2clWebFxKitHtmlMapperProvider::new);
@@ -37,4 +40,43 @@ public final class GwtEntryPoint implements ApplicationBooterProvider, EntryPoin
         register(dev.webfx.platform.visibility.spi.VisibilityProvider.class, dev.webfx.platform.visibility.spi.impl.gwtj2cl.GwtJ2clVisibilityProvider::new);
         register(javafx.application.Application.class, eu.hansolo.spacefx.SpaceFX::new);
     }
+
+    private static void registerPwa() {
+        boolean pwa = true;
+        ServiceWorkerContainer serviceWorker = DomGlobal.navigator.serviceWorker;
+        if (serviceWorker == null) {
+            if (pwa)
+                DomGlobal.console.warn("❌ PWA service worker registration failed: not supported in this browser or context");
+        } else {
+            String pwaScriptURL = "./webfx-pwa-service-worker.js";
+            if (!pwa) {
+                serviceWorker.getRegistrations()
+                    .then(registrations -> {
+                        registrations.forEach((registration, i) -> registration.unregister());
+                        return null;
+                    });
+            } else {
+                serviceWorker.register(pwaScriptURL)
+                    .then(registration -> {
+                        DomGlobal.console.log("✅ PWA service worker registered");
+                        return null;
+                    })
+                    .catch_(error -> {
+                        DomGlobal.console.warn("❌ PWA service worker registration failed: " + error);
+                        return null;
+                    });
+                DomGlobal.window.addEventListener("beforeinstallprompt", event -> {
+                    dev.webfx.kit.mapper.peers.javafxgraphics.gwtj2cl.html.UserInteraction.runOnNextUserInteraction(() -> installPWA(event));
+                });
+                DomGlobal.window.addEventListener("appinstalled", event -> {
+
+                });
+            }
+        }
+    }
+
+    private static native void installPWA(elemental2.dom.Event e) /*-{
+        e.prompt();
+    }-*/;
+
 }

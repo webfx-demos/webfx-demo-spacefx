@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project applicationId="dev.webfx.demo.spacefx" applicationLabel="SpaceFX">
+<project applicationId="dev.webfx.demo.spacefx" applicationLabel="SpaceFX" pwa="true">
 
     <exported-packages>
         <source-packages/>
