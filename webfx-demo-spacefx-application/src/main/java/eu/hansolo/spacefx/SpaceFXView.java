@@ -49,6 +49,7 @@ import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -724,7 +725,8 @@ public class SpaceFXView extends StackPane {
 
         shipTouchArea.setCenterX(spaceShip.x);
         shipTouchArea.setCenterY(spaceShip.y);
-        shipTouchArea.setRadius(deflectorShieldRadius);
+        // shipTouchArea.setRadius(deflectorShieldRadius); // Too small, especially on iPad with pencil => can be challenging to start dragging the ship
+        shipTouchArea.setRadius(Screen.getPrimary().getBounds().getHeight()); // wide circle => we can start dragging the ship from anywhere
         shipTouchArea.setStroke(Color.TRANSPARENT);
         shipTouchArea.setFill(Color.TRANSPARENT);
         readyToStart = true;
