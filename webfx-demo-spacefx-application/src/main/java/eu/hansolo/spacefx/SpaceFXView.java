@@ -729,6 +729,7 @@ public class SpaceFXView extends StackPane {
         shipTouchArea.setRadius(Screen.getPrimary().getBounds().getHeight()); // wide circle => we can start dragging the ship from anywhere
         shipTouchArea.setStroke(Color.TRANSPARENT);
         shipTouchArea.setFill(Color.TRANSPARENT);
+        shipTouchArea.setMouseTransparent(true);
         readyToStart = true;
 
         displayDifficulty();
@@ -1642,6 +1643,7 @@ public class SpaceFXView extends StackPane {
     private void gameOver() {
         running = false;
         gameOverScreen = true;
+        shipTouchArea.setMouseTransparent(true);
 
         boolean isInHallOfFame = score > hallOfFame.get(2).score;
 
@@ -1999,6 +2001,7 @@ public class SpaceFXView extends StackPane {
         backgroundViewportY           = SWITCH_POINT;
         autoFire = false;
         timer.start();
+        shipTouchArea.setMouseTransparent(false);
         userInteracted();
     }
 
