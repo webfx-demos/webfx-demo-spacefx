@@ -3,8 +3,8 @@
   "name": "SpaceFX",
   "start_url": "/index.html",
   "display": "fullscreen",
-  "background_color": "#ffffff",
-  "theme_color": "#3367D6",
+  "background_color": "black",
+  "theme_color": "black",
   "icons": [
     {
       "src": "./AppIcon-1024x1024.png",
