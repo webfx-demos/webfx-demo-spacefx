@@ -48,7 +48,7 @@ public final class GwtEntryPoint implements ApplicationBooterProvider, EntryPoin
             if (pwa)
                 DomGlobal.console.warn("❌ PWA service worker registration failed: not supported in this browser or context");
         } else {
-            String pwaScriptURL = "./webfx-pwa-service-worker.js";
+            String pwaScriptURL = "/webfx-pwa-service-worker.js";
             if (!pwa) {
                 serviceWorker.getRegistrations()
                     .then(registrations -> {
