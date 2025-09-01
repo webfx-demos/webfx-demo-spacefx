@@ -2,7 +2,7 @@
   "id": "dev.webfx.demo.spacefx",
   "name": "SpaceFX",
   "start_url": "/index.html",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#ffffff",
   "theme_color": "#3367D6",
   "icons": [
