@@ -5,6 +5,7 @@
   "display": "fullscreen",
   "background_color": "black",
   "theme_color": "black",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "./AppIcon-1024x1024.png",
