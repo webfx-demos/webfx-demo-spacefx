@@ -16,11 +16,8 @@
 
 package eu.hansolo.spacefx;
 
-import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.scene.DeviceSceneUtil;
-import dev.webfx.platform.meta.Meta;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -40,13 +37,6 @@ public final class SpaceFX extends Application {
         stage.setScene(scene);
         // Reading back the real window size in case we run in the browser
         WINDOW_HEIGHT = scene.getHeight();
-        // Temporary workaround for iOS not returning the correct initial scene height in PWA mode (due to initial
-        // body padding applied to body element to fix iOS not returning initial window height).
-        // TODO: fis that at WebFX level
-        if (Meta.isPwa()) {
-            Insets safeAreaInsets = WebFxKitLauncher.safeAreaInsetsProperty().get();
-            WINDOW_HEIGHT += safeAreaInsets.getTop() + safeAreaInsets.getBottom();
-        }
         WINDOW_WIDTH = Math.min(scene.getWidth(), WINDOW_HEIGHT / 900 * 700);
         // Note: Config will consider these variables during initialization
 
