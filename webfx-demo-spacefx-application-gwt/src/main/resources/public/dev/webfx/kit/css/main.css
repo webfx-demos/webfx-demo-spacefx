@@ -362,32 +362,28 @@ fx-radiobutton.pseudo-selected .radio .dot {
 
 /*===== spacefx-web@main.css from webfx-demo-spacefx-application =====*/
 
+:root {
+    --fx-font-family: "Spaceboy";
+    --fx-cyan-color: rgb(51, 210, 206);
+}
+
 body {
     background-color: black;
 }
 
-.label {
-    color  : rgb(51, 210, 206);
-    font-family: "Spaceboy";
+fx-text {
+    --fx-text-fill: var(--fx-cyan-color);
+    font-family: var(--fx-font-family);
     font-size  : 1.8em;
-    alignment  : center;
 }
 
 fx-button fx-text {
-    alignment          : center;
-    font-family        : "Spaceboy";
     font-size          : 1.5em;
-    color              : rgb(51, 210, 206);
 }
 
-fx-button > fx-background {
-    background-color   : transparent;
-    faint-focus-color  : transparent;
-    background-insets  : 0;
-    background-radius  : 0;
-    highlight-fill     : transparent;
-    padding            : 0 0 0.5em 0;
-    border-color       : rgb(51, 210, 206);
-    border-width       : 0.08333333em;
-    border-radius      : 1em;
+fx-button {
+    --fx-button-background-color: transparent;
+    --fx-button-border-color: var(--fx-cyan-color);
+    --fx-button-border-width: 0.08333333em;
+    --fx-button-border-radius: 1em;
 }
