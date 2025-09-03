@@ -525,6 +525,7 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
 :root {
     --fx-font-family: "Spaceboy";
     --fx-cyan-color: rgb(51, 210, 206);
+    --text-user-select: none; /* disabling text user selection to not interfere with the game */
 }
 
 body {
