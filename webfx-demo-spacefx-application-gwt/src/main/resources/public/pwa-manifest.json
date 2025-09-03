@@ -1,0 +1,26 @@
+{
+  "id": "dev.webfx.demo.spacefx",
+  "name": "SpaceFX",
+  "short_name": "SpaceFX",
+  "description": "A JavaFX game written by Gerrit Grunwald and transpiled to JS by WebFX",
+  "categories": ["game", "demo"],
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "black",
+  "theme_color": "black",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./AppIcon-1024x1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ],
+  "screenshots" : [
+    {
+      "src": "./SpaceFX-new-224x264.webp",
+      "sizes": "224x264",
+      "type": "image/webp"
+    }
+  ]
+}
