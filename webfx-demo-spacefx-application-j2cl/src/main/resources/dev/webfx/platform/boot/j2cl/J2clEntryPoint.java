@@ -2,8 +2,8 @@ package dev.webfx.platform.boot.j2cl;
 
 import dev.webfx.platform.boot.ApplicationBooter;
 import dev.webfx.platform.boot.spi.ApplicationBooterProvider;
-import elemental2.dom.DomGlobal;
-import elemental2.dom.ServiceWorkerContainer;
+import dev.webfx.platform.util.gwtj2cl.GwtJ2clUtil;
+
 import org.treblereel.j2cl.processors.annotations.GWT3EntryPoint;
 
 import static dev.webfx.platform.service.gwtj2cl.ServiceRegistry.*;
@@ -14,8 +14,8 @@ public final class J2clEntryPoint implements ApplicationBooterProvider {
     public void entryPoint() {
         registerArrayConstructors();
         registerServiceProviders();
+        GwtJ2clUtil.registerPwa();
         ApplicationBooter.start(this, null);
-        managePwaRegistration();
     }
 
     private static void registerArrayConstructors() {
@@ -40,33 +40,4 @@ public final class J2clEntryPoint implements ApplicationBooterProvider {
         register(dev.webfx.platform.visibility.spi.VisibilityProvider.class, dev.webfx.platform.visibility.spi.impl.gwtj2cl.GwtJ2clVisibilityProvider::new);
         register(javafx.application.Application.class, eu.hansolo.spacefx.SpaceFX::new);
     }
-
-    private static void managePwaRegistration() {
-        boolean pwa = true;
-        ServiceWorkerContainer serviceWorker = DomGlobal.navigator.serviceWorker;
-        if (serviceWorker == null) {
-            if (pwa)
-                DomGlobal.console.warn("❌ PWA service worker registration failed: not supported in this browser or context");
-        } else {
-            String pwaScriptURL = "webfx-pwa-service-worker.js";
-            if (!pwa) {
-                serviceWorker.getRegistrations()
-                    .then(registrations -> {
-                        registrations.forEach((registration, i) -> registration.unregister());
-                        return null;
-                    });
-            } else {
-                serviceWorker.register(pwaScriptURL)
-                    .then(registration -> {
-                        DomGlobal.console.log("✅ PWA service worker registered");
-                        return null;
-                    })
-                    .catch_(error -> {
-                        DomGlobal.console.warn("❌ PWA service worker registration failed: " + error);
-                        return null;
-                    });
-            }
-        }
-    }
-
 }

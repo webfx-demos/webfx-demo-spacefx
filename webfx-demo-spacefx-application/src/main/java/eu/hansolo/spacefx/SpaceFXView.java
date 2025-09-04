@@ -16,6 +16,7 @@
 
 package eu.hansolo.spacefx;
 
+import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.useragent.UserAgent;
@@ -79,7 +80,7 @@ public class SpaceFXView extends StackPane {
 
     private static Color whiten(Color rainbowColor, int waveIndex) {
         // Whiten color (making outer wave whiter)
-        double rainbowFactor = 1.0 + ((0.1 - 1.0) * waveIndex) / 5; // from 1.0 (red => keeps red) to 0.1 (blue => more white)
+        double rainbowFactor = 1.0 + ((0.1 - 1.0) * waveIndex) / 5; // from 1.0 (red => keeps red) to 0.1 (blue => whiter)
         double red   = Math.min(1, rainbowColor.getRed()   * rainbowFactor + 1 - rainbowFactor);
         double green = Math.min(1, rainbowColor.getGreen() * rainbowFactor + 1 - rainbowFactor);
         double blue  = Math.min(1, rainbowColor.getBlue()  * rainbowFactor + 1 - rainbowFactor);
@@ -100,6 +101,7 @@ public class SpaceFXView extends StackPane {
     private              InitialDigit               digit2;
     private              HBox                       playerInitialsDigits;
     private              Button                     saveInitialsButton;
+    private              Button installAppButton;
     private              List<Player>               hallOfFame;
     private              VBox                       hallOfFameBox;
     private              Level                      level;
@@ -265,12 +267,13 @@ public class SpaceFXView extends StackPane {
             }
         });
 
-        Pane pane = new Pane(canvas, difficultyBox, volumeButton, shipTouchArea, hallOfFameBox, playerInitialsLabel, playerInitialsDigits, saveInitialsButton) {
+        Pane pane = new Pane(canvas, difficultyBox, volumeButton, shipTouchArea, hallOfFameBox, playerInitialsLabel, playerInitialsDigits, saveInitialsButton, installAppButton) {
             @Override
             protected void layoutChildren() {
                 super.layoutChildren();
                 layoutInArea(difficultyBox, 0, isRunning() ? 0 : -140 * SCALING_FACTOR, WIDTH, HEIGHT, 0, HPos.CENTER, VPos.TOP);
                 layoutInArea(volumeButton, WIDTH / 2 - 6 * SCALING_FACTOR, 37 * SCALING_FACTOR, 0, 0, 0, HPos.CENTER, VPos.TOP);
+                layoutInArea(installAppButton, 0, (isRunning() ? -140 : 420) * SCALING_FACTOR, WIDTH, installAppButton.prefHeight(-1), 0, HPos.CENTER, VPos.TOP);
             }
         };
         pane.setMaxSize(WIDTH, HEIGHT);
@@ -473,10 +476,14 @@ public class SpaceFXView extends StackPane {
 
         saveInitialsButton = new Button("Save Initials");
         saveInitialsButton.setPrefWidth(WIDTH * 0.6);
-        saveInitialsButton.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
-        saveInitialsButton.setTextFill(null); // To allow css color management
-        saveInitialsButton.setBorder(null); // To allow css border management
         Helper.enableNode(saveInitialsButton, false);
+
+        installAppButton = new Button("Install App");
+        installAppButton.setPadding(new Insets(20));
+        installAppButton.setOnAction(e -> WebFxKitLauncher.promptAppInstall());
+        installAppButton.setCursor(Cursor.HAND);
+        updateInstallAppButtonVisibility();
+        WebFxKitLauncher.appInstallPromptReadyProperty().addListener(e -> updateInstallAppButtonVisibility());
 
         // PreFill hall of fame
         //properties = PropertyManager.INSTANCE.getProperties();
@@ -505,16 +512,16 @@ public class SpaceFXView extends StackPane {
         difficultyText.setFont(Fonts.spaceBoy(WIDTH / 10));
 
         incrementDifficultyButton = createSvgButton(
-                "M 10.419383,2.7920361 0.44372521,19.200594 c -0.82159289,1.471294 0.2330761,3.327162 1.95783919,3.327162 H 21.793496 c 1.716023,0 2.779433,-1.847128 1.95784,-3.327162 L 14.335061,2.7920361 c -0.847814,-1.5295618 -3.059123,-1.5295618 -3.915678,0 z",
+                "M10.4 2.8.4 19.2c-.8 1.5.2 3.3 2 3.3H21.8c1.7 0 2.8-1.8 2-3.3L14.3 2.8c-.8-1.5-3.1-1.5-3.9 0z",
                 true, false, this::increaseDifficulty);
         decrementDifficultyButton = createSvgButton(
-                "M 10.322413,21.701054 0.34675429,5.2924958 c -0.8215929,-1.471294 0.2330761,-3.327162 1.95783921,-3.327162 H 21.696526 c 1.716023,0 2.779433,1.847127 1.95784,3.327162 L 14.238091,21.701054 c -0.847814,1.529561 -3.059123,1.529561 -3.915678,0 z",
+                "M10.3 21.7.3 5.3c-.8-1.5.2-3.3 2-3.3H21.7c1.7 0 2.8 1.8 2 3.3L14.2 21.7c-.8 1.5-3.1 1.5-3.9 0z",
                 true, false, this::decreaseDifficulty);
         difficultyBox = new VBox(incrementDifficultyButton, difficultyText, decrementDifficultyButton);
         difficultyBox.setAlignment(Pos.CENTER);
         difficultyText.setOnMouseClicked(e -> {
             userInteracted();
-            e.consume(); // Not starting game when clicking on difficulty
+            e.consume(); // Not starting then game when clicking on difficulty
         });
 
         volumeButton = createSvgButton(null,false, true, this::toggleMuteSound);
@@ -637,6 +644,7 @@ public class SpaceFXView extends StackPane {
                     Helper.enableNode(hallOfFameBox,  hallOfFameScreen);
                     Helper.enableNode(volumeButton,  !hallOfFameScreen);
                     Helper.enableNode(difficultyBox, !hallOfFameScreen);
+                    updateInstallAppButtonVisibility();
                     ctx.drawImage(hallOfFameScreen ?  hallOfFameImg : startImg, 0, 0, WIDTH, HEIGHT);
                     lastScreenToggle = now;
                 }
@@ -667,6 +675,10 @@ public class SpaceFXView extends StackPane {
                 }
             }
         });
+    }
+
+    private void updateInstallAppButtonVisibility() {
+        Helper.enableNode(installAppButton, isStartScreen() && WebFxKitLauncher.isAppInstallPromptReady());
     }
 
     private void initOnBackground(Stage stage) {
@@ -1695,6 +1707,7 @@ public class SpaceFXView extends StackPane {
 
         Helper.enableNode(hallOfFameBox, false);
         Helper.enableNode(volumeButton, true);
+        updateInstallAppButtonVisibility();
         gameOverScreen = false;
         hallOfFameScreen = false;
         bigTorpedoesEnabled = false;
@@ -1851,8 +1864,8 @@ public class SpaceFXView extends StackPane {
     }
 
     private static AudioClip newSound(String resourceName) {
-        // Adjusting sounds volume, because they are not all the same level and many are too loud compared to the music
-        // especially when there are lots of ennemies.
+        // Adjusting the sound volume, because they are not all the same level and many are too loud compared to the
+        // music, especially when there are lots of ennemies.
         double volume;
         switch (resourceName) {
             case "explosionSound.mp3":
@@ -1927,8 +1940,8 @@ public class SpaceFXView extends StackPane {
 
     private void displayVolume() {
         volumeButton.getChildren().set(0, createSvgPath(
-                soundMuted ? "m 42.82353,13.646772 18.82353,22.588237 m 0,-22.588237 -18.82353,22.588237 M 33.411765,2.3526543 17.411764,16.470302 H 2.3529403 V 34.352655 H 17.411764 l 16.000001,14.117648 z"
-                        :                                            "m 53.5,5 q 16.409227,19.9254884 0,39.8509784 M 33.411765,2.3526543 17.411764,16.470302 H 2.3529403 V 34.352655 H 17.411764 l 16.000001,14.117648 z"
+                soundMuted ? "m42.8 13.6 18.8 22.6m0-22.6-18.8 22.6M33.4 2.4 17.4 16.5H2.4V34.4H17.4l16 14.1z"
+                           : "m53.5 5q16.4 19.9 0 39.9M33.4 2.4 17.4 16.5H2.4V34.4H17.4l16 14.1z"
                 , false, true));
         if (!ENABLE_NEW_VERSION)
             Helper.enableNode(volumeButton, false);
