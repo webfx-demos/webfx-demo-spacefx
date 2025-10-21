@@ -1,5 +1,5 @@
 
-/*===== webfx-kit-javafxgraphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
+/*===== webfx-kit-javafxgraphics-web@main.css from webfx-kit-javafxgraphics-peers-elemental2 =====*/
 
 :root {
     /* Capturing safe area in CSS variables so they can be accessed by WebFX kit */
@@ -165,7 +165,7 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
     fill: var(--fx-svg-path-fill);
 }
 
-/*===== webfx-kit-javafxcontrols-web@main.css from webfx-kit-javafxcontrols-peers-gwt-j2cl =====*/
+/*===== webfx-kit-javafxcontrols-web@main.css from webfx-kit-javafxcontrols-peers-elemental2 =====*/
 
 /***** Global variables *****/
 :root {

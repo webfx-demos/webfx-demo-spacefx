@@ -33,18 +33,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        app: [{name: 'SpaceFX', module-token: 'webfx-demo-spacefx', gwt-token: 'webfx_demo_spacefx', gluon-token: 'WebFXDemoSpacefx', gwt-push-branch: 'spacefx', android-package-name: 'dev.webfx.demo.spacefx', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.spacefx', version: '0.1.0-SNAPSHOT'}]
+        app: [{name: 'SpaceFX', module-token: 'webfx-demo-spacefx', gwt-token: 'webfx_demo_spacefx', gluon-token: 'WebFXDemoSpacefx', gwt-push-branch: 'spacefx', teavm-push-branch: 'spacefx-teavm', android-package-name: 'dev.webfx.demo.spacefx', android-track: 'beta', ios-bundle-id: 'dev.webfx.demo.spacefx', version: '0.1.0-SNAPSHOT'}]
         os-config:  [1]
         include:
           - os-config: 1 # Generates builds 1) 2) 3) 4) & 5)
             os: ubuntu-latest
             # Note: 1) must run on Ubuntu because the GitHub push action (to update the web-build branch) works only on Ubuntu
-            gwt-artifact-suffix:          'Web.war'                            # build 1)
+            gwt-artifact-suffix:           'Web.war'                            # build 1)
+            #j2cl-artifact-suffix:          'Web.war'                            # build 1)
             fatjar-artifact-suffix:        'Linux-x64-runnable.jar'             # build 2)
-            jvm-deb-artifact-suffix:       'Linux-x64-jvm-package.deb'          # build 3)
-            jvm-rpm-artifact-suffix:       'Linux-x64-jvm-package.rpm'          # build 4)
-            gluon-desktop-arch-token:      'x86_64-linux'                       # build 5)
-            gluon-desktop-artifact-suffix: 'Linux-x64-native-runnable'          # build 5)
+            #jvm-deb-artifact-suffix:       'Linux-x64-jvm-package.deb'          # build 3)
+            #jvm-rpm-artifact-suffix:       'Linux-x64-jvm-package.rpm'          # build 4)
+            #gluon-desktop-arch-token:      'x86_64-linux'                       # build 5)
+            #gluon-desktop-artifact-suffix: 'Linux-x64-native-runnable'          # build 5)
             MVN:                           '/tmp/maven/apache-maven-3.8.8/bin/mvn'
 
     env:
@@ -56,13 +57,15 @@ jobs:
       app-gwt-build-dir:         ./${{ matrix.app.module-token }}-application-gwt/target/${{ matrix.app.module-token }}-application-gwt-${{ matrix.app.version }}/${{ matrix.app.gwt-token }}_application_gwt
       app-j2cl-module-dir:       ./${{ matrix.app.module-token }}-application-j2cl
       app-j2cl-build-dir:        ./${{ matrix.app.module-token }}-application-j2cl/target/${{ matrix.app.module-token }}-application-j2cl-${{ matrix.app.version }}/${{ matrix.app.module-token }}-application-j2cl
+      app-teavm-module-dir:       ./${{ matrix.app.module-token }}-application-teavm
+      app-teavm-build-dir:        ./${{ matrix.app.module-token }}-application-teavm/target/teavm
       app-gluon-module-dir:      ./${{ matrix.app.module-token }}-application-gluon
       web-push-repository-name:  'webfx-netlify'
       web-push-repository-owner: 'webfx-project'
       web-push-username: ${{ github.actor }}
       web-push-email: ${{ secrets.API_GITHUB_EMAIL }}
       jdk-version: '19'
-      xcode-version: '16.4.0'
+      xcode-version: '15.4.0'
       API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       GLUON_LICENSE: ${{ secrets.GLUON_LICENSE }}
       GLUON_ANDROID_VERSION_CODE: ${{ vars.GLUON_ANDROID_VERSION_CODE }}
@@ -153,6 +156,12 @@ jobs:
         run: ${{ matrix.MVN }} -B -P j2cl package
         working-directory: ${{ env.app-parent-module-dir }}
 
+      # Building TeaVM application (if required)
+      - if: matrix.teavm-artifact-suffix != null || matrix.app.teavm-push-branch != null && matrix.os-config == 1
+        name: Build TeaVM application
+        run: ${{ matrix.MVN }} -B -Pteavm package
+        working-directory: ${{ env.app-parent-module-dir }}
+
       # Building OpenJFX fat jar and installers (if required)
       - if: matrix.fatjar-artifact-suffix != null
         name: Build OpenJFX fat jar
@@ -190,6 +199,19 @@ jobs:
           destination-github-username: ${{ env.web-push-username }}
           user-email: ${{ env.web-push-email }}
 
+      - if: matrix.os-config == 1 && matrix.app.teavm-push-branch != null && env.API_GITHUB_TOKEN != ''
+        name: Push TeaVM build to ${{ matrix.app.teavm-push-branch }} branch
+        uses: cpina/github-action-push-to-another-repository@master
+        env:
+          API_TOKEN_GITHUB: ${{ env.API_GITHUB_TOKEN }}
+        with:
+          source-directory: ${{ env.app-teavm-build-dir }}
+          destination-repository-username: ${{ env.web-push-repository-owner }}
+          destination-repository-name: ${{ env.web-push-repository-name }}
+          target-branch: ${{ matrix.app.teavm-push-branch }}
+          destination-github-username: ${{ env.web-push-username }}
+          user-email: ${{ env.web-push-email }}
+
       ##################################################################################################################
       #                                           Staging artifacts                                                    #
       ##################################################################################################################
@@ -212,12 +234,6 @@ jobs:
       - if: matrix.gwt-artifact-suffix != null
         name: Copy Web archive to staging
         run: cp ${{ env.app-gwt-module-dir }}/target/*.war staging/${{ env.app-name }}-${{ matrix.gwt-artifact-suffix }}
-
-      # Building J2CL application (if required)
-      - if: matrix.j2cl-artifact-suffix != null || matrix.app.j2cl-push-branch != null && matrix.os-config == 1
-        name: Build J2CL application
-        run: ${{ matrix.MVN }} -B -P j2cl package
-        working-directory: ${{ env.app-parent-module-dir }}
 
       # Staging 2) | 7) | 11)
       - if: matrix.fatjar-artifact-suffix != null

@@ -3,7 +3,7 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>eu.hansolo.spacefx</resource-package>
+        <resource-packages/>
     </exported-packages>
 
     <providers>

@@ -9,12 +9,12 @@ module webfx.demo.spacefx.application.openjfx {
     requires webfx.kit.platform.visibility.openjfx;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
-    requires webfx.platform.os.java;
-    requires webfx.platform.resource.java;
-    requires webfx.platform.scheduler.java;
-    requires webfx.platform.shutdown.java;
-    requires webfx.platform.storage.java;
-    requires webfx.platform.storagelocation.java;
-    requires webfx.platform.useragent.java.client;
+    requires webfx.platform.os.jre;
+    requires webfx.platform.resource.jre;
+    requires webfx.platform.scheduler.jre;
+    requires webfx.platform.shutdown.jre;
+    requires webfx.platform.storage.jre;
+    requires webfx.platform.storagelocation.jre;
+    requires webfx.platform.useragent.jre.client;
 
 }
