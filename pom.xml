@@ -39,6 +39,7 @@
         <module>webfx-demo-spacefx-application-j2cl</module>
         <module>webfx-demo-spacefx-application-openjfx</module>
         <module>webfx-demo-spacefx-application-teavm</module>
+        <module>webfx-demo-spacefx-application-teavm-wasm</module>
     </modules>
 
 </project>
