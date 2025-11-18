@@ -4,8 +4,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, viewport-fit=cover"/>
         <meta name="mavenBuildTimestamp" content="${maven.build.timestamp}"/>
-        <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'>
-        <link rel='manifest' href='./pwa-manifest.json'>
         <link rel="stylesheet" href="./dev/webfx/kit/css/main.css?v=${maven.build.timestamp}"></link>
 
     </head>
@@ -20,7 +18,8 @@
                 });
                 teavm.exports.main([]);
             }
+            main();
         </script>
-        <script>main()</script>
+
     </body>
 </html>
