@@ -4,11 +4,88 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, viewport-fit=cover"/>
         <meta name="mavenBuildTimestamp" content="${maven.build.timestamp}"/>
+        <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'>
+        <link rel='manifest' href='./pwa-manifest.json'>
+        <style>
+            #pwa-progress-bar-container {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 25%;
+                width: 50%;
+                height: 10px;
+                border: 1px lightgray solid;
+                color: transparent;
+            }
+            #pwa-progress-bar {
+                width: 0;
+                height: 100%;
+                background-color: #007bff;
+                transition: width 0.2s ease;
+            }
+        </style>
         <link rel="stylesheet" href="./dev/webfx/kit/css/main.css?v=${maven.build.timestamp}"></link>
 
     </head>
     <body>
-        <script type="text/javascript" charset="utf-8" src="./classes.js"></script>
+             <div id="pwa-progress-bar-container">
+                 <div id="pwa-progress-bar">This is to force the browser to paint this new page</div>
+             </div>
+        
+             <script>
+                 function loadGwtApp() {
+                     console.log('Injecting application script...');
+                     var script = document.createElement('script');
+                     script.src = "./classes.js";
+                     document.body.appendChild(script);
+                 }
+                 if ('serviceWorker' in navigator) {
+                     navigator.serviceWorker.register('pwa-service-worker.js');
+                     let isCriticalDone = false;
+                     function checkLaunch() {
+                         if (isCriticalDone && navigator.serviceWorker.controller) {
+                             loadGwtApp();
+                         }
+                     }
+                     navigator.serviceWorker.addEventListener('message', event => {
+                         if (event.data) {
+                             if (event.data.type === 'loading_progress') {
+                                 const percent = Math.round((event.data.current / event.data.total) * 100);
+                                 const container = document.getElementById('pwa-progress-bar-container');
+                                 const bar = document.getElementById('pwa-progress-bar');
+                                 if (container && bar) {
+                                     if (!event.data.completed && percent < 100) {
+                                         container.style.display = 'block';
+                                         bar.style.width = percent + '%';
+                                     }
+                                     if (event.data.completed || percent >= 100) {
+                                         bar.style.width = '100%';
+                                         setTimeout(() => container.style.display = 'none', 500);
+                                     }
+                                 }
+                                 if (event.data.criticalCompleted && !isCriticalDone) {
+                                     isCriticalDone = true;
+                                     checkLaunch();
+                                 }
+                             } else if (event.data.type === 'status') {
+                                 if (event.data.criticalCompleted && !isCriticalDone) {
+                                     isCriticalDone = true;
+                                     checkLaunch();
+                                 }
+                             }
+                         }
+                     });
+                     if (navigator.serviceWorker.controller) {
+                         navigator.serviceWorker.controller.postMessage({ type: 'check_status' });
+                     } else {
+                         navigator.serviceWorker.addEventListener('controllerchange', () => {
+                             navigator.serviceWorker.controller.postMessage({ type: 'check_status' });
+                         });
+                     }
+                 } else {
+                     loadGwtApp();
+                 }
+             </script>
         <script>main()</script>
     </body>
 </html>
