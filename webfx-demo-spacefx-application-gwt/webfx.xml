@@ -5,4 +5,12 @@
         <used-by-source-modules/>
     </dependencies>
 
+    <pwa>
+        <essential-assets>
+            <asset strategy="critical">/eu/hansolo/spacefx/Spaceboy.ttf</asset>
+            <asset strategy="critical">/eu/hansolo/spacefx/startscreen.jpg</asset>
+            <asset strategy="critical">/eu/hansolo/spacefx/halloffamescreen.jpg</asset>
+        </essential-assets>
+    </pwa>
+
 </project>
