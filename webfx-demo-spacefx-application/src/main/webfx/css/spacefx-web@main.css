@@ -19,8 +19,8 @@ fx-button fx-text {
 }
 
 fx-button {
-    --fx-button-background-color: transparent;
-    --fx-button-border-color: var(--fx-cyan-color);
-    --fx-button-border-width: 0.08333333em;
-    --fx-button-border-radius: 1em;
+    --fx-background-color: transparent;
+    --fx-border-color: var(--fx-cyan-color);
+    --fx-border-width: 0.08333333em;
+    --fx-border-radius: 1em;
 }
